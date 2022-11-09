@@ -30,7 +30,82 @@
   | mpc.gen_sourceid    | table* | SourceID data                   |
   | mpc.branch_sourceid | table* | SourceID data                   |
   
+### Standard keys in MATPOWER
+
+* `bus`
+  | column | type  | description               |
+  | ------ | ----- | ------------------------- |
+  | bus_i  | int   | bus number                |
+  | type   | int   | bus type (1-4)            |
+  | Pd     | float | real power demand         |
+  | Qd     | float | reactive power demand     |
+  | Gs     | float | shunt conductance         |
+  | Bs     | float | shunt susceptance         |
+  | area   | int   | area number               |
+  | Vm     | float | voltage magnitude         |
+  | Va     | float | voltage angle             |
+  | baseKV | float | base voltage              |
+  | zone   | int   | loss zone                 |
+  | Vmax   | float | maximum voltage magnitude |
+  | Vmin   | float | minimum voltage magnitude |
   
+* `gen`
+  | column   | type  | description                                    |
+  | -------- | ----- | ---------------------------------------------- |
+  | bus      | int   | bus number                                     |
+  | Pg       | float | real power output                              |
+  | Qg       | float | reactive power output                          |
+  | Qmax     | float | maximum reactive power output                  |
+  | Qmin     | float | minimum reactive power output                  |
+  | Vg       | float | voltage magnitude setpoint                     |
+  | mBase    | float | total MVA base of machine                      |
+  | status   | float | status, > 0, in-service, <= 0 out-of-service   |
+  | Pmax     | float | maximum real power output                      |
+  | Pmin     | float | minimum real power output                      |
+  | Pc1      | float | lower real power output of PQ capability curve |
+  | Pc2      | float | upper real power output of PQ capability curve |
+  | Qc1min   | float | minimum reactive power output at PC1           |
+  | Qc1max   | float | maximum reactive power output at PC1           |
+  | Qc2min   | float | minimum reactive power output at PC2           |
+  | Qc2max   | float | maximum reactive power output at PC2           |
+  | ramp_agc | float | ramp rate for load following/AGC               |
+  | ramp_10  | float | ramp rate for 10 minute reserves               |
+  | ramp_30  | float | ramp rate for 30 minute reserves               |
+  | ramp_q   | float | ramp rate for reactive power (2 sec timescale) |
+  | apf      | float | area participation factor                      |
+
+* `branch`
+  | column | type   | description                                              |
+  | ------ | ------ | -------------------------------------------------------- |
+  | fbus   | int    | "from" bus number                                        |
+  | tbus   | int    | "to" bus number                                          |
+  | r      | float  | resistance                                               |
+  | x      | float  | reactance                                                |
+  | b      | float  | total line charging susceptance                          |
+  | rateA  | float  | MVA rating A (long term rating), set to 0 for unlimited  |
+  | rateB  | float  | MVA rating B (short term rating), set to 0 for unlimited |
+  | rateC  | float  | MVA rating C (emergency rating), set to 0 for unlimited  |
+  | ratio  | float  | TAP: transformer off nominal turns ratio                 |
+  | angle  | float  | SHIFT:  transformer phase shift angle (degrees)          |
+  | status | binary | initial branch status, 1: in-service, 0: out-of-service  |
+  | angmin | float  | minimum angle difference                                 |
+  | angmax | float  | maximum angle difference                                 |
+
+* `gencost`
+  | column   | type  | description                                                     |
+  | -------- | ----- | --------------------------------------------------------------- |
+  | model    | int   | cost model, 1: linear, 2: polynomial                            |
+  | startup  | float | startup cost                                                    |
+  | shutdown | float | shutdown cost                                                   |
+  | ncost    | int   | number N = n + 1 of data points defining an n-segment piecewise |
+  | c0       | float | coef                                                            |
+  | c1       | float | coef                                                            |
+  | c2       | float | coef                                                            |
+
+  * `gencost` looks like associated with `gen`, but miss the `gen_i` or `bus_i`
+  * c0, c1, c2 are not exact with 3 coefficients, may be less or more, depend on `ncost`
+  * c0, c1, c2 are the coeffients of polynomial function, starting from high to low
+
 ### Customized keys in MATPOWER
 
 * `gmd_bus`

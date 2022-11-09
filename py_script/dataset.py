@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from pandapower.converter import from_mpc
 from pandapower.topology import create_nxgraph
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset, HeteroData
 
 from py_script.utils import read_file
 
@@ -83,7 +83,9 @@ class GMD(InMemoryDataset):
         pos = torch.tensor(pos, dtype=torch.float32)
 
         # REVIEW: data label or not (y)?
-        data = Data(x=x, edge_index=edge_index)
+        # hetero_graph:
+        # https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.HeteroData
+        data = Data(x=x, edge_index=edge_index, edge_attr=None,)
         # save to the processed path
         torch.save(self.collate([data]), self.processed_paths[0])
 

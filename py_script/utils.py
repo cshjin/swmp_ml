@@ -96,3 +96,20 @@ def read_file(fn):
             df.columns = HEADERS[key]
             mpc[key] = df
     return mpc
+
+
+def process_node_features(mpc):
+    """ Process node features for heterodata.
+
+    Args:
+        mpc (dict): Dictionary of processed MPC file.
+    """
+    # TODO
+
+    return
+
+
+def process_edge_features(mpc):
+    """ Process edge features for heterodata.
+    """
+    return
