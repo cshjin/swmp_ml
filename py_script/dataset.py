@@ -5,9 +5,7 @@ from typing import Callable, Optional
 import numpy as np
 import pandas as pd
 import torch
-from pandapower.converter import from_mpc
-from pandapower.topology import create_nxgraph
-from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset
 
 from py_script.utils import read_file
 
@@ -58,8 +56,8 @@ class GMD(InMemoryDataset):
 
         bus_gen = pd.merge(mpc['bus'], mpc['gen'], how="left", left_on="bus_i", right_on="bus")
         # bus has 4 types
-        bus_gen = pd.concat(
-            [pd.DataFrame(np.eye(4)[bus_gen.type.to_numpy(dtype=int)]).add_prefix("t"), bus_gen], axis=1)
+        bus_gen = pd.concat([pd.DataFrame(np.eye(4)[bus_gen.type.to_numpy(dtype=int)]).add_prefix("t"), bus_gen],
+                            axis=1)
         bus_gen = bus_gen.drop(['bus_i', 'bus', 'type'], axis=1)
         x = torch.tensor(np.nan_to_num(bus_gen.to_numpy(), nan=-1), dtype=torch.float32)
         # process edge index and features
