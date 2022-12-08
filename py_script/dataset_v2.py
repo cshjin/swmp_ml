@@ -5,6 +5,8 @@ import os
 import os.path as osp
 from typing import Callable, Optional
 
+import json
+
 import numpy as np
 import pandas as pd
 import torch
@@ -38,6 +40,7 @@ class GMD(InMemoryDataset):
 
         self.root = root
         self.name = name
+        self.solution_name = name + "_blocker_placement_results"
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -53,9 +56,17 @@ class GMD(InMemoryDataset):
 
     def process(self):
         """ Process the raw file, and save to processed files. """
-        # filename
+        # Input filename
         fn = self.root + "/" + self.name + ".m"
         mpc = read_file(fn)
+
+        # Soultion filename
+        fn = self.root + "/" + self.solution_name + ".json"
+        dc_placement = json.load(open(fn))
+        self.solution = {}
+        for i in dc_placement["input"]["gmd_bus"]:
+            self.solution[i] = dc_placement["input"]["gmd_bus"][i]["blocker_placed"]
+
         h_data = HeteroData()
 
         # use the normal bus features
@@ -145,6 +156,7 @@ class GMD(InMemoryDataset):
         # h_data['bus', 'attach', 'gmd_bus_dc'].edge_attr = mpc['gmd_bus_dc'].iloc[:, 2:].to_numpy()
 
         # h_data['bus'].y = JuMP
+
         # save to the processed path
         torch.save(self.collate([h_data]), self.processed_paths[0])
 
