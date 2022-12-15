@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch_geometric.data import HeteroData, InMemoryDataset
-
+import shutil
 from py_script.utils import read_file
 
 
@@ -35,6 +35,8 @@ class GMD(InMemoryDataset):
     def __init__(self, root: Optional[str] = None,
                  name: Optional[str] = "b4gic",
                  transform: Optional[Callable] = None,
+                 force_reprocess: Optional[bool] = False,
+                 problem: Optional[str] = 'clf',
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
 
@@ -42,8 +44,18 @@ class GMD(InMemoryDataset):
         self.name = name
         self.solution_name = name + "_blocker_placement_results"
         self.transform = transform
+        self.force_reprocess = force_reprocess
+        self.problem = problem
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+
+        if self.force_reprocess:
+            dir_path = osp.dirname(osp.realpath(__file__))
+            SAVED_PATH = osp.join(dir_path, "processed", self.name)
+            if osp.exists(SAVED_PATH):
+                shutil.rmtree(SAVED_PATH)
+                shutil.rmtree(osp.join(self.root, "processed"))
+
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -63,9 +75,8 @@ class GMD(InMemoryDataset):
         # Soultion filename
         fn = self.root + "/" + self.solution_name + ".json"
         dc_placement = json.load(open(fn))
-        self.solution = {}
-        for i in dc_placement["input"]["gmd_bus"]:
-            self.solution[i] = dc_placement["input"]["gmd_bus"][i]["blocker_placed"]
+        res_gmd_bus = pd.DataFrame.from_dict(dc_placement['result']['solution']['gmd_bus']).T.sort_index()
+        res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
 
         h_data = HeteroData()
 
@@ -85,39 +96,44 @@ class GMD(InMemoryDataset):
         h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
             mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
-        # add a dummy y
-        h_data['y'] = h_data['bus'].x[:, 11]
-
-        ''' TODO: DC network with GMD data'''
-        # x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
-
-        # # shift the index
-        # edges = mpc['branch'].iloc[:, :2].to_numpy() - 1
-        # edge_index = torch.tensor(edges).T
-
-        # edge_attr = mpc['branch'].iloc[:, 2:].to_numpy()
-        # edge_attr = torch.tensor(edge_attr, dtype=torch.float32)
-
-        # pos = mpc['bus_gmd'].to_numpy()
-        # pos = torch.tensor(pos, dtype=torch.float32)
-
-        # # REVIEW: data label or not (y)?
-        # # data = Data(x=x, edge_index=edge_index, edge_attr=None,)
-        # # TODO: hetero_graph:
-        # # https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.HeteroData
-        # h_data = HeteroData()
+        ''' REVIEW: DC network with GMD data'''
+        pos = mpc['bus_gmd'].to_numpy()
+        pos = torch.tensor(pos, dtype=torch.float32)
 
         # ''' process nodes '''
-        # # process `bus`
-        # h_data['bus'].num_nodes = mpc['bus']['bus_i'].max()
-        # mpc['bus'] = pd.concat([pd.get_dummies(mpc['bus'].type), mpc['bus']], axis=1)
-        # mpc['bus'] = mpc['bus'].drop(["type"], axis=1)
-        # h_data['bus'].x = mpc['bus'].iloc[:, 1:].to_numpy()
+        # h_data['gmd_bus'].x = mpc['gmd_bus'].iloc[:, 1:3].to_numpy()
+        if self.problem == 'clf':
+            # REVIEW: classification problem, read true label from results
+            # gmd bus attr
+            gmd_bus_attr = res_gmd_bus[['gmd_vdc', 'status', 'g_gnd']].astype('float').to_numpy()
+            h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
 
-        # # process `gen`
-        # # mpc['gen'] = mpc['gen'].drop(['bus_i'], axis=1)
-        # h_data['gen'].x = mpc['gen'].iloc[:, 1:].to_numpy()
+            # NOTE: same dimension as `gmd_bus`
+            h_data['y'] = torch.tensor(res_gmd_bus['blocker_placed'].astype("int").to_numpy(), dtype=torch.long)
 
+        elif self.problem == "reg":
+            # REVIEW: regression problem, read true label from results
+            # gmd bus attr
+            gmd_bus_attr = res_gmd_bus[['blocker_placed', 'status', 'g_gnd']].astype('float').to_numpy()
+            h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
+
+            # NOTE: same dimension as `gmd_bus`
+            h_data['y'] = torch.tensor(res_gmd_bus['gmd_vdc'].astype("float").to_numpy(), dtype=torch.float32)
+        else:
+            raise Exception("Unknown problem setting, `clf` or `reg` only.")
+
+        gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
+        # gmd edge index
+        h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_edges.T - 1, dtype=torch.long)
+
+        tmp = mpc['gmd_bus'].reset_index()
+        tmp['parent_index'] -= 1
+        ac_dc_attach = tmp.iloc[:, :2].to_numpy()
+
+        # REIVEW: build connection btw AC and DC
+        h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(ac_dc_attach.T, dtype=torch.long)
+
+        # DEPRECATED:
         # # process `gmd_bus`
         # mpc['gmd_bus_ac'] = mpc['gmd_bus'][mpc['gmd_bus']['name'].str.contains("sub")]
         # mpc['gmd_bus_dc'] = mpc['gmd_bus'][mpc['gmd_bus']['name'].str.contains("bus")]
