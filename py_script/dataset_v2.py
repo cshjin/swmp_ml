@@ -96,6 +96,16 @@ class GMD(InMemoryDataset):
         h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
             mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
+        # process `branch_gmd` - AC
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.get_dummies(mpc['branch_gmd'].type)], axis=1)
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.get_dummies(mpc['branch_gmd'].config)], axis=1)
+        mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type', 'config'], axis=1)
+
+        edges = mpc['branch_gmd'].iloc[:, :2].to_numpy()
+        h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T - 1, dtype=torch.long)
+        h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
+            mpc['branch_gmd'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+
         ''' REVIEW: DC network with GMD data'''
         pos = mpc['bus_gmd'].to_numpy()
         pos = torch.tensor(pos, dtype=torch.float32)
@@ -118,7 +128,10 @@ class GMD(InMemoryDataset):
             h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
 
             # NOTE: same dimension as `gmd_bus`
-            h_data['y'] = torch.tensor(res_gmd_bus['gmd_vdc'].astype("float").to_numpy(), dtype=torch.float32)
+            y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
+            # REVIEW: normalize
+            # y = (y-y.min()) / (y.max() - y.min())
+            h_data['y'] = torch.tensor(y, dtype=torch.float32)
         else:
             raise Exception("Unknown problem setting, `clf` or `reg` only.")
 
