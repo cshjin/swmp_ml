@@ -81,14 +81,27 @@ class GMD(InMemoryDataset):
         h_data = HeteroData()
 
         # use the normal bus features
+        # convert the `type` to one-hot encoder
+        mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
+            np.eye(4)[mpc['bus'].type.to_numpy(dtype=int)]).add_prefix("t")], axis=1)
         h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
-        # concatenate bus and gen together
+        # creating new virtual link between bus and gen to handle multiple generators
+        h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+        tmp = mpc['gen'].reset_index()
+        tmp['bus'] -= 1
+        bus_gen_conn = tmp.iloc[:, :2].to_numpy()
+        # edge information
+        h_data['gen', 'conn', "bus"].edge_index = torch.tensor(bus_gen_conn.T, dtype=torch.long)
+
+        # DEPRECATED: concatenate bus and gen together
+        '''
         bus_gen = pd.merge(mpc['bus'], mpc['gen'], how="right", left_on="bus_i", right_on="bus")
         bus_gen = pd.concat([pd.DataFrame(np.eye(4)[bus_gen.type.to_numpy(dtype=int)]).add_prefix("t"), bus_gen],
                             axis=1)
         bus_gen = bus_gen.drop(['bus_i', 'bus', 'type'], axis=1)
-        # h_data['gen'].x = torch.tensor(bus_gen.to_numpy(), dtype=torch.float32)
+        h_data['gen'].x = torch.tensor(bus_gen.to_numpy(), dtype=torch.float32)
+        '''
 
         # process edge_index
         edges = mpc['branch'].iloc[:, :2].to_numpy()
@@ -138,7 +151,8 @@ class GMD(InMemoryDataset):
         gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
         # gmd edge index
         h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_edges.T - 1, dtype=torch.long)
-
+        h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(),
+                                                                            dtype=torch.float32)
         tmp = mpc['gmd_bus'].reset_index()
         tmp['parent_index'] -= 1
         ac_dc_attach = tmp.iloc[:, :2].to_numpy()
@@ -183,8 +197,6 @@ class GMD(InMemoryDataset):
         # h_data['bus', 'branch_gmd', 'bus'].edge_attr = mpc['branch_gmd'].iloc[:, 2:].to_numpy()
         # h_data['bus', 'attach', 'gmd_bus_ac'].edge_attr = mpc['gmd_bus_ac'].iloc[:, 2:].to_numpy()
         # h_data['bus', 'attach', 'gmd_bus_dc'].edge_attr = mpc['gmd_bus_dc'].iloc[:, 2:].to_numpy()
-
-        # h_data['bus'].y = JuMP
 
         # save to the processed path
         torch.save(self.collate([h_data]), self.processed_paths[0])
