@@ -1,1 +1,232 @@
-{"solve_time":0.023889780044555664,"optimizer":"Ipopt","termination_status":"LOCALLY_SOLVED","dual_status":"FEASIBLE_POINT","primal_status":"FEASIBLE_POINT","objective":0.0,"solution":{"baseMVA":100,"gmd_branch":{"4":{"br_r":0.16666666666667,"gmd_idc":76.2950361355461,"name":"dc_T3_hi","parent_index":3,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",4],"f_bus":8,"br_status":1,"t_bus":3,"index":4},"1":{"br_r":0.16666666666667,"gmd_idc":-62.78779881488515,"name":"dc_T1_hi","parent_index":1,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",1],"f_bus":5,"br_status":1,"t_bus":1,"index":1},"5":{"br_r":1.17438,"gmd_idc":62.78779881488515,"name":"dc_br23","parent_index":4,"br_v":93.15699811884,"len_km":121.05562183044,"source_id":["gmd_branch",5],"f_bus":5,"br_status":1,"t_bus":6,"index":5},"2":{"br_r":0.066666666666667,"gmd_idc":76.2950361355461,"name":"dc_T2_series","parent_index":2,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",2],"f_bus":6,"br_status":1,"t_bus":7,"index":2},"6":{"br_r":1.5583333333333,"gmd_idc":76.2950361355461,"name":"dc_br45","parent_index":5,"br_v":155.55621025547,"len_km":160.4734287131,"source_id":["gmd_branch",6],"f_bus":7,"br_status":1,"t_bus":8,"index":6},"3":{"br_r":0.066666666666667,"gmd_idc":-13.507237320660954,"name":"dc_T2_common","parent_index":2,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",3],"f_bus":6,"br_status":1,"t_bus":2,"index":3}},"multiinfrastructure":false,"multinetwork":false,"gmd_bus":{"8":{"source_id":["gmd_bus",8],"g_gnd":0,"name":"dc_bus5","gmd_vdc":27.974846583033823,"status":1,"parent_index":5,"index":8,"blocker_placed":0.0},"4":{"source_id":["gmd_bus",4],"g_gnd":0,"name":"dc_bus1","gmd_vdc":0.0,"status":1,"parent_index":1,"index":4,"blocker_placed":0.0},"1":{"source_id":["gmd_bus",1],"g_gnd":5,"name":"dc_sub1","gmd_vdc":-12.55755976297703,"status":1,"parent_index":1,"index":1,"blocker_placed":0.0},"5":{"source_id":["gmd_bus",5],"g_gnd":0,"name":"dc_bus2","gmd_vdc":-23.02219289879143,"status":1,"parent_index":2,"index":5,"blocker_placed":0.0},"2":{"source_id":["gmd_bus",2],"g_gnd":5,"name":"dc_sub2","gmd_vdc":-2.701447464132191,"status":1,"parent_index":2,"index":2,"blocker_placed":0.0},"6":{"source_id":["gmd_bus",6],"g_gnd":0,"name":"dc_bus3","gmd_vdc":-3.6019299521762584,"status":1,"parent_index":3,"index":6,"blocker_placed":0.0},"7":{"source_id":["gmd_bus",7],"g_gnd":0,"name":"dc_bus4","gmd_vdc":-8.688265694546025,"status":1,"parent_index":4,"index":7,"blocker_placed":0.0},"9":{"source_id":["gmd_bus",9],"g_gnd":0,"name":"dc_bus6","gmd_vdc":0.0,"status":1,"parent_index":6,"index":9,"blocker_placed":0.0},"3":{"source_id":["gmd_bus",3],"g_gnd":5,"name":"dc_sub3","gmd_vdc":15.25900722710922,"status":1,"parent_index":3,"index":3,"blocker_placed":0.0}},"per_unit":true},"objective_lb":null}
+{
+    "solve_time": 0.023889780044555664,
+    "optimizer": "Ipopt",
+    "termination_status": "LOCALLY_SOLVED",
+    "dual_status": "FEASIBLE_POINT",
+    "primal_status": "FEASIBLE_POINT",
+    "objective": 0.0,
+    "solution": {
+        "baseMVA": 100,
+        "gmd_branch": {
+            "4": {
+                "br_r": 0.16666666666667,
+                "gmd_idc": 76.2950361355461,
+                "name": "dc_T3_hi",
+                "parent_index": 3,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "source_id": [
+                    "gmd_branch",
+                    4
+                ],
+                "f_bus": 8,
+                "br_status": 1,
+                "t_bus": 3,
+                "index": 4
+            },
+            "1": {
+                "br_r": 0.16666666666667,
+                "gmd_idc": -62.78779881488515,
+                "name": "dc_T1_hi",
+                "parent_index": 1,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "source_id": [
+                    "gmd_branch",
+                    1
+                ],
+                "f_bus": 5,
+                "br_status": 1,
+                "t_bus": 1,
+                "index": 1
+            },
+            "5": {
+                "br_r": 1.17438,
+                "gmd_idc": 62.78779881488515,
+                "name": "dc_br23",
+                "parent_index": 4,
+                "br_v": 93.15699811884,
+                "len_km": 121.05562183044,
+                "source_id": [
+                    "gmd_branch",
+                    5
+                ],
+                "f_bus": 5,
+                "br_status": 1,
+                "t_bus": 6,
+                "index": 5
+            },
+            "2": {
+                "br_r": 0.066666666666667,
+                "gmd_idc": 76.2950361355461,
+                "name": "dc_T2_series",
+                "parent_index": 2,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "source_id": [
+                    "gmd_branch",
+                    2
+                ],
+                "f_bus": 6,
+                "br_status": 1,
+                "t_bus": 7,
+                "index": 2
+            },
+            "6": {
+                "br_r": 1.5583333333333,
+                "gmd_idc": 76.2950361355461,
+                "name": "dc_br45",
+                "parent_index": 5,
+                "br_v": 155.55621025547,
+                "len_km": 160.4734287131,
+                "source_id": [
+                    "gmd_branch",
+                    6
+                ],
+                "f_bus": 7,
+                "br_status": 1,
+                "t_bus": 8,
+                "index": 6
+            },
+            "3": {
+                "br_r": 0.066666666666667,
+                "gmd_idc": -13.507237320660954,
+                "name": "dc_T2_common",
+                "parent_index": 2,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "source_id": [
+                    "gmd_branch",
+                    3
+                ],
+                "f_bus": 6,
+                "br_status": 1,
+                "t_bus": 2,
+                "index": 3
+            }
+        },
+        "multiinfrastructure": false,
+        "multinetwork": false,
+        "gmd_bus": {
+            "8": {
+                "source_id": [
+                    "gmd_bus",
+                    8
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus5",
+                "gmd_vdc": 27.974846583033823,
+                "status": 1,
+                "parent_index": 5,
+                "index": 8,
+                "blocker_placed": 0.0
+            },
+            "4": {
+                "source_id": [
+                    "gmd_bus",
+                    4
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus1",
+                "gmd_vdc": 0.0,
+                "status": 1,
+                "parent_index": 1,
+                "index": 4,
+                "blocker_placed": 0.0
+            },
+            "1": {
+                "source_id": [
+                    "gmd_bus",
+                    1
+                ],
+                "g_gnd": 5,
+                "name": "dc_sub1",
+                "gmd_vdc": -12.55755976297703,
+                "status": 1,
+                "parent_index": 1,
+                "index": 1,
+                "blocker_placed": 0.0
+            },
+            "5": {
+                "source_id": [
+                    "gmd_bus",
+                    5
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus2",
+                "gmd_vdc": -23.02219289879143,
+                "status": 1,
+                "parent_index": 2,
+                "index": 5,
+                "blocker_placed": 0.0
+            },
+            "2": {
+                "source_id": [
+                    "gmd_bus",
+                    2
+                ],
+                "g_gnd": 5,
+                "name": "dc_sub2",
+                "gmd_vdc": -2.701447464132191,
+                "status": 1,
+                "parent_index": 2,
+                "index": 2,
+                "blocker_placed": 0.0
+            },
+            "6": {
+                "source_id": [
+                    "gmd_bus",
+                    6
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus3",
+                "gmd_vdc": -3.6019299521762584,
+                "status": 1,
+                "parent_index": 3,
+                "index": 6,
+                "blocker_placed": 0.0
+            },
+            "7": {
+                "source_id": [
+                    "gmd_bus",
+                    7
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus4",
+                "gmd_vdc": -8.688265694546025,
+                "status": 1,
+                "parent_index": 4,
+                "index": 7,
+                "blocker_placed": 0.0
+            },
+            "9": {
+                "source_id": [
+                    "gmd_bus",
+                    9
+                ],
+                "g_gnd": 0,
+                "name": "dc_bus6",
+                "gmd_vdc": 0.0,
+                "status": 1,
+                "parent_index": 6,
+                "index": 9,
+                "blocker_placed": 0.0
+            },
+            "3": {
+                "source_id": [
+                    "gmd_bus",
+                    3
+                ],
+                "g_gnd": 5,
+                "name": "dc_sub3",
+                "gmd_vdc": 15.25900722710922,
+                "status": 1,
+                "parent_index": 3,
+                "index": 3,
+                "blocker_placed": 0.0
+            }
+        },
+        "per_unit": true
+    },
+    "objective_lb": null
+}

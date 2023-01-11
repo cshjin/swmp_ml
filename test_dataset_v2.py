@@ -7,6 +7,7 @@ import torch
 from scipy.special import softmax
 from torch import nn
 from torch_geometric.nn import HGTConv, Linear
+from torch_geometric.loader import DataLoader
 
 from py_script.dataset_v2 import GMD
 
@@ -60,8 +61,16 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     # readout the dataset `pyg.heterodata`
-    dataset = GMD("./test/data", name="b4gic", problem=args['problem'], force_reprocess=args['force'])
-    data = dataset[0]
+    dataset1 = GMD("./test/data", name="b4gic", problem=args['problem'], force_reprocess=args['force'])
+    data1 = dataset1[0]
+    dataset2 = GMD("./test/data", name="epri21", problem=args['problem'], force_reprocess=args['force'])
+    data2 = dataset2[0]
+
+    # Create a list of datasets
+    dataset_list = [data1, data2]
+
+    # Create a dataset loader
+    dataset_loader = DataLoader(dataset_list, shuffle=True)
 
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
@@ -77,17 +86,18 @@ if __name__ == "__main__":
     losses = []
     model.train()
     for epoch in range(args['epochs']):
-        optimizer.zero_grad()
-        # data.edge_attr_dict
-        out = model(data.x_dict, data.edge_index_dict)
-        if args['problem'] == "reg":
-            # REVIEW: meet the dimension of target
-            out = out.T[0]
-        loss = loss_fn(out, data['y'])
-        loss.backward()
-        optimizer.step()
-        print(f"epoch {epoch}, loss {loss:.4f}")
-        losses.append(loss.item())
+        for data in dataset_loader:
+            optimizer.zero_grad()
+            # data.edge_attr_dict
+            out = model(data.x_dict, data.edge_index_dict)
+            if args['problem'] == "reg":
+                # REVIEW: meet the dimension of target
+                out = out.T[0]
+            loss = loss_fn(out, data['y'])
+            loss.backward()
+            optimizer.step()
+            print(f"epoch {epoch}, loss {loss:.4f}")
+            losses.append(loss.item())
     print("True bic_placed", data.y)
     out = out.detach().cpu().numpy()
     if args['problem'] == "clf":

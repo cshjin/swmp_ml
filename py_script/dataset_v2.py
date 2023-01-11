@@ -42,7 +42,7 @@ class GMD(InMemoryDataset):
 
         self.root = root
         self.name = name
-        self.solution_name = name + "_blocker_placement_results"
+        self.solution_name = name + "_results"
         self.transform = transform
         self.force_reprocess = force_reprocess
         self.problem = problem
@@ -73,7 +73,7 @@ class GMD(InMemoryDataset):
         mpc = read_file(fn)
 
         # Soultion filename
-        fn = self.root + "/" + self.solution_name + ".json"
+        fn = self.root + "/results/" + self.solution_name + ".json"
         dc_placement = json.load(open(fn))
         res_gmd_bus = pd.DataFrame.from_dict(dc_placement['result']['solution']['gmd_bus']).T.sort_index()
         res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
