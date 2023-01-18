@@ -1,8 +1,8 @@
+import os
 import re
 from io import StringIO
 
 import pandas as pd
-
 
 HEADERS = {
     "gen": ['bus', 'Pg', 'Qg', 'Qmax', 'Qmin',
@@ -98,18 +98,17 @@ def read_file(fn):
     return mpc
 
 
-def process_node_features(mpc):
-    """ Process node features for heterodata.
-
+def create_dir(path):
+    """ Create a dir where the processed data will be stored
     Args:
-        mpc (dict): Dictionary of processed MPC file.
+        path (str): Path to create the folder.
     """
-    # TODO
+    dir_exists = os.path.exists(path)
 
-    return
-
-
-def process_edge_features(mpc):
-    """ Process edge features for heterodata.
-    """
-    return
+    if not dir_exists:
+        try:
+            os.makedirs(path)
+            print("The {} directory is created.".format(path))
+        except Exception as e:
+            print("Error: {}".format(e))
+            exit(-1)

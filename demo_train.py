@@ -60,7 +60,10 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     # readout the dataset `pyg.heterodata`
-    dataset = GMD("./test/data", name="epri21", problem=args['problem'], force_reprocess=args['force'])
+    dataset = GMD("./test/data",
+                  name=args['name'],
+                  problem=args['problem'],
+                  force_reprocess=args['force'])
     data = dataset[0]
 
     # adjust the output dimension accordingly
