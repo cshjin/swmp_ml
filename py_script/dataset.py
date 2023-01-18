@@ -90,10 +90,10 @@ class GMD(InMemoryDataset):
         # convert the tuples with mapping
         ''' edge_type: bus--branch--bus '''
         n_branch = mpc['branch'].shape[0]
-        bus_bus_edges = np.zeros((n_branch, 2))
+        edges = np.zeros((n_branch, 2))
         for i in range(n_branch):
-            bus_bus_edges[i] = [mapping[mpc['branch'].fbus[i]], mapping[mpc['branch'].tbus[i]]]
-        h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(bus_bus_edges.T, dtype=torch.long)
+            edges[i] = [mapping[mpc['branch'].fbus[i]], mapping[mpc['branch'].tbus[i]]]
+        h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
         h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
             mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
@@ -115,6 +115,7 @@ class GMD(InMemoryDataset):
         pos = torch.tensor(pos, dtype=torch.float32)
 
         ''' DC network with GMD data '''
+        ''' node_type: gmd_bus '''
         # process `gmd_bus` from PowerModelsGMD results
         if self.problem == 'clf':
             # classification problem
@@ -144,13 +145,12 @@ class GMD(InMemoryDataset):
         h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
             mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
 
-        ''' node_type: gmd_bus '''
+        ''' edge_type (virtual): gmd_bus--attach--bus '''
         n_gmd_bus = mpc['gmd_bus'].shape[0]
         gmd_bus_bus_edges = np.zeros((n_gmd_bus, 2))
         for i in range(n_gmd_bus):
             gmd_bus_bus_edges[i] = [i, mapping[mpc['gmd_bus'].parent_index[i]]]
 
-        ''' edge_type (virtual): gmd_bus--attach--bus '''
         h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(gmd_bus_bus_edges.T, dtype=torch.long)
 
         # save to the processed path
