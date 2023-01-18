@@ -73,9 +73,10 @@ class GMD(InMemoryDataset):
         mpc = read_file(fn)
 
         # Soultion filename
-        fn = self.root + "/" + self.solution_name + ".json"
+        fn = self.root + "/results/" + self.name + "_results.json"
+
         dc_placement = json.load(open(fn))
-        res_gmd_bus = pd.DataFrame.from_dict(dc_placement['result']['solution']['gmd_bus']).T.sort_index()
+        res_gmd_bus = pd.DataFrame.from_dict(dc_placement['solution']['gmd_bus']).T.sort_index()
         res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
 
         h_data = HeteroData()
@@ -102,10 +103,21 @@ class GMD(InMemoryDataset):
         bus_gen = bus_gen.drop(['bus_i', 'bus', 'type'], axis=1)
         h_data['gen'].x = torch.tensor(bus_gen.to_numpy(), dtype=torch.float32)
         '''
+        # build the mapping
+        n_nodes = mpc['bus'].shape[0]
+        mapping = {}
+        for i in range(n_nodes):
+            mapping[mpc['bus'].bus_i[i]] = i
 
+        # convert the tuples with mapping
+        n_edges = mpc['branch'].shape[0]
+        edges = np.zeros((n_edges, 2))
+        for i in range(n_edges):
+            edges[i] = [mapping[mpc['branch'].fbus[i]], mapping[mpc['branch'].tbus[i]]]
+        # TOFIX: change the edge_index with node_id
         # process edge_index
-        edges = mpc['branch'].iloc[:, :2].to_numpy()
-        h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T - 1, dtype=torch.long)
+        # edges = mpc['branch'].iloc[:, :2].to_numpy()
+        h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
         h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
             mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
@@ -114,8 +126,13 @@ class GMD(InMemoryDataset):
         mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.get_dummies(mpc['branch_gmd'].config)], axis=1)
         mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type', 'config'], axis=1)
 
-        edges = mpc['branch_gmd'].iloc[:, :2].to_numpy()
-        h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T - 1, dtype=torch.long)
+        # TOFIX: replace edge with new process
+        # edges = mpc['branch_gmd'].iloc[:, :2].to_numpy()
+        n_branch_gmd = mpc['branch_gmd'].shape[0]
+        edges = np.zeros((n_branch_gmd, 2))
+        for i in range(n_branch_gmd):
+            edges[i] = [mapping[mpc['branch_gmd'].hi_bus[i]], mapping[mpc['branch_gmd'].lo_bus[i]]]
+        h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
         h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
             mpc['branch_gmd'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
@@ -154,8 +171,14 @@ class GMD(InMemoryDataset):
         h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(),
                                                                             dtype=torch.float32)
         tmp = mpc['gmd_bus'].reset_index()
-        tmp['parent_index'] -= 1
-        ac_dc_attach = tmp.iloc[:, :2].to_numpy()
+        # tmp['parent_index'] -= 1
+        # ac_dc_attach = tmp.iloc[:, :2].to_numpy()
+
+        # TOFIX: reindex bus
+        n_gmd_bus = mpc['gmd_bus'].shape[0]
+        ac_dc_attach = np.zeros((n_gmd_bus, 2))
+        for i in range(n_gmd_bus):
+            ac_dc_attach[i] = [i, mapping[mpc['gmd_bus'].parent_index[i]]]
 
         # REIVEW: build connection btw AC and DC
         h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(ac_dc_attach.T, dtype=torch.long)
