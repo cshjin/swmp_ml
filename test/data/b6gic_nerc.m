@@ -81,7 +81,7 @@ mpc.gmd_branch = {
 %% branch_gmd data
 %column_names% hi_bus lo_bus gmd_br_hi gmd_br_lo gmd_k gmd_br_series gmd_br_common baseMVA type config
 mpc.branch_gmd = {
-	2	1	1	-1	1.8	-1	-1	100	 'xfmr'	'gwye-delta'
+	2	1	1	-1	1.8	-1	-1	100	'xfmr'	'gwye-delta'
 	4	3	-1	-1	1.8	2	3	100	'xfmr'	'gwye-gwye-auto'
 	5	6	4	-1	1.8	-1	-1	100	'xfmr'	'gwye-delta'
 	2	3	-1	-1	-1	-1	-1	100	'line'	'none'
