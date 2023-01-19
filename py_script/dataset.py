@@ -67,6 +67,7 @@ class GMD(InMemoryDataset):
         # convert the `type` to one-hot encoder
         mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
             np.eye(4)[mpc['bus'].type.to_numpy(dtype=int)]).add_prefix("t")], axis=1)
+        mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
         h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
         # build the bus_i to node_i mapping
@@ -99,8 +100,17 @@ class GMD(InMemoryDataset):
 
         ''' edge_type: bus--branch_gmd--bus '''
         # convert type and config to one-hot encoder
-        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.get_dummies(mpc['branch_gmd'].type)], axis=1)
-        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.get_dummies(mpc['branch_gmd'].config)], axis=1)
+        bg_type = {"'xfmr'": 0, "'line'": 1, "'series_cap'": 2}
+        bg_config = {"'none'": 0, "'delta-delta'": 1, "'delta-wye'": 2,
+                     "'wye-delta'": 3, "'wye-wye'": 4, "'delta-gwye'": 5,
+                     "'gwye-delta'": 6, "'gwye-gwye'": 7, "'gwye-gwye-auto'": 8}
+        mpc['branch_gmd']['type'] = mpc['branch_gmd']['type'].map(lambda x: bg_type[x])
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
+            np.eye(3)[mpc['branch_gmd']['type'].to_numpy(dtype=int)]).add_prefix("t")], axis=1)
+
+        mpc['branch_gmd']['config'] = mpc['branch_gmd']['config'].map(lambda x: bg_config[x])
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
+            np.eye(9)[mpc['branch_gmd']['config'].to_numpy(dtype=int)]).add_prefix("c")], axis=1)
         mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type', 'config'], axis=1)
 
         n_branch_gmd = mpc['branch_gmd'].shape[0]
@@ -159,3 +169,63 @@ class GMD(InMemoryDataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr}) {self.name}'
+
+
+class MultiGMD(InMemoryDataset):
+
+    def __init__(self, root: Optional[str] = None,
+                 name: Optional[str] = "all",
+                 transform: Optional[Callable] = None,
+                 force_reprocess: Optional[bool] = False,
+                 problem: Optional[str] = 'clf',
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+
+        self.root = root
+        self.name = name
+        self.transform = transform
+        self.force_reprocess = force_reprocess
+        self.problem = problem
+        self.pre_transform = pre_transform
+        self.pre_filter = pre_filter
+
+        self.test_grids = ['b4gic',
+                           'b6gic_nerc',
+                           'case24_ieee_rts_0',
+                           'epri21',
+                           'ots_test',
+                           'uiuc150_95pct_loading',
+                           'uiuc150',
+                           ]
+
+        for name in self.test_grids:
+            dataset = GMD(root=self.root,
+                          name=name,
+                          transform=self.transform,
+                          force_reprocess=self.force_reprocess,
+                          problem=self.problem,
+                          pre_transform=self.pre_transform,
+                          pre_filter=self.pre_filter)
+
+        super().__init__(root, transform, pre_transform, pre_filter)
+        self.data, self.slices = torch.load(self.processed_paths[0])
+
+    @property
+    def processed_file_names(self):
+        dir_path = osp.dirname(osp.realpath(__file__))
+        SAVED_PATH = osp.join(dir_path, "processed", self.name)
+        create_dir(SAVED_PATH)
+        return [f'{SAVED_PATH}/processed.pt']
+
+    def process(self):
+        """ Process multiple grids into single dataset in PyG
+        """
+        data_list = []
+        dir_path = osp.dirname(osp.realpath(__file__))
+        for name in self.test_grids:
+            data_path = osp.join(dir_path, "processed", name)
+            data = torch.load(f"{data_path}/processed.pt")[0]
+            data_list.append(data)
+
+        data, slices = self.collate(data_list)
+        torch.save((data, slices), self.processed_paths[0])
