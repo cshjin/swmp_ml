@@ -8,7 +8,8 @@ from scipy.special import softmax
 from torch import nn
 from torch_geometric.nn import HGTConv, Linear
 
-from py_script.dataset import GMD
+from py_script.dataset import GMD, MultiGMD
+from tqdm import tqdm
 
 
 class HGT(torch.nn.Module):
@@ -57,14 +58,34 @@ if __name__ == "__main__":
                         help="number of layers in HGT")
     parser.add_argument("--epochs", type=int, default=200,
                         help="number of epochs in training")
+    parser.add_argument("--log", action="store_true",
+                        help="Log the training process.")
     args = vars(parser.parse_args())
 
     # readout the dataset `pyg.heterodata`
-    dataset = GMD("./test/data",
-                  name=args['name'],
-                  problem=args['problem'],
-                  force_reprocess=args['force'])
-    data = dataset[0]
+    if args['name'] != "all":
+        dataset = GMD("./test/data",
+                      name=args['name'],
+                      problem=args['problem'],
+                      force_reprocess=args['force'])
+        data = dataset[0]
+        # print(data['bus'].x.shape,
+        #       data['gen'].x.shape,
+        #       data['gmd_bus'].x.shape)
+        # print(data['branch'].edge_attr.shape,
+        #       data['branch_gmd'].edge_attr.shape,
+        #       data['gmd_branch'].edge_attr.shape)
+        # print(data[("gen", "conn", "bus")].edge_index.shape)
+        # print(data[("gmd_bus", "attach", "bus")].edge_index.shape)
+
+        # exit()
+    else:
+        dataset = MultiGMD("./test/data",
+                           name=args['name'],
+                           problem=args['problem'],
+                           force_reprocess=args['force'])
+        data = dataset[0]
+    print(dataset)
 
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
@@ -79,7 +100,8 @@ if __name__ == "__main__":
 
     losses = []
     model.train()
-    for epoch in range(args['epochs']):
+    pbar = tqdm(range(args['epochs']))
+    for epoch in pbar:
         optimizer.zero_grad()
         # data.edge_attr_dict
         # mini-batch settings for multi-graphs
@@ -90,8 +112,9 @@ if __name__ == "__main__":
         loss = loss_fn(out, data['y'])
         loss.backward()
         optimizer.step()
-        print(f"epoch {epoch}, loss {loss:.4f}")
+        pbar.set_postfix({'loss': loss.item()})
         losses.append(loss.item())
+
     print("True bic_placed", data.y)
     out = out.detach().cpu().numpy()
     if args['problem'] == "clf":
@@ -102,10 +125,10 @@ if __name__ == "__main__":
     # print("Predicted bic_placed", out.argmax(1))
 
     ''' plot the loss function '''
-    fig = plt.figure(figsize=(4, 3), tight_layout=True)
-    foo = r'training loss'
-    plt.plot(losses)
-    plt.ylabel(foo)
-    plt.xlabel("epoch")
-    plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"losses - {args['problem']}.png")
+    # fig = plt.figure(figsize=(4, 3), tight_layout=True)
+    # foo = r'training loss'
+    # plt.plot(losses)
+    # plt.ylabel(foo)
+    # plt.xlabel("epoch")
+    # plt.title(f"Hete-Graph - {args['problem']}")
+    # plt.savefig(f"losses - {args['problem']}.png")
