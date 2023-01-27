@@ -12,6 +12,7 @@ import torch
 from torch_geometric.data import HeteroData, InMemoryDataset
 
 from py_script.utils import create_dir, read_file
+from glob import glob
 
 
 class GMD(InMemoryDataset):
@@ -51,120 +52,157 @@ class GMD(InMemoryDataset):
 
     def process(self):
         """ Process the raw file, and save to processed files. """
-        # Input filename
-        fn = self.root + "/" + self.name + ".m"
-        mpc = read_file(fn)
 
-        # Soultion filename
-        fn = self.root + "/results/" + self.name + "_results.json"
-        dc_placement = json.load(open(fn))
-        res_gmd_bus = pd.DataFrame.from_dict(dc_placement['solution']['gmd_bus']).T.sort_index()
-        res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
+        # NOTE: removed for opf
+        # fn = self.root + "/results/" + self.name + "_results.json"
+        # dc_placement = json.load(open(fn))
+        # res_gmd_bus = pd.DataFrame.from_dict(dc_placement['solution']['gmd_bus']).T.sort_index()
+        # res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
 
-        h_data = HeteroData()
+        # for f in glob("../../gic-blocker/data/*_modded_*.json"):
+        #     data = json.load(open(f))
+        #     if "INFEASIBLE" in data['result']['termination_status']:
+        #         pass
+        #     else:
+        #         load_data = data['net']['load']
+        data_list = []
+        # enumerate the optimized file, send into a list
+        files = glob(f"../gic-blockers/data/{self.name}_modded_*.json")
+        for f in files:
+            aug_data = json.load(open(f))
+            # Input filename
+            # TODO: replace with net in aug_data
+            fn = self.root + "/" + self.name + ".m"
+            mpc = read_file(fn)
+            if "INFEASIBLE" in aug_data['result']['termination_status']:
+                pass
+            else:
+                h_data = HeteroData()
+                net_data = aug_data['net']
+                res_data = aug_data['result']
+                for k in net_data['load']:
+                    # update pd/qd with augmented config
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
 
-        ''' node_type: bus '''
-        # convert the `type` to one-hot encoder
-        mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
-            np.eye(4)[mpc['bus'].type.to_numpy(dtype=int)]).add_prefix("t")], axis=1)
-        mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
-        h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+                # read the pg value from solution
+                y = [res_data['solution']['gen'][k]['pg'] for k in sorted(res_data['solution']['gen'].keys())]
+                h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
-        # build the bus_i to node_i mapping
-        n_nodes = mpc['bus'].shape[0]
-        mapping = {}
-        for i in range(n_nodes):
-            mapping[mpc['bus'].bus_i[i]] = i
+                ''' node_type: bus '''
+                # convert the `type` to one-hot encoder
+                mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
+                    np.eye(4)[mpc['bus'].type.to_numpy(dtype=int)]).add_prefix("t")], axis=1)
+                mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
+                h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
-        ''' node_type: gen '''
-        # creating new virtual link between bus and gen to handle multiple generators
-        h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+                # build the bus_i to node_i mapping
+                n_nodes = mpc['bus'].shape[0]
+                mapping = {}
+                for i in range(n_nodes):
+                    mapping[mpc['bus'].bus_i[i]] = i
 
-        ''' edge_type (virtual): gen--conn--bus '''
-        n_gen = mpc['gen'].shape[0]
-        gen_bus_edges = np.zeros((n_gen, 2))
-        for i in range(n_gen):
-            gen_bus_edges[i] = [i, mapping[mpc['gen'].bus[i]]]
-        # edge feature
-        h_data['gen', 'conn', "bus"].edge_index = torch.tensor(gen_bus_edges.T, dtype=torch.long)
+                ''' node_type: gen '''
+                # creating new virtual link between bus and gen to handle multiple generators
+                h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
-        # convert the tuples with mapping
-        ''' edge_type: bus--branch--bus '''
-        n_branch = mpc['branch'].shape[0]
-        edges = np.zeros((n_branch, 2))
-        for i in range(n_branch):
-            edges[i] = [mapping[mpc['branch'].fbus[i]], mapping[mpc['branch'].tbus[i]]]
-        h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
-        h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
-            mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+                ''' edge_type (virtual): gen--conn--bus '''
+                n_gen = mpc['gen'].shape[0]
+                # DEBUG
+                gen_bus_edges = np.zeros((n_gen, 2))
+                for i in range(n_gen):
+                    gen_bus_edges[i] = [mapping[mpc['gen'].bus[i]], i]
+                # edge feature
+                h_data['bus', 'conn', "gen"].edge_index = torch.tensor(gen_bus_edges.T, dtype=torch.long)
 
-        ''' edge_type: bus--branch_gmd--bus '''
-        # convert type and config to one-hot encoder
-        bg_type = {"'xfmr'": 0, "'line'": 1, "'series_cap'": 2}
-        bg_config = {"'none'": 0, "'delta-delta'": 1, "'delta-wye'": 2,
-                     "'wye-delta'": 3, "'wye-wye'": 4, "'delta-gwye'": 5,
-                     "'gwye-delta'": 6, "'gwye-gwye'": 7, "'gwye-gwye-auto'": 8}
-        mpc['branch_gmd']['type'] = mpc['branch_gmd']['type'].map(lambda x: bg_type[x])
-        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
-            np.eye(3)[mpc['branch_gmd']['type'].to_numpy(dtype=int)]).add_prefix("t")], axis=1)
+                gen_bus_edges = np.zeros((n_gen, 2))
+                for i in range(n_gen):
+                    gen_bus_edges[i] = [i, mapping[mpc['gen'].bus[i]]]
+                # edge feature
+                h_data['gen', 'conn', "bus"].edge_index = torch.tensor(gen_bus_edges.T, dtype=torch.long)
 
-        mpc['branch_gmd']['config'] = mpc['branch_gmd']['config'].map(lambda x: bg_config[x])
-        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
-            np.eye(9)[mpc['branch_gmd']['config'].to_numpy(dtype=int)]).add_prefix("c")], axis=1)
-        mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type', 'config'], axis=1)
+                # convert the tuples with mapping
+                ''' edge_type: bus--branch--bus '''
+                n_branch = mpc['branch'].shape[0]
+                edges = np.zeros((n_branch, 2))
+                for i in range(n_branch):
+                    edges[i] = [mapping[mpc['branch'].fbus[i]], mapping[mpc['branch'].tbus[i]]]
+                h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
+                h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
+                    mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
-        n_branch_gmd = mpc['branch_gmd'].shape[0]
-        edges = np.zeros((n_branch_gmd, 2))
-        for i in range(n_branch_gmd):
-            edges[i] = [mapping[mpc['branch_gmd'].hi_bus[i]], mapping[mpc['branch_gmd'].lo_bus[i]]]
-        h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
-        h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
-            mpc['branch_gmd'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+                ''' edge_type: bus--branch_gmd--bus '''
+                # convert type and config to one-hot encoder
+                bg_type = {"'xfmr'": 0, "'line'": 1, "'series_cap'": 2}
+                bg_config = {"'none'": 0, "'delta-delta'": 1, "'delta-wye'": 2,
+                             "'wye-delta'": 3, "'wye-wye'": 4, "'delta-gwye'": 5,
+                             "'gwye-delta'": 6, "'gwye-gwye'": 7, "'gwye-gwye-auto'": 8}
+                mpc['branch_gmd']['type'] = mpc['branch_gmd']['type'].map(lambda x: bg_type[x])
+                mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
+                    np.eye(3)[mpc['branch_gmd']['type'].to_numpy(dtype=int)]).add_prefix("t")], axis=1)
 
-        pos = mpc['bus_gmd'].to_numpy()
-        pos = torch.tensor(pos, dtype=torch.float32)
+                mpc['branch_gmd']['config'] = mpc['branch_gmd']['config'].map(lambda x: bg_config[x])
+                mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
+                    np.eye(9)[mpc['branch_gmd']['config'].to_numpy(dtype=int)]).add_prefix("c")], axis=1)
+                mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type', 'config'], axis=1)
 
-        ''' DC network with GMD data '''
-        ''' node_type: gmd_bus '''
-        # process `gmd_bus` from PowerModelsGMD results
-        if self.problem == 'clf':
-            # classification problem
-            gmd_bus_attr = res_gmd_bus[['gmd_vdc', 'status', 'g_gnd']].astype('float').to_numpy()
-            h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
+                n_branch_gmd = mpc['branch_gmd'].shape[0]
+                edges = np.zeros((n_branch_gmd, 2))
+                for i in range(n_branch_gmd):
+                    edges[i] = [mapping[mpc['branch_gmd'].hi_bus[i]], mapping[mpc['branch_gmd'].lo_bus[i]]]
+                h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
+                h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
+                    mpc['branch_gmd'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
 
-            # same dimension as `gmd_bus`
-            h_data['y'] = torch.tensor(res_gmd_bus['blocker_placed'].astype("int").to_numpy(), dtype=torch.long)
+                pos = mpc['bus_gmd'].to_numpy()
+                pos = torch.tensor(pos, dtype=torch.float32)
 
-        elif self.problem == "reg":
-            # regression problem
-            gmd_bus_attr = res_gmd_bus[['blocker_placed', 'status', 'g_gnd']].astype('float').to_numpy()
-            h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
+                ''' DC network with GMD data '''
+                ''' node_type: gmd_bus '''
+                # NOTE: only read GMD from conf file
+                h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
+                # NOTE: removed in opf problem
+                # process `gmd_bus` from PowerModelsGMD results
+                # if self.problem == 'clf':
+                #     # classification problem
+                #     gmd_bus_attr = res_gmd_bus[['gmd_vdc', 'status', 'g_gnd']].astype('float').to_numpy()
+                #     h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
 
-            # same dimension as `gmd_bus`
-            y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
-            # REVIEW: normalize
-            # y = (y-y.min()) / (y.max() - y.min())
-            h_data['y'] = torch.tensor(y, dtype=torch.float32)
-        else:
-            raise Exception("Unknown problem setting, `clf` or `reg` only.")
+                #     # same dimension as `gmd_bus`
+                #     h_data['y'] = torch.tensor(res_gmd_bus['blocker_placed'].astype("int").to_numpy(), dtype=torch.long)
 
-        ''' edge_type: gmd_bus--gmd_branch--gmd_bus '''
-        gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
-        # gmd edge index
-        h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_edges.T - 1, dtype=torch.long)
-        h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
-            mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
+                # elif self.problem == "reg":
+                #     # regression problem
+                #     gmd_bus_attr = res_gmd_bus[['blocker_placed', 'status', 'g_gnd']].astype('float').to_numpy()
+                #     h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
 
-        ''' edge_type (virtual): gmd_bus--attach--bus '''
-        n_gmd_bus = mpc['gmd_bus'].shape[0]
-        gmd_bus_bus_edges = np.zeros((n_gmd_bus, 2))
-        for i in range(n_gmd_bus):
-            gmd_bus_bus_edges[i] = [i, mapping[mpc['gmd_bus'].parent_index[i]]]
+                #     # same dimension as `gmd_bus`
+                #     y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
+                #     # REVIEW: normalize
+                #     # y = (y-y.min()) / (y.max() - y.min())
+                #     h_data['y'] = torch.tensor(y, dtype=torch.float32)
+                # else:
+                #     raise Exception("Unknown problem setting, `clf` or `reg` only.")
 
-        h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(gmd_bus_bus_edges.T, dtype=torch.long)
+                ''' edge_type: gmd_bus--gmd_branch--gmd_bus '''
+                gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
+                # gmd edge index
+                h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_edges.T - 1, dtype=torch.long)
+                h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
+                    mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
+
+                ''' edge_type (virtual): gmd_bus--attach--bus '''
+                n_gmd_bus = mpc['gmd_bus'].shape[0]
+                gmd_bus_bus_edges = np.zeros((n_gmd_bus, 2))
+                for i in range(n_gmd_bus):
+                    gmd_bus_bus_edges[i] = [i, mapping[mpc['gmd_bus'].parent_index[i]]]
+
+                h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(gmd_bus_bus_edges.T, dtype=torch.long)
+
+                data_list.append(h_data)
 
         # save to the processed path
-        torch.save(self.collate([h_data]), self.processed_paths[0])
+        torch.save(self.collate(data_list), self.processed_paths[0])
 
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
@@ -210,7 +248,7 @@ class MultiGMD(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
-    @property
+    @ property
     def processed_file_names(self):
         dir_path = osp.dirname(osp.realpath(__file__))
         SAVED_PATH = osp.join(dir_path, "processed", self.name)
