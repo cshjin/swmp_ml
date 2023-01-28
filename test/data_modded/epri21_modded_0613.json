@@ -1,0 +1,3336 @@
+{
+    "net": {
+        "thermal_cap_y0": {
+            "1": {
+                "C": 90.0,
+                "B": 93.94,
+                "H": 64.94,
+                "source_id": [
+                    "thermal_cap_y0",
+                    1
+                ],
+                "A": 100.0,
+                "D": 85.42,
+                "G": 70.0,
+                "E": 80.0,
+                "index": 1,
+                "I": 59.97,
+                "J": 56.92,
+                "K": 50.0,
+                "F": 74.73
+            }
+        },
+        "time_elapsed": 10.0,
+        "bus": {
+            "4": {
+                "lat": 33.54789,
+                "zone": 1,
+                "lon": -86.07461,
+                "bus_i": 4,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    4
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "4 ",
+                "index": 4,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "1": {
+                "lat": 33.6135,
+                "zone": 1,
+                "lon": -87.37367,
+                "bus_i": 1,
+                "bus_type": 3,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    1
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "1 ",
+                "index": 1,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "12": {
+                "lat": 34.1956,
+                "zone": 1,
+                "lon": -81.098,
+                "bus_i": 12,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    12
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "10 ",
+                "index": 12,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "20": {
+                "lat": 32.70509,
+                "zone": 1,
+                "lon": -84.6634,
+                "bus_i": 20,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    20
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "18 ",
+                "index": 20,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 345.0
+            },
+            "2": {
+                "lat": 33.6135,
+                "zone": 1,
+                "lon": -87.37367,
+                "bus_i": 2,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    2
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "2 ",
+                "index": 2,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 345.0
+            },
+            "6": {
+                "lat": 33.3773,
+                "zone": 1,
+                "lon": -82.6188,
+                "bus_i": 6,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    6
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "6 ",
+                "index": 6,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "11": {
+                "lat": 34.2522,
+                "zone": 1,
+                "lon": -82.8363,
+                "bus_i": 11,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    11
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "9 ",
+                "index": 11,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "13": {
+                "lat": 34.1956,
+                "zone": 1,
+                "lon": -81.098,
+                "bus_i": 13,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    13
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "11 ",
+                "index": 13,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "5": {
+                "lat": 32.70509,
+                "zone": 1,
+                "lon": -84.6634,
+                "bus_i": 5,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    5
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "5 ",
+                "index": 5,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "15": {
+                "lat": 33.95506,
+                "zone": 1,
+                "lon": -84.67935,
+                "bus_i": 15,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    15
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "13 ",
+                "index": 15,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "16": {
+                "lat": 33.95506,
+                "zone": 1,
+                "lon": -84.67935,
+                "bus_i": 16,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    16
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "14 ",
+                "index": 16,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 345.0
+            },
+            "14": {
+                "lat": 34.1956,
+                "zone": 1,
+                "lon": -81.098,
+                "bus_i": 14,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    14
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "12 ",
+                "index": 14,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "21": {
+                "lat": 32.70509,
+                "zone": 1,
+                "lon": -84.6634,
+                "bus_i": 21,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    21
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "19 ",
+                "index": 21,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 500.0
+            },
+            "7": {
+                "lat": 33.3773,
+                "zone": 1,
+                "lon": -82.6188,
+                "bus_i": 7,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    7
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "7 ",
+                "index": 7,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 18.0
+            },
+            "8": {
+                "lat": 33.3773,
+                "zone": 1,
+                "lon": -82.6188,
+                "bus_i": 8,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    8
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "8 ",
+                "index": 8,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "17": {
+                "lat": 34.31044,
+                "zone": 1,
+                "lon": -86.36576,
+                "bus_i": 17,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    17
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "15 ",
+                "index": 17,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 345.0
+            },
+            "19": {
+                "lat": 34.31044,
+                "zone": 1,
+                "lon": -86.36576,
+                "bus_i": 19,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    19
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "17 ",
+                "index": 19,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "18": {
+                "lat": 34.31044,
+                "zone": 1,
+                "lon": -86.36576,
+                "bus_i": 18,
+                "bus_type": 2,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    18
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "16 ",
+                "index": 18,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 22.0
+            },
+            "3": {
+                "lat": 33.54789,
+                "zone": 1,
+                "lon": -86.07461,
+                "bus_i": 3,
+                "bus_type": 1,
+                "vmax": 1.3,
+                "source_id": [
+                    "bus",
+                    3
+                ],
+                "area": 1,
+                "vmin": 0.7,
+                "bus_sid": "3 ",
+                "index": 3,
+                "va": -0.0,
+                "vm": 1.1,
+                "base_kv": 345.0
+            }
+        },
+        "source_type": "matpower",
+        "name": "epri21",
+        "dcline": {},
+        "source_version": "2",
+        "gen": {
+            "4": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 5.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "4 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 13,
+                "qg": -0.056100000000000004,
+                "gen_bus": 13,
+                "pmax": 5.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    4
+                ],
+                "pc2": 0.0,
+                "index": 4,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": -0.006100000000000003,
+                "gen_status": 1,
+                "qmin": -0.1061,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 4.95
+            },
+            "1": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 7.7732,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "1 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 1,
+                "qg": 0.5657,
+                "gen_bus": 1,
+                "pmax": 7.823200000000001,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    1
+                ],
+                "pc2": 0.0,
+                "index": 1,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": 0.6157,
+                "gen_status": 1,
+                "qmin": 0.5157,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 7.7232
+            },
+            "5": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 5.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "5 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 14,
+                "qg": -0.056100000000000004,
+                "gen_bus": 14,
+                "pmax": 5.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    5
+                ],
+                "pc2": 0.0,
+                "index": 5,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": -0.006100000000000003,
+                "gen_status": 1,
+                "qmin": -0.1061,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 4.95
+            },
+            "2": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 9.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "2 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 7,
+                "qg": -0.5156000000000001,
+                "gen_bus": 7,
+                "pmax": 9.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    2
+                ],
+                "pc2": 0.0,
+                "index": 2,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": -0.4656,
+                "gen_status": 1,
+                "qmin": -0.5656,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 8.95
+            },
+            "6": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 6.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "6 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 18,
+                "qg": 0.2378,
+                "gen_bus": 18,
+                "pmax": 6.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    6
+                ],
+                "pc2": 0.0,
+                "index": 6,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": 0.2878,
+                "gen_status": 1,
+                "qmin": 0.18780000000000002,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 5.95
+            },
+            "7": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 6.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "7 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 19,
+                "qg": 0.2378,
+                "gen_bus": 19,
+                "pmax": 6.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    7
+                ],
+                "pc2": 0.0,
+                "index": 7,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": 0.2878,
+                "gen_status": 1,
+                "qmin": 0.18780000000000002,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 5.95
+            },
+            "3": {
+                "apf": 0.0,
+                "qc1max": 0.0,
+                "pg": 9.0,
+                "model": 2,
+                "shutdown": 0.0,
+                "startup": 0.0,
+                "gen_sid": "3 ",
+                "qc2max": 0.0,
+                "ramp_agc": 0.0,
+                "bus_i": 8,
+                "qg": -0.5156000000000001,
+                "gen_bus": 8,
+                "pmax": 9.05,
+                "ramp_10": 0.0,
+                "vg": 1.1,
+                "mbase": 100.0,
+                "source_id": [
+                    "gen",
+                    3
+                ],
+                "pc2": 0.0,
+                "index": 3,
+                "cost": [
+                    1100.0,
+                    500.0,
+                    0.0
+                ],
+                "qmax": -0.4656,
+                "gen_status": 1,
+                "qmin": -0.5656,
+                "qc1min": 0.0,
+                "qc2min": 0.0,
+                "pc1": 0.0,
+                "ramp_q": -10.0,
+                "ramp_30": 0.0,
+                "ncost": 3,
+                "pmin": 8.95
+            }
+        },
+        "branch": {
+            "24": {
+                "br_r": 0.00012,
+                "gmd_br_series": -1,
+                "rate_a": 12.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 0.8,
+                "lo_bus": 7,
+                "xfmr": 1,
+                "tbus": 7,
+                "br_x": 0.011,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 6,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    24
+                ],
+                "b_fr": 0.0,
+                "f_bus": 6,
+                "gmd_br_hi": 28,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 6,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 7,
+                "b_to": 0.0,
+                "index": 24,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "24 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "4": {
+                "br_r": 0.00187,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 6,
+                "xfmr": 0,
+                "tbus": 6,
+                "br_x": 0.03075,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 4,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    4
+                ],
+                "b_fr": 1.64,
+                "f_bus": 4,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 4,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 6,
+                "b_to": 1.64,
+                "index": 4,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "4 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "1": {
+                "br_r": 0.00295,
+                "gmd_br_series": -1,
+                "rate_a": 21.2,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 3,
+                "xfmr": 0,
+                "tbus": 3,
+                "br_x": 0.0315,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 2,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    1
+                ],
+                "b_fr": 0.2695,
+                "f_bus": 2,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 2,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 3,
+                "b_to": 0.2695,
+                "index": 1,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "1 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "12": {
+                "br_r": 0.00392,
+                "gmd_br_series": -1,
+                "rate_a": 21.2,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 17,
+                "xfmr": 0,
+                "tbus": 17,
+                "br_x": 0.0382,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 16,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    12
+                ],
+                "b_fr": 0.357,
+                "f_bus": 16,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 16,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 17,
+                "b_to": 0.357,
+                "index": 12,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "12 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "29": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": 34,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.1,
+                "lo_bus": 16,
+                "xfmr": 1,
+                "tbus": 15,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 16,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    29
+                ],
+                "b_fr": 0.0,
+                "f_bus": 16,
+                "gmd_br_hi": -1,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 15,
+                "config": "gwye-gwye-auto",
+                "topoil_time_const": 71,
+                "t_bus": 15,
+                "b_to": 0.0,
+                "index": 29,
+                "gmd_br_common": 35,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "29 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "20": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": 20,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 3,
+                "xfmr": 1,
+                "tbus": 4,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 3,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    20
+                ],
+                "b_fr": 0.0,
+                "f_bus": 3,
+                "gmd_br_hi": -1,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 4,
+                "config": "gwye-gwye-auto",
+                "topoil_time_const": 71,
+                "t_bus": 4,
+                "b_to": 0.0,
+                "index": 20,
+                "gmd_br_common": 21,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "20 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "2": {
+                "br_r": 0.00094,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 5,
+                "xfmr": 0,
+                "tbus": 5,
+                "br_x": 0.01545,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 4,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    2
+                ],
+                "b_fr": 0.0,
+                "f_bus": 4,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 4,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 5,
+                "b_to": 0.0,
+                "index": 2,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "2 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "6": {
+                "br_r": 0.00058,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 11,
+                "xfmr": 0,
+                "tbus": 11,
+                "br_x": 0.00961,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 6,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    6
+                ],
+                "b_fr": 0.5085,
+                "f_bus": 6,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 6,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 11,
+                "b_to": 0.5085,
+                "index": 6,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "6 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "25": {
+                "br_r": 0.00012,
+                "gmd_br_series": -1,
+                "rate_a": 12.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 0.8,
+                "lo_bus": 8,
+                "xfmr": 1,
+                "tbus": 8,
+                "br_x": 0.011,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 6,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    25
+                ],
+                "b_fr": 0.0,
+                "f_bus": 6,
+                "gmd_br_hi": 29,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 6,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 8,
+                "b_to": 0.0,
+                "index": 25,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "25 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "23": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 20,
+                "xfmr": 1,
+                "tbus": 20,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 5,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    23
+                ],
+                "b_fr": 0.0,
+                "f_bus": 5,
+                "gmd_br_hi": 26,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 5,
+                "config": "gwye-gwye",
+                "topoil_time_const": 71,
+                "t_bus": 20,
+                "b_to": 0.0,
+                "index": 23,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "23 ",
+                "gmd_br_lo": 27,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "22": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 20,
+                "xfmr": 1,
+                "tbus": 20,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 5,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    22
+                ],
+                "b_fr": 0.0,
+                "f_bus": 5,
+                "gmd_br_hi": 24,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 5,
+                "config": "gwye-gwye",
+                "topoil_time_const": 71,
+                "t_bus": 20,
+                "b_to": 0.0,
+                "index": 22,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "22 ",
+                "gmd_br_lo": 25,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "11": {
+                "br_r": 0.0034,
+                "gmd_br_series": -1,
+                "rate_a": 21.2,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 20,
+                "xfmr": 0,
+                "tbus": 20,
+                "br_x": 0.0348,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 16,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    11
+                ],
+                "b_fr": 0.3115,
+                "f_bus": 16,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 16,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 20,
+                "b_to": 0.3115,
+                "index": 11,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "11 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "13": {
+                "br_r": 0.00583,
+                "gmd_br_series": -1,
+                "rate_a": 21.2,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 20,
+                "xfmr": 0,
+                "tbus": 20,
+                "br_x": 0.0542,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 17,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    13
+                ],
+                "b_fr": 0.532,
+                "f_bus": 17,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 17,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 20,
+                "b_to": 0.532,
+                "index": 13,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "13 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "5": {
+                "br_r": 0.00119,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 6,
+                "xfmr": 0,
+                "tbus": 6,
+                "br_x": 0.0178,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 5,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    5
+                ],
+                "b_fr": 1.232,
+                "f_bus": 5,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 5,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 6,
+                "b_to": 1.232,
+                "index": 5,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "5 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "15": {
+                "br_r": 0.0014,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 11,
+                "xfmr": 0,
+                "tbus": 11,
+                "br_x": 0.02325,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 21,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    15
+                ],
+                "b_fr": 1.236,
+                "f_bus": 21,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 21,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 11,
+                "b_to": 1.236,
+                "index": 15,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "15 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "27": {
+                "br_r": 8.0e-5,
+                "gmd_br_series": -1,
+                "rate_a": 7.5,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 0.8,
+                "lo_bus": 14,
+                "xfmr": 1,
+                "tbus": 14,
+                "br_x": 0.015,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 12,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    27
+                ],
+                "b_fr": 0.0,
+                "f_bus": 12,
+                "gmd_br_hi": 31,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 12,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 14,
+                "b_to": 0.0,
+                "index": 27,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "27 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "31": {
+                "br_r": 0.00017,
+                "gmd_br_series": -1,
+                "rate_a": 16.445,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.2,
+                "lo_bus": 19,
+                "xfmr": 1,
+                "tbus": 19,
+                "br_x": 0.013,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 17,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    31
+                ],
+                "b_fr": 0.0,
+                "f_bus": 17,
+                "gmd_br_hi": 37,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 17,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 19,
+                "b_to": 0.0,
+                "index": 31,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "31 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "28": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": 32,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.1,
+                "lo_bus": 16,
+                "xfmr": 1,
+                "tbus": 15,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 16,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    28
+                ],
+                "b_fr": 0.0,
+                "f_bus": 16,
+                "gmd_br_hi": -1,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 15,
+                "config": "gwye-gwye-auto",
+                "topoil_time_const": 71,
+                "t_bus": 15,
+                "b_to": 0.0,
+                "index": 28,
+                "gmd_br_common": 33,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "28 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "16": {
+                "br_r": 0.0,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 21,
+                "xfmr": 0,
+                "tbus": 21,
+                "br_x": -0.01061,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 5,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    16
+                ],
+                "b_fr": 0.0,
+                "f_bus": 5,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 5,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 21,
+                "b_to": 0.0,
+                "index": 16,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "16 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "series_cap"
+            },
+            "14": {
+                "br_r": 0.00296,
+                "gmd_br_series": -1,
+                "rate_a": 21.2,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 2,
+                "xfmr": 0,
+                "tbus": 2,
+                "br_x": 0.031,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 17,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    14
+                ],
+                "b_fr": 0.27,
+                "f_bus": 17,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 17,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 2,
+                "b_to": 0.27,
+                "index": 14,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "14 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "21": {
+                "br_r": 7.0e-5,
+                "gmd_br_series": 22,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 3,
+                "xfmr": 1,
+                "tbus": 4,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 3,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    21
+                ],
+                "b_fr": 0.0,
+                "f_bus": 3,
+                "gmd_br_hi": -1,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 4,
+                "config": "gwye-gwye-auto",
+                "topoil_time_const": 71,
+                "t_bus": 4,
+                "b_to": 0.0,
+                "index": 21,
+                "gmd_br_common": 23,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "21 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "7": {
+                "br_r": 0.00093,
+                "gmd_br_series": -1,
+                "rate_a": 12.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 12,
+                "xfmr": 0,
+                "tbus": 12,
+                "br_x": 0.0163,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 11,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    7
+                ],
+                "b_fr": 0.815,
+                "f_bus": 11,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 11,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 12,
+                "b_to": 0.815,
+                "index": 7,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "7 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "8": {
+                "br_r": 0.00079,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 4,
+                "xfmr": 0,
+                "tbus": 4,
+                "br_x": 0.0138,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 15,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    8
+                ],
+                "b_fr": 0.7,
+                "f_bus": 15,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 15,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 4,
+                "b_to": 0.7,
+                "index": 8,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "8 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "26": {
+                "br_r": 8.0e-5,
+                "gmd_br_series": -1,
+                "rate_a": 7.5,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 0.8,
+                "lo_bus": 13,
+                "xfmr": 1,
+                "tbus": 13,
+                "br_x": 0.015,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 12,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    26
+                ],
+                "b_fr": 0.0,
+                "f_bus": 12,
+                "gmd_br_hi": 30,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 12,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 13,
+                "b_to": 0.0,
+                "index": 26,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "26 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "17": {
+                "br_r": 0.00017,
+                "gmd_br_series": -1,
+                "rate_a": 16.445,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.2,
+                "lo_bus": 2,
+                "xfmr": 1,
+                "tbus": 2,
+                "br_x": 0.014,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 1,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    17
+                ],
+                "b_fr": 0.0,
+                "f_bus": 1,
+                "gmd_br_hi": -1,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 1,
+                "config": "wye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 2,
+                "b_to": 0.0,
+                "index": 17,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "17 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "10": {
+                "br_r": 0.00117,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 6,
+                "xfmr": 0,
+                "tbus": 6,
+                "br_x": 0.0192,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 15,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    10
+                ],
+                "b_fr": 1.025,
+                "f_bus": 15,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 15,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 6,
+                "b_to": 1.025,
+                "index": 10,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "10 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "19": {
+                "br_r": 0.00016,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": -0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 3,
+                "xfmr": 1,
+                "tbus": 4,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 3,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    19
+                ],
+                "b_fr": 0.0,
+                "f_bus": 3,
+                "gmd_br_hi": 18,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 4,
+                "config": "gwye-gwye",
+                "topoil_time_const": 71,
+                "t_bus": 4,
+                "b_to": 0.0,
+                "index": 19,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "19 ",
+                "gmd_br_lo": 19,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "9": {
+                "br_r": 0.00117,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 6,
+                "xfmr": 0,
+                "tbus": 6,
+                "br_x": 0.0192,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 15,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    9
+                ],
+                "b_fr": 1.025,
+                "f_bus": 15,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 15,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 6,
+                "b_to": 1.025,
+                "index": 9,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "9 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            },
+            "18": {
+                "br_r": 0.00016,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": 0.63,
+                "shift": -0.0,
+                "gmd_k": 1.6,
+                "lo_bus": 3,
+                "xfmr": 1,
+                "tbus": 4,
+                "br_x": 0.025,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 3,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    18
+                ],
+                "b_fr": 0.0,
+                "f_bus": 3,
+                "gmd_br_hi": 16,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 4,
+                "config": "gwye-gwye",
+                "topoil_time_const": 71,
+                "t_bus": 4,
+                "b_to": 0.0,
+                "index": 18,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "18 ",
+                "gmd_br_lo": 17,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "30": {
+                "br_r": 0.00017,
+                "gmd_br_series": -1,
+                "rate_a": 16.445,
+                "hotspot_coeff": 0.63,
+                "shift": 0.0,
+                "gmd_k": 1.2,
+                "lo_bus": 18,
+                "xfmr": 1,
+                "tbus": 18,
+                "br_x": 0.012,
+                "topoil_init": 0,
+                "g_to": 0.0,
+                "hotspot_instant_limit": 280,
+                "topoil_rated": 75,
+                "fbus": 17,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    30
+                ],
+                "b_fr": 0.0,
+                "f_bus": 17,
+                "gmd_br_hi": 36,
+                "baseMVA": 100,
+                "br_status": 1,
+                "topoil_initialized": 1,
+                "hi_bus": 17,
+                "config": "gwye-delta",
+                "topoil_time_const": 71,
+                "t_bus": 18,
+                "b_to": 0.0,
+                "index": 30,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": 25,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": 240,
+                "hotspot_rated": 150,
+                "branch_sid": "30 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "xfmr"
+            },
+            "3": {
+                "br_r": 0.00094,
+                "gmd_br_series": -1,
+                "rate_a": 20.0,
+                "hotspot_coeff": -1.0,
+                "shift": 0.0,
+                "gmd_k": -1.0,
+                "lo_bus": 5,
+                "xfmr": 0,
+                "tbus": 5,
+                "br_x": 0.01545,
+                "topoil_init": -1,
+                "g_to": 0.0,
+                "hotspot_instant_limit": -1,
+                "topoil_rated": -1,
+                "fbus": 4,
+                "g_fr": 0.0,
+                "source_id": [
+                    "branch",
+                    3
+                ],
+                "b_fr": 0.825,
+                "f_bus": 4,
+                "gmd_br_hi": -1,
+                "baseMVA": -1,
+                "br_status": 1,
+                "topoil_initialized": -1,
+                "hi_bus": 4,
+                "config": "none",
+                "topoil_time_const": -1,
+                "t_bus": 5,
+                "b_to": 0.825,
+                "index": 3,
+                "gmd_br_common": -1,
+                "angmin": -0.5235987755982988,
+                "temperature_ambient": -1,
+                "angmax": 0.5235987755982988,
+                "transformer": true,
+                "hotspot_avg_limit": -1,
+                "hotspot_rated": -1,
+                "branch_sid": "3 ",
+                "gmd_br_lo": -1,
+                "tap": 1.0,
+                "type": "line"
+            }
+        },
+        "gmd_branch": {
+            "24": {
+                "source_id": [
+                    "gmd_branch",
+                    24
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 13,
+                "name": "dc_xf6_hi",
+                "br_status": 1,
+                "parent_index": 22,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 5,
+                "index": 24
+            },
+            "4": {
+                "source_id": [
+                    "gmd_branch",
+                    4
+                ],
+                "br_r": 1.5583333333333333,
+                "f_bus": 12,
+                "name": "dc_br4",
+                "br_status": 1,
+                "parent_index": 4,
+                "br_v": 321.2612206582465,
+                "len_km": 321.81790843092256,
+                "t_bus": 14,
+                "index": 4
+            },
+            "1": {
+                "source_id": [
+                    "gmd_branch",
+                    1
+                ],
+                "br_r": 1.1704125,
+                "f_bus": 10,
+                "name": "dc_br1",
+                "br_status": 1,
+                "parent_index": 1,
+                "br_v": 120.60003474069319,
+                "len_km": 120.81939273462899,
+                "t_bus": 11,
+                "index": 1
+            },
+            "12": {
+                "source_id": [
+                    "gmd_branch",
+                    12
+                ],
+                "br_r": 1.5552599999999999,
+                "f_bus": 22,
+                "name": "dc_br12",
+                "br_status": 1,
+                "parent_index": 12,
+                "br_v": -155.55611343458276,
+                "len_km": 160.47336211212942,
+                "t_bus": 23,
+                "index": 12
+            },
+            "29": {
+                "source_id": [
+                    "gmd_branch",
+                    29
+                ],
+                "br_r": 0.049999999999999996,
+                "f_bus": 14,
+                "name": "dc_xf9_hi",
+                "br_status": 1,
+                "parent_index": 25,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 6,
+                "index": 29
+            },
+            "20": {
+                "source_id": [
+                    "gmd_branch",
+                    20
+                ],
+                "br_r": 0.02,
+                "f_bus": 11,
+                "name": "dc_xf4_series",
+                "br_status": 1,
+                "parent_index": 20,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 12,
+                "index": 20
+            },
+            "32": {
+                "source_id": [
+                    "gmd_branch",
+                    32
+                ],
+                "br_r": 0.02,
+                "f_bus": 22,
+                "name": "dc_xf12_series",
+                "br_status": 1,
+                "parent_index": 28,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 21,
+                "index": 32
+            },
+            "2": {
+                "source_id": [
+                    "gmd_branch",
+                    2
+                ],
+                "br_r": 0.7833333333333333,
+                "f_bus": 12,
+                "name": "dc_br2",
+                "br_status": 1,
+                "parent_index": 2,
+                "br_v": 131.6938150979946,
+                "len_km": 161.49436872495582,
+                "t_bus": 13,
+                "index": 2
+            },
+            "6": {
+                "source_id": [
+                    "gmd_branch",
+                    6
+                ],
+                "br_r": 0.48333333333333334,
+                "f_bus": 14,
+                "name": "dc_br6",
+                "br_status": 1,
+                "parent_index": 6,
+                "br_v": -20.137238063195745,
+                "len_km": 99.11107851638545,
+                "t_bus": 17,
+                "index": 6
+            },
+            "25": {
+                "source_id": [
+                    "gmd_branch",
+                    25
+                ],
+                "br_r": 0.02,
+                "f_bus": 26,
+                "name": "dc_xf6_lo",
+                "br_status": 1,
+                "parent_index": 22,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 5,
+                "index": 25
+            },
+            "23": {
+                "source_id": [
+                    "gmd_branch",
+                    23
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 11,
+                "name": "dc_xf5_common",
+                "br_status": 1,
+                "parent_index": 21,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 23
+            },
+            "22": {
+                "source_id": [
+                    "gmd_branch",
+                    22
+                ],
+                "br_r": 0.02,
+                "f_bus": 11,
+                "name": "dc_xf5_series",
+                "br_status": 1,
+                "parent_index": 21,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 12,
+                "index": 22
+            },
+            "11": {
+                "source_id": [
+                    "gmd_branch",
+                    11
+                ],
+                "br_r": 1.34895,
+                "f_bus": 22,
+                "name": "dc_br11",
+                "br_status": 1,
+                "parent_index": 11,
+                "br_v": 1.4850062354159403,
+                "len_km": 138.6435468799988,
+                "t_bus": 26,
+                "index": 11
+            },
+            "35": {
+                "source_id": [
+                    "gmd_branch",
+                    35
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 22,
+                "name": "dc_xf13_common",
+                "br_status": 1,
+                "parent_index": 29,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 3,
+                "index": 35
+            },
+            "13": {
+                "source_id": [
+                    "gmd_branch",
+                    13
+                ],
+                "br_r": 2.3130525,
+                "f_bus": 23,
+                "name": "dc_br13",
+                "br_status": 1,
+                "parent_index": 13,
+                "br_v": 158.17375406876596,
+                "len_km": 238.16588676612818,
+                "t_bus": 26,
+                "index": 13
+            },
+            "5": {
+                "source_id": [
+                    "gmd_branch",
+                    5
+                ],
+                "br_r": 0.9916666666666667,
+                "f_bus": 13,
+                "name": "dc_br5",
+                "br_status": 1,
+                "parent_index": 5,
+                "br_v": 190.9859010213294,
+                "len_km": 205.02104684716693,
+                "t_bus": 14,
+                "index": 5
+            },
+            "15": {
+                "source_id": [
+                    "gmd_branch",
+                    15
+                ],
+                "br_r": 1.1666666666666667,
+                "f_bus": 27,
+                "name": "dc_br15",
+                "br_status": 1,
+                "parent_index": 15,
+                "br_v": 169.82073202204822,
+                "len_km": 241.42124977424734,
+                "t_bus": 17,
+                "index": 15
+            },
+            "27": {
+                "source_id": [
+                    "gmd_branch",
+                    27
+                ],
+                "br_r": 0.02,
+                "f_bus": 26,
+                "name": "dc_xf7_lo",
+                "br_status": 1,
+                "parent_index": 23,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 5,
+                "index": 27
+            },
+            "31": {
+                "source_id": [
+                    "gmd_branch",
+                    31
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 18,
+                "name": "dc_xf11_hi",
+                "br_status": 1,
+                "parent_index": 27,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 8,
+                "index": 31
+            },
+            "33": {
+                "source_id": [
+                    "gmd_branch",
+                    33
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 22,
+                "name": "dc_xf12_common",
+                "br_status": 1,
+                "parent_index": 28,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 3,
+                "index": 33
+            },
+            "28": {
+                "source_id": [
+                    "gmd_branch",
+                    28
+                ],
+                "br_r": 0.049999999999999996,
+                "f_bus": 14,
+                "name": "dc_xf8_hi",
+                "br_status": 1,
+                "parent_index": 24,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 6,
+                "index": 28
+            },
+            "16": {
+                "source_id": [
+                    "gmd_branch",
+                    16
+                ],
+                "br_r": 0.06666666666666667,
+                "f_bus": 12,
+                "name": "dc_xf2_hi",
+                "br_status": 1,
+                "parent_index": 18,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 16
+            },
+            "14": {
+                "source_id": [
+                    "gmd_branch",
+                    14
+                ],
+                "br_r": 1.17438,
+                "f_bus": 23,
+                "name": "dc_br14",
+                "br_status": 1,
+                "parent_index": 14,
+                "br_v": -93.15718079092285,
+                "len_km": 121.05590409010416,
+                "t_bus": 10,
+                "index": 14
+            },
+            "21": {
+                "source_id": [
+                    "gmd_branch",
+                    21
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 11,
+                "name": "dc_xf4_common",
+                "br_status": 1,
+                "parent_index": 20,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 21
+            },
+            "7": {
+                "source_id": [
+                    "gmd_branch",
+                    7
+                ],
+                "br_r": 0.775,
+                "f_bus": 17,
+                "name": "dc_br7",
+                "br_status": 1,
+                "parent_index": 7,
+                "br_v": 160.17017349968367,
+                "len_km": 160.29318090362787,
+                "t_bus": 18,
+                "index": 7
+            },
+            "34": {
+                "source_id": [
+                    "gmd_branch",
+                    34
+                ],
+                "br_r": 0.02,
+                "f_bus": 22,
+                "name": "dc_xf13_series",
+                "br_status": 1,
+                "parent_index": 29,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 21,
+                "index": 34
+            },
+            "8": {
+                "source_id": [
+                    "gmd_branch",
+                    8
+                ],
+                "br_r": 0.6583333333333333,
+                "f_bus": 21,
+                "name": "dc_br8",
+                "br_status": 1,
+                "parent_index": 8,
+                "br_v": -129.27518497259706,
+                "len_km": 136.9370288107594,
+                "t_bus": 12,
+                "index": 8
+            },
+            "36": {
+                "source_id": [
+                    "gmd_branch",
+                    36
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 23,
+                "name": "dc_xf14_hi",
+                "br_status": 1,
+                "parent_index": 30,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 2,
+                "index": 36
+            },
+            "26": {
+                "source_id": [
+                    "gmd_branch",
+                    26
+                ],
+                "br_r": 0.013333333333333334,
+                "f_bus": 13,
+                "name": "dc_xf7_hi",
+                "br_status": 1,
+                "parent_index": 23,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 5,
+                "index": 26
+            },
+            "17": {
+                "source_id": [
+                    "gmd_branch",
+                    17
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 11,
+                "name": "dc_xf2_lo",
+                "br_status": 1,
+                "parent_index": 18,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 17
+            },
+            "10": {
+                "source_id": [
+                    "gmd_branch",
+                    10
+                ],
+                "br_r": 0.9750000000000001,
+                "f_bus": 21,
+                "name": "dc_br10",
+                "br_status": 1,
+                "parent_index": 10,
+                "br_v": 191.1051972595808,
+                "len_km": 201.56362020739277,
+                "t_bus": 14,
+                "index": 10
+            },
+            "19": {
+                "source_id": [
+                    "gmd_branch",
+                    19
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 11,
+                "name": "dc_xf3_lo",
+                "br_status": 1,
+                "parent_index": 19,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 19
+            },
+            "37": {
+                "source_id": [
+                    "gmd_branch",
+                    37
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 23,
+                "name": "dc_xf15_hi",
+                "br_status": 1,
+                "parent_index": 31,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 2,
+                "index": 37
+            },
+            "9": {
+                "source_id": [
+                    "gmd_branch",
+                    9
+                ],
+                "br_r": 0.9750000000000001,
+                "f_bus": 21,
+                "name": "dc_br9",
+                "br_status": 1,
+                "parent_index": 9,
+                "br_v": 191.1051972595808,
+                "len_km": 201.56362020739277,
+                "t_bus": 14,
+                "index": 9
+            },
+            "18": {
+                "source_id": [
+                    "gmd_branch",
+                    18
+                ],
+                "br_r": 0.06666666666666667,
+                "f_bus": 12,
+                "name": "dc_xf3_hi",
+                "br_status": 1,
+                "parent_index": 19,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 4,
+                "index": 18
+            },
+            "30": {
+                "source_id": [
+                    "gmd_branch",
+                    30
+                ],
+                "br_r": 0.03333333333333333,
+                "f_bus": 18,
+                "name": "dc_xf10_hi",
+                "br_status": 1,
+                "parent_index": 26,
+                "br_v": 0.0,
+                "len_km": 0.0,
+                "t_bus": 8,
+                "index": 30
+            },
+            "3": {
+                "source_id": [
+                    "gmd_branch",
+                    3
+                ],
+                "br_r": 0.7833333333333333,
+                "f_bus": 12,
+                "name": "dc_br3",
+                "br_status": 1,
+                "parent_index": 3,
+                "br_v": 131.6938150979946,
+                "len_km": 161.49436872495582,
+                "t_bus": 13,
+                "index": 3
+            }
+        },
+        "storage": {},
+        "switch": {},
+        "baseMVA": 100,
+        "thermal_cap_x0": {
+            "1": {
+                "C": 0.26438,
+                "B": 0.25,
+                "H": 0.36153,
+                "source_id": [
+                    "thermal_cap_x0",
+                    1
+                ],
+                "A": 0.23033,
+                "D": 0.2796,
+                "G": 0.33942,
+                "E": 0.3,
+                "index": 1,
+                "I": 0.38444,
+                "J": 0.4,
+                "K": 0.43894,
+                "F": 0.31967
+            }
+        },
+        "per_unit": true,
+        "shunt": {
+            "1": {
+                "source_id": [
+                    "bus",
+                    4
+                ],
+                "shunt_bus": 4,
+                "status": 1,
+                "gs": 0.0,
+                "bs": 5.4662,
+                "index": 1
+            },
+            "2": {
+                "source_id": [
+                    "bus",
+                    16
+                ],
+                "shunt_bus": 16,
+                "status": 1,
+                "gs": 0.0,
+                "bs": 2.1253,
+                "index": 2
+            }
+        },
+        "gmd_bus": {
+            "24": {
+                "source_id": [
+                    "gmd_bus",
+                    24
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus18",
+                "status": 1,
+                "parent_index": 18,
+                "index": 24
+            },
+            "4": {
+                "source_id": [
+                    "gmd_bus",
+                    4
+                ],
+                "g_gnd": 1.0,
+                "name": "dc_sub4",
+                "status": 1,
+                "parent_index": 4,
+                "index": 4
+            },
+            "1": {
+                "source_id": [
+                    "gmd_bus",
+                    1
+                ],
+                "g_gnd": 5.0,
+                "name": "dc_sub1",
+                "status": 1,
+                "parent_index": 1,
+                "index": 1
+            },
+            "12": {
+                "source_id": [
+                    "gmd_bus",
+                    12
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus4",
+                "status": 1,
+                "parent_index": 4,
+                "index": 12
+            },
+            "20": {
+                "source_id": [
+                    "gmd_bus",
+                    20
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus14",
+                "status": 1,
+                "parent_index": 14,
+                "index": 20
+            },
+            "2": {
+                "source_id": [
+                    "gmd_bus",
+                    2
+                ],
+                "g_gnd": 5.0,
+                "name": "dc_sub2",
+                "status": 1,
+                "parent_index": 2,
+                "index": 2
+            },
+            "6": {
+                "source_id": [
+                    "gmd_bus",
+                    6
+                ],
+                "g_gnd": 10.0,
+                "name": "dc_sub6",
+                "status": 1,
+                "parent_index": 6,
+                "index": 6
+            },
+            "25": {
+                "source_id": [
+                    "gmd_bus",
+                    25
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus19",
+                "status": 1,
+                "parent_index": 19,
+                "index": 25
+            },
+            "23": {
+                "source_id": [
+                    "gmd_bus",
+                    23
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus17",
+                "status": 1,
+                "parent_index": 17,
+                "index": 23
+            },
+            "22": {
+                "source_id": [
+                    "gmd_bus",
+                    22
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus16",
+                "status": 1,
+                "parent_index": 16,
+                "index": 22
+            },
+            "11": {
+                "source_id": [
+                    "gmd_bus",
+                    11
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus3",
+                "status": 1,
+                "parent_index": 3,
+                "index": 11
+            },
+            "13": {
+                "source_id": [
+                    "gmd_bus",
+                    13
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus5",
+                "status": 1,
+                "parent_index": 5,
+                "index": 13
+            },
+            "5": {
+                "source_id": [
+                    "gmd_bus",
+                    5
+                ],
+                "g_gnd": 10.0,
+                "name": "dc_sub5",
+                "status": 1,
+                "parent_index": 5,
+                "index": 5
+            },
+            "15": {
+                "source_id": [
+                    "gmd_bus",
+                    15
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus7",
+                "status": 1,
+                "parent_index": 7,
+                "index": 15
+            },
+            "27": {
+                "source_id": [
+                    "gmd_bus",
+                    27
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus21",
+                "status": 1,
+                "parent_index": 21,
+                "index": 27
+            },
+            "16": {
+                "source_id": [
+                    "gmd_bus",
+                    16
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus8",
+                "status": 1,
+                "parent_index": 8,
+                "index": 16
+            },
+            "14": {
+                "source_id": [
+                    "gmd_bus",
+                    14
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus6",
+                "status": 1,
+                "parent_index": 6,
+                "index": 14
+            },
+            "21": {
+                "source_id": [
+                    "gmd_bus",
+                    21
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus15",
+                "status": 1,
+                "parent_index": 15,
+                "index": 21
+            },
+            "7": {
+                "source_id": [
+                    "gmd_bus",
+                    7
+                ],
+                "g_gnd": 4.621712806766188,
+                "name": "dc_sub7",
+                "status": 1,
+                "parent_index": 7,
+                "index": 7
+            },
+            "8": {
+                "source_id": [
+                    "gmd_bus",
+                    8
+                ],
+                "g_gnd": 10.0,
+                "name": "dc_sub8",
+                "status": 1,
+                "parent_index": 8,
+                "index": 8
+            },
+            "26": {
+                "source_id": [
+                    "gmd_bus",
+                    26
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus20",
+                "status": 1,
+                "parent_index": 20,
+                "index": 26
+            },
+            "17": {
+                "source_id": [
+                    "gmd_bus",
+                    17
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus11",
+                "status": 1,
+                "parent_index": 11,
+                "index": 17
+            },
+            "10": {
+                "source_id": [
+                    "gmd_bus",
+                    10
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus2",
+                "status": 1,
+                "parent_index": 2,
+                "index": 10
+            },
+            "19": {
+                "source_id": [
+                    "gmd_bus",
+                    19
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus13",
+                "status": 1,
+                "parent_index": 13,
+                "index": 19
+            },
+            "9": {
+                "source_id": [
+                    "gmd_bus",
+                    9
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus1",
+                "status": 1,
+                "parent_index": 1,
+                "index": 9
+            },
+            "18": {
+                "source_id": [
+                    "gmd_bus",
+                    18
+                ],
+                "g_gnd": 0.0,
+                "name": "dc_bus12",
+                "status": 1,
+                "parent_index": 12,
+                "index": 18
+            },
+            "3": {
+                "source_id": [
+                    "gmd_bus",
+                    3
+                ],
+                "g_gnd": 5.0,
+                "name": "dc_sub3",
+                "status": 1,
+                "parent_index": 3,
+                "index": 3
+            }
+        },
+        "load": {
+            "4": {
+                "source_id": [
+                    "bus",
+                    15
+                ],
+                "load_bus": 15,
+                "status": 1,
+                "qd": 5.839590017894705,
+                "pd": 14.015016042947291,
+                "index": 4
+            },
+            "1": {
+                "source_id": [
+                    "bus",
+                    4
+                ],
+                "load_bus": 4,
+                "status": 1,
+                "qd": 6.931609579731159,
+                "pd": 17.329023949327897,
+                "index": 1
+            },
+            "5": {
+                "source_id": [
+                    "bus",
+                    16
+                ],
+                "load_bus": 16,
+                "status": 1,
+                "qd": 2.6032212507551202,
+                "pd": 6.5080531268878,
+                "index": 5
+            },
+            "2": {
+                "source_id": [
+                    "bus",
+                    5
+                ],
+                "load_bus": 5,
+                "status": 1,
+                "qd": 4.693929516282758,
+                "pd": 16.093472627255167,
+                "index": 2
+            },
+            "3": {
+                "source_id": [
+                    "bus",
+                    6
+                ],
+                "load_bus": 6,
+                "status": 1,
+                "qd": 1.8391721629516593,
+                "pd": 3.6783443259033186,
+                "index": 3
+            }
+        }
+    },
+    "result": {
+        "solve_time": 0.1377089023590088,
+        "optimizer": "Ipopt",
+        "termination_status": "LOCALLY_INFEASIBLE",
+        "dual_status": "UNKNOWN_RESULT_STATUS",
+        "primal_status": "INFEASIBLE_POINT",
+        "objective": 408200.81188305235,
+        "solution": {
+            "baseMVA": 100,
+            "branch": {
+                "24": {
+                    "qf": 1.30682219349893,
+                    "qt": -0.565599958594061,
+                    "pt": 9.050000115560424,
+                    "pf": -9.04191410596539
+                },
+                "29": {
+                    "qf": 0.11332158701786262,
+                    "qt": -0.09990992447093555,
+                    "pt": -0.7932068256124479,
+                    "pf": 0.7932443026579165
+                },
+                "1": {
+                    "qf": 0.21616271573979867,
+                    "qt": 0.7889210847047655,
+                    "pt": -7.962557791246214,
+                    "pf": 8.11897928611653
+                },
+                "12": {
+                    "qf": 0.37873602860697997,
+                    "qt": 0.37474707240151356,
+                    "pt": 7.264252653102989,
+                    "pf": -7.097153381517618
+                },
+                "4": {
+                    "qf": -1.5711788036828522,
+                    "qt": -1.9079063471710287,
+                    "pt": 4.792910001632499,
+                    "pf": -4.758205644457001
+                },
+                "20": {
+                    "qf": -0.19364882893988258,
+                    "qt": 0.2756980665145293,
+                    "pt": -1.9907812855600107,
+                    "pf": 1.9910109466592496
+                },
+                "2": {
+                    "qf": 0.3113902731727785,
+                    "qt": -0.2706549942875356,
+                    "pt": 1.7767287473301683,
+                    "pf": -1.7742504293763584
+                },
+                "6": {
+                    "qf": -1.1081674417260843,
+                    "qt": -0.15363883000142142,
+                    "pt": 0.3613563643252533,
+                    "pf": -10.681973547904668
+                },
+                "25": {
+                    "qf": 1.30682219349893,
+                    "qt": -0.565599958594061,
+                    "pt": 9.050000115560424,
+                    "pf": -9.04191410596539
+                },
+                "23": {
+                    "qf": 0.03465316445751289,
+                    "qt": 0.0252322871423241,
+                    "pt": 1.7128752928260202,
+                    "pf": -1.712707686700603
+                },
+                "22": {
+                    "qf": 0.03465316445751289,
+                    "qt": 0.0252322871423241,
+                    "pt": 1.7128752928260202,
+                    "pf": -1.712707686700603
+                },
+                "11": {
+                    "qf": -0.6649017187190057,
+                    "qt": -0.058129629136083126,
+                    "pt": 1.000456512434937,
+                    "pf": -0.9973883111737917
+                },
+                "13": {
+                    "qf": -0.44042574612336727,
+                    "qt": 0.007665054822965753,
+                    "pt": -4.426207061497571,
+                    "pf": 4.521508809262137
+                },
+                "5": {
+                    "qf": -1.1186028233843772,
+                    "qt": -1.2681822118476822,
+                    "pt": 6.712725090727968,
+                    "pf": -6.669369928464886
+                },
+                "31": {
+                    "qf": 0.19147450952570683,
+                    "qt": 0.1878000717640533,
+                    "pt": 6.050000074262059,
+                    "pf": -6.0450403592336865
+                },
+                "15": {
+                    "qf": -1.2644780199276355,
+                    "qt": 0.03578173934726396,
+                    "pt": 9.659588723468753,
+                    "pf": -9.552144688527202
+                },
+                "27": {
+                    "qf": 0.4135842869081511,
+                    "qt": -0.10609995978430241,
+                    "pt": 5.0500000685750885,
+                    "pf": -5.048360189584584
+                },
+                "28": {
+                    "qf": 0.11332158701786262,
+                    "qt": -0.09990992447093555,
+                    "pt": -0.7932068256124479,
+                    "pf": 0.7932443026579165
+                },
+                "16": {
+                    "qf": -2.0926356227745075,
+                    "qt": 1.2644780198959145,
+                    "pt": 9.552144717738862,
+                    "pf": -9.552144783499962
+                },
+                "14": {
+                    "qf": -0.2879964467561743,
+                    "qt": -0.3853828674551064,
+                    "pt": -0.3040960349868681,
+                    "pf": 0.3043206723338614
+                },
+                "21": {
+                    "qf": -0.19364882893988258,
+                    "qt": 0.2756980665145293,
+                    "pt": -1.9907812855600107,
+                    "pf": 1.9910109466592496
+                },
+                "7": {
+                    "qf": 0.11785709062075568,
+                    "qt": -0.8271685738489726,
+                    "pt": 10.096720397560993,
+                    "pf": -10.020945064686472
+                },
+                "8": {
+                    "qf": -2.299963487164458,
+                    "qt": 0.6424467170339355,
+                    "pt": -1.061268942231069,
+                    "pf": 1.0634437258155127
+                },
+                "26": {
+                    "qf": 0.4135842869081511,
+                    "qt": -0.10609995978430241,
+                    "pt": 5.0500000685750885,
+                    "pf": -5.048360189584584
+                },
+                "17": {
+                    "qf": 0.5157000706745795,
+                    "qt": 0.1692201516948207,
+                    "pt": -7.81488323555614,
+                    "pf": 7.823200092832433
+                },
+                "19": {
+                    "qf": -0.20081171342713258,
+                    "qt": 0.28285823364232926,
+                    "pt": -1.9897429474510544,
+                    "pf": 1.9902679684142421
+                },
+                "10": {
+                    "qf": -1.6699033409085,
+                    "qt": -0.08428027461828302,
+                    "pt": 6.7909111833592455,
+                    "pf": -6.74602304072028
+                },
+                "9": {
+                    "qf": -1.6699033409085,
+                    "qt": -0.08428027461828302,
+                    "pt": 6.7909111833592455,
+                    "pf": -6.74602304072028
+                },
+                "18": {
+                    "qf": -0.20081171342713258,
+                    "qt": 0.28285823364232926,
+                    "pt": -1.9897429474510544,
+                    "pf": 1.9902679684142421
+                },
+                "30": {
+                    "qf": 0.16220061093209975,
+                    "qt": 0.18780007177998087,
+                    "pt": 6.05000007423472,
+                    "pf": -6.045041760698635
+                },
+                "3": {
+                    "qf": -0.7039622474612569,
+                    "qt": -1.2813424047817337,
+                    "pt": 1.7767287473301683,
+                    "pf": -1.7742504293763584
+                }
+            },
+            "gen": {
+                "4": {
+                    "qg": -0.10609995975139734,
+                    "pg": 5.05000004954644
+                },
+                "1": {
+                    "qg": 0.5157000706950653,
+                    "pg": 7.823200077268262
+                },
+                "5": {
+                    "qg": -0.10609995975139734,
+                    "pg": 5.05000004954644
+                },
+                "2": {
+                    "qg": -0.5655999585619174,
+                    "pg": 9.050000089558571
+                },
+                "6": {
+                    "qg": 0.18780007180018987,
+                    "pg": 6.050000059532958
+                },
+                "7": {
+                    "qg": 0.18780007178426622,
+                    "pg": 6.050000059533068
+                },
+                "3": {
+                    "qg": -0.5655999585619174,
+                    "pg": 9.050000089558571
+                }
+            },
+            "multiinfrastructure": false,
+            "multinetwork": false,
+            "bus": {
+                "4": {
+                    "va": -0.3355414793418131,
+                    "vm": 1.109382859089342
+                },
+                "1": {
+                    "va": -8.197417863192766e-16,
+                    "vm": 1.1209080823626727
+                },
+                "12": {
+                    "va": -0.08160190607425767,
+                    "vm": 1.118760205702104
+                },
+                "20": {
+                    "va": -0.2780166496867719,
+                    "vm": 1.1068332837241592
+                },
+                "2": {
+                    "va": -0.08747428278890998,
+                    "vm": 1.117553460052101
+                },
+                "6": {
+                    "va": -0.21607557889240386,
+                    "vm": 1.1129398834662931
+                },
+                "11": {
+                    "va": -0.21350723302118482,
+                    "vm": 1.1172620033186431
+                },
+                "13": {
+                    "va": -0.02086677466606636,
+                    "vm": 1.1156330055098438
+                },
+                "5": {
+                    "va": -0.3129767488037841,
+                    "vm": 1.1068313553038995
+                },
+                "15": {
+                    "va": -0.32246537205955517,
+                    "vm": 1.091523655281278
+                },
+                "16": {
+                    "va": -0.3058642547516031,
+                    "vm": 1.094013587395106
+                },
+                "14": {
+                    "va": -0.020866774666066366,
+                    "vm": 1.1156330055098438
+                },
+                "21": {
+                    "va": -0.3970333937066704,
+                    "vm": 1.090622149662819
+                },
+                "7": {
+                    "va": -0.13495617433308618,
+                    "vm": 1.1046309656367712
+                },
+                "8": {
+                    "va": -0.13495617433308618,
+                    "vm": 1.1046309656367712
+                },
+                "17": {
+                    "va": -0.08005474168347866,
+                    "vm": 1.1197259984408676
+                },
+                "19": {
+                    "va": -0.017359313395445143,
+                    "vm": 1.1206224612987126
+                },
+                "18": {
+                    "va": -0.022197800425743715,
+                    "vm": 1.1207808270248472
+                },
+                "3": {
+                    "va": -0.29488598812830247,
+                    "vm": 1.1042080334390196
+                }
+            },
+            "per_unit": true
+        },
+        "objective_lb": null
+    }
+}
