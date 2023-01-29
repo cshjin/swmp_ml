@@ -40,9 +40,9 @@ class HGT(torch.nn.Module):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", type=str, default="b4gic",
+    parser.add_argument("--name", type=str, default="epri21",
                         help="name of network")
-    parser.add_argument("--problem", "-p", type=str, default="clf", choices=["clf", "reg"],
+    parser.add_argument("--problem", "-p", type=str, default="reg", choices=["clf", "reg"],
                         help="Specify the problem, either `clf` or `reg`")
     parser.add_argument("--force", action="store_true",
                         help="Force to reprocess data")

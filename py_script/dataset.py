@@ -61,6 +61,14 @@ class GMD(InMemoryDataset):
         res_gmd_bus = pd.DataFrame.from_dict(dc_placement['solution']['gmd_bus']).T.sort_index()
         res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
 
+        # Modded solution filename
+        # TODO: currently testing on the epri21 modded files. Comment this out if
+        #       if needed. Go to line 147 to see the regression classification
+        #       output.
+        fn = self.root + "/data_modded_results/" + self.name + "_modded_0001.json"
+        modded = json.load(open(fn))
+        pq_output = pd.DataFrame.from_dict(modded['result']['solution']['gen']).T.sort_index()
+
         h_data = HeteroData()
 
         ''' node_type: bus '''
@@ -141,9 +149,12 @@ class GMD(InMemoryDataset):
             h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
 
             # same dimension as `gmd_bus`
-            y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
+            # y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
+            y = pq_output['pg'].astype("float").to_numpy()
+
             # REVIEW: normalize
             # y = (y-y.min()) / (y.max() - y.min())
+            # h_data['y'] = torch.tensor(y, dtype=torch.float32)
             h_data['y'] = torch.tensor(y, dtype=torch.float32)
         else:
             raise Exception("Unknown problem setting, `clf` or `reg` only.")
