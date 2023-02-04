@@ -8,7 +8,7 @@ import torch
 from scipy.special import softmax
 from sklearn.model_selection import LeaveOneOut
 # from torch import nn
-from torch.nn import (CrossEntropyLoss, Linear, Module, ModuleDict, ModuleList,
+from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
                       MSELoss, ReLU, Sequential, Dropout)
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import HGTConv, Linear, HANConv
