@@ -71,22 +71,24 @@ class GMD(InMemoryDataset):
         for f in files:
             aug_data = json.load(open(f))
             # Input filename
-            # TODO: replace with net in aug_data
+            # REVIEW: replace with net in aug_data
             fn = self.root + "/" + self.name + ".m"
             mpc = read_file(fn)
-            if "INFEASIBLE" in aug_data['result']['termination_status']:
+            if "INFEASIBLE" in aug_data['ac']['result']['termination_status']:
                 pass
             else:
                 h_data = HeteroData()
-                net_data = aug_data['net']
-                res_data = aug_data['result']
+                net_data = aug_data['ac']['case']
+                res_data = aug_data['ac']['result']
                 for k in net_data['load']:
-                    # update pd/qd with augmented config
+                    # REVIEW: data['ac']['case']['load'][k]['pd']
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
+                    # REVIEW: data['ac']['case']['load'][k]['qd']
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
 
                 # read the pg value from solution
-                y = [res_data['solution']['gen'][k]['pg'] for k in sorted(res_data['solution']['gen'].keys())]
+                # REVIEW: data['ac']['result']['solution']['load'].keys()
+                y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
                 h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
                 ''' node_type: bus '''

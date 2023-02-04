@@ -55,7 +55,7 @@ class HGT(Module):
 
         # note: return node of generator
         # return self.lin(torch.nn.Dropout(0.5)(x_dict['gen']))
-        return self.flatten(x_dict['gen'])
+        return self.flatten(x_dict['bus'])
 
 
 if __name__ == "__main__":
@@ -116,6 +116,7 @@ if __name__ == "__main__":
     loss_fn = CrossEntropyLoss() if args['problem'] == "clf" else MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
+    # TODO: replace with DataLoader
     loo = LeaveOneOut()
     for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):
         losses = []
