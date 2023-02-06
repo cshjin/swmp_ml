@@ -7,7 +7,7 @@ import numpy as np
 from sklearn import datasets
 import torch
 from scipy.special import softmax
-from sklearn.model_selection import LeaveOneOut
+from sklearn.model_selection import LeaveOneOut, train_test_split
 # from torch import nn
 from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
                       MSELoss, ReLU, Sequential, Dropout)
@@ -113,11 +113,15 @@ if __name__ == "__main__":
                            force_reprocess=args['force'])
     data = dataset[0]
     print(dataset)
-
+    dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
     # Create a DataLoader for our datasets
-    data_loader = DataLoader(dataset=dataset,
-                            batch_size=100,
+    data_loader_train = DataLoader(dataset=dataset_train,
+                            batch_size=64,
                             shuffle=True)
+
+    data_loader_test = DataLoader(dataset=dataset_test,
+                            batch_size=64,
+                            shuffle=True)    
 
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
@@ -132,31 +136,40 @@ if __name__ == "__main__":
 
     # Training code for the DataLoader version
     losses = [] # Create a list to store the losses each iteration
-    for epoch in range(args['epochs']):
+    pbar = tqdm(range(args['epochs']), desc=args['name'])
+    for epoch in pbar:
         # Mini-batch settings for multi-graphs
         t_loss = 0
-        for i, data in enumerate(data_loader, 0):
+        for i, data in enumerate(data_loader_train, 0):
             # Get the output from the model and compute the loss
             out = model(data.x_dict, data.edge_index_dict)
             loss = loss_fn(out, data['y'])
 
             # Update the gradient and use it
             optimizer.zero_grad()   # Zero the gradient
-            loss.backwards()        # Perform backpropagation
+            loss.backward()        # Perform backpropagation
             optimizer.step()        # Update the weights
 
             # Add the loss of the current iteration to the total for the epoch
             t_loss += loss.item()
 
             # Print some information about the current iteration
-            print("Epoch", epoch, "i", i, "loss.item()", loss.item())
+            # print("Epoch", epoch, "i", i, "loss.item()", loss.item())
+        pbar.set_postfix({"loss": t_loss})
         
         # Store some information about the accumulated loss in the current
         # iteration of the epoch  
         losses.append(t_loss)
 
-        # Evaluate the model
-        model.eval()
+    # Evaluate the model
+    model.eval()
+    for data in data_loader_test:
+        pred = model(data.x_dict, data.edge_index_dict)
+        print(pred)
+        print(data['y'])
+        print((pred - data['y']).T)
+        exit()
+
 
     # loo = LeaveOneOut()
     # for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):
@@ -204,10 +217,10 @@ if __name__ == "__main__":
     #             layer.reset_parameters()
 
     ''' plot the loss function '''
-    fig = plt.figure(figsize=(4, 3), tight_layout=True)
-    foo = r'training loss'
-    plt.plot(losses)
-    plt.ylabel(foo)
-    plt.xlabel("epoch")
-    plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"losses - {args['problem']}.png")
+    # fig = plt.figure(figsize=(4, 3), tight_layout=True)
+    # foo = r'training loss'
+    # plt.plot(losses)
+    # plt.ylabel(foo)
+    # plt.xlabel("epoch")
+    # plt.title(f"Hete-Graph - {args['problem']}")
+    # plt.savefig(f"losses - {args['problem']}.png")
