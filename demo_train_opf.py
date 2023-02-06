@@ -57,7 +57,7 @@ class HGT(Module):
 
         # note: return node of generator
         # return self.lin(torch.nn.Dropout(0.5)(x_dict['gen']))
-        return self.flatten(x_dict['gen'])
+        return self.flatten(x_dict['bus'])
 
 # class PowerSystemsDataset(Dataset):
 #     def __init__(self):
@@ -168,6 +168,9 @@ if __name__ == "__main__":
         print(pred)
         print(data['y'])
         print((pred - data['y']).T)
+        plt.plot(data['y'], "ro", label="true")
+        plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
+        plt.savefig("tmp.png")
         exit()
 
 
