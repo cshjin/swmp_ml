@@ -4,6 +4,7 @@ import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn import datasets
 import torch
 from scipy.special import softmax
 from sklearn.model_selection import LeaveOneOut
@@ -11,6 +12,7 @@ from sklearn.model_selection import LeaveOneOut
 from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
                       MSELoss, ReLU, Sequential, Dropout)
 from torch_geometric.loader import DataLoader
+# from torch.utils.data import Dataset
 from torch_geometric.nn import HGTConv, Linear, HANConv
 from tqdm import tqdm
 
@@ -56,6 +58,13 @@ class HGT(Module):
         # note: return node of generator
         # return self.lin(torch.nn.Dropout(0.5)(x_dict['gen']))
         return self.flatten(x_dict['gen'])
+
+# class PowerSystemsDataset(Dataset):
+#     def __init__(self):
+        
+#     def __getitem__(self, index):
+    
+#     def __len__(self):
 
 
 if __name__ == "__main__":
@@ -105,6 +114,11 @@ if __name__ == "__main__":
     data = dataset[0]
     print(dataset)
 
+    # Create a DataLoader for our datasets
+    data_loader = DataLoader(dataset=dataset,
+                            batch_size=100,
+                            shuffle=True)
+
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
     model = HGT(hidden_channels=args['hidden_size'],
@@ -116,49 +130,79 @@ if __name__ == "__main__":
     loss_fn = CrossEntropyLoss() if args['problem'] == "clf" else MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
-    loo = LeaveOneOut()
-    for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):
-        losses = []
-        model.train()
-        pbar = tqdm(range(args['epochs']))
-        for epoch in pbar:
-            optimizer.zero_grad()
-            # data.edge_attr_dict
-            # mini-batch settings for multi-graphs
-            t_loss = 0
-            for data in dataset[train_idx[:1]]:
-                out = model(data.x_dict, data.edge_index_dict)
-                loss = loss_fn(out, data['y'])
-                loss.backward()
-                optimizer.step()
-                t_loss += loss.item()
-                if args['problem'] == "reg":
-                    # REVIEW: meet the dimension of target
-                    out = out.T[0]
+    # Training code for the DataLoader version
+    losses = [] # Create a list to store the losses each iteration
+    for epoch in range(args['epochs']):
+        # Mini-batch settings for multi-graphs
+        t_loss = 0
+        for i, data in enumerate(data_loader, 0):
+            # Get the output from the model and compute the loss
+            out = model(data.x_dict, data.edge_index_dict)
+            loss = loss_fn(out, data['y'])
 
-            pbar.set_postfix({'loss': t_loss})
-            losses.append(t_loss)
+            # Update the gradient and use it
+            optimizer.zero_grad()   # Zero the gradient
+            loss.backwards()        # Perform backpropagation
+            optimizer.step()        # Update the weights
 
-        print(f"split {i}", train_idx, test_idx)
+            # Add the loss of the current iteration to the total for the epoch
+            t_loss += loss.item()
+
+            # Print some information about the current iteration
+            print("Epoch", epoch, "i", i, "loss.item()", loss.item())
+        
+        # Store some information about the accumulated loss in the current
+        # iteration of the epoch  
+        losses.append(t_loss)
+
+        # Evaluate the model
         model.eval()
-        # train_data = dataset[train_idx[0]]
-        # print("true pg", train_data.y.T)
-        # out = out.detach().cpu().numpy()
-        # print("pred pg", out.T)
-        # exit()
-        #
-        test_data = dataset[test_idx[0]]
-        print("True pg", test_data.y.T.cpu().numpy())
-        out = model(test_data.x_dict, test_data.edge_index_dict)
-        out = out.detach().cpu().numpy()
-        print("pred pg", out.T)
-        # print(softmax(out, axis=1))
-        # print("Pred bic_placed", out.argmax(1))
 
-        # reset parameters
-        for layer in model.children():
-            if hasattr(layer, 'reset_parameters'):
-                layer.reset_parameters()
+    # loo = LeaveOneOut()
+    # for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):
+    #     # print("\n\n\n\n\nTEST TEST TEST TEST TEST TEST  ", test_idx, "\n\n\n\n\n")
+    #     losses = []
+    #     model.train()
+    #     pbar = tqdm(range(args['epochs']))
+    #     for epoch in pbar:
+    #         optimizer.zero_grad()
+    #         # data.edge_attr_dict
+    #         # mini-batch settings for multi-graphs
+    #         t_loss = 0
+    #         for data in dataset[list(train_idx[:1])]:
+    #             out = model(data.x_dict, data.edge_index_dict)
+    #             loss = loss_fn(out, data['y'])
+    #             loss.backward()
+    #             optimizer.step()
+    #             t_loss += loss.item()
+    #             if args['problem'] == "reg":
+    #                 # REVIEW: meet the dimension of target
+    #                 out = out.T[0]
+
+    #         pbar.set_postfix({'loss': t_loss})
+    #         losses.append(t_loss)
+
+    #     print(f"split {i}", train_idx, test_idx)
+    #     model.eval()
+    #     # train_data = dataset[train_idx[0]]
+    #     # print("true pg", train_data.y.T)
+    #     # out = out.detach().cpu().numpy()
+    #     # print("pred pg", out.T)
+    #     # exit()
+    #     #
+    #     test_data = dataset[test_idx[0]]
+    #     print("True pg", test_data.y.T.cpu().numpy())
+    #     out = model(test_data.x_dict, test_data.edge_index_dict)
+    #     out = out.detach().cpu().numpy()
+    #     print("pred pg", out.T)
+    #     # print(softmax(out, axis=1))
+    #     # print("Pred bic_placed", out.argmax(1))
+
+    #     # reset parameters
+    #     for layer in model.children():
+    #         if hasattr(layer, 'reset_parameters'):
+    #             layer.reset_parameters()
+
     ''' plot the loss function '''
     fig = plt.figure(figsize=(4, 3), tight_layout=True)
     foo = r'training loss'

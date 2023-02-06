@@ -29,10 +29,8 @@ HEADERS = {
 
 def read_file(fn):
     """ Read the MPC file ".m" into dictionary.
-
     Args:
         fn (str): Filename.
-
     Returns:
         dict: A dictionary with keys of attributes.
     """

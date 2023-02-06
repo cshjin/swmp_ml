@@ -74,12 +74,14 @@ class GMD(InMemoryDataset):
             # TODO: replace with net in aug_data
             fn = self.root + "/" + self.name + ".m"
             mpc = read_file(fn)
-            if "INFEASIBLE" in aug_data['result']['termination_status']:
+            if "INFEASIBLE" in aug_data['ac']['result']['termination_status']:
                 pass
             else:
                 h_data = HeteroData()
-                net_data = aug_data['net']
-                res_data = aug_data['result']
+                # net_data = aug_data['net']
+                net_data = aug_data['ac']['result']['solution']
+                # res_data = aug_data['result']
+                res_data = aug_data['ac']['result']
                 for k in net_data['load']:
                     # update pd/qd with augmented config
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
