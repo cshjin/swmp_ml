@@ -88,7 +88,7 @@ class GMD(InMemoryDataset):
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
 
                 # read the pg value from solution
-                y = [res_data['solution']['gen'][k]['pg'] for k in sorted(res_data['solution']['gen'].keys())]
+                y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
                 h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
                 ''' node_type: bus '''
