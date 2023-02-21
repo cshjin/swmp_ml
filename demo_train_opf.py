@@ -47,7 +47,8 @@ class HGT(Module):
         )
         # self.lin = Linear(hidden_channels, out_channels)
 
-    def forward(self, x_dict, edge_index_dict):
+   # def forward(self, x_dict, edge_index_dict):
+    def forward(self, x_dict, edge_index_dict, aligned_keys, num_nodes):
         for node_type, x in x_dict.items():
             x_dict[node_type] = self.lin_dict[node_type](x).relu_()
 
@@ -57,7 +58,27 @@ class HGT(Module):
 
         # note: return node of generator
         # return self.lin(torch.nn.Dropout(0.5)(x_dict['gen']))
-        return self.flatten(x_dict['bus'])
+        # Update the output with aligned keys only
+        # return self.flatten(x_dict['bus'])
+        # output = [x_dict['bus'][k] for k in sum(aligned_keys, [])]  # sum(aligned_keys, []) will merge
+        #                                                     # all the lists in aligned_keys into
+        #                                                     # one list.
+        # TODO: mapping idx based on aligned keys (4,5,...,19,20,...)
+        # output = [x_dict['bus'][k] for k in aligned_keys[0]]
+        extract_final_indices = []
+        index = 0   # Indicates which index we're in for the aligned_keys list
+        shift = 0   # Stores the next index to start from in aligned_keys
+        for index in range(len(aligned_keys)):
+            # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
+            # than a list of integers. I'm not sure why that happens, but I put the int() to typecast the
+            # tensor for now.
+            indices = [int(k + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
+            extract_final_indices.extend(indices)   # Add the shifted aligned_keys to the end of the list
+            shift += num_nodes[index]   # Add the number of nodes of the current network to shift to set
+                                        # the starting index for the next iteration through the aligned_keys
+
+        output = x_dict['bus'][extract_final_indices]  # dim: 320 * 128
+        return self.flatten(output)  # dim: 320 * 1
 
 # class PowerSystemsDataset(Dataset):
 #     def __init__(self):
@@ -111,8 +132,8 @@ if __name__ == "__main__":
                            name=args['name'],
                            problem=args['problem'],
                            force_reprocess=args['force'])
-    data = dataset[0]
-    print(dataset)
+    # data = dataset[0]
+    # print(dataset)
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
@@ -142,7 +163,7 @@ if __name__ == "__main__":
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             # Get the output from the model and compute the loss
-            out = model(data.x_dict, data.edge_index_dict)
+            out = model(data.x_dict, data.edge_index_dict, data.source_ids, data.num_network_nodes)
             loss = loss_fn(out, data['y'])
 
             # Update the gradient and use it
@@ -164,7 +185,7 @@ if __name__ == "__main__":
     # Evaluate the model
     model.eval()
     for data in data_loader_test:
-        pred = model(data.x_dict, data.edge_index_dict)
+        pred = model(data.x_dict, data.edge_index_dict, data.source_ids, data.num_network_nodes)
         print(pred)
         print(data['y'])
         print((pred - data['y']).T)

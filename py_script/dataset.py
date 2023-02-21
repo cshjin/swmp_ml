@@ -67,29 +67,51 @@ class GMD(InMemoryDataset):
         #         load_data = data['net']['load']
         data_list = []
         # enumerate the optimized file, send into a list
-        files = glob(f"../gic-blockers/data/{self.name}_modded_*.json")
-        for f in files:
-            aug_data = json.load(open(f))
+        files_modded = glob(f"../gic-blockers/data/{self.name}_modded_*.json")
+        files_mods = glob(f"../gic-blockers/data/{self.name}_mods_*.json")
+        for f_modded, f_mods in list(zip(files_modded, files_mods)):
+            aug_data_modded = json.load(open(f_modded))
+            aug_data_mods = json.load(open(f_mods))
             # Input filename
             # TODO: replace with net in aug_data
             fn = self.root + "/" + self.name + ".m"
             mpc = read_file(fn)
-            if "INFEASIBLE" in aug_data['ac']['result']['termination_status']:
+            if "INFEASIBLE" in aug_data_modded['ac']['result']['termination_status']:
                 pass
             else:
                 h_data = HeteroData()
+                # Modded version
                 # net_data = aug_data['net']
-                net_data = aug_data['ac']['result']['solution']
                 # res_data = aug_data['result']
-                res_data = aug_data['ac']['result']
-                for k in net_data['load']:
-                    # update pd/qd with augmented config
-                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
-                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
+                # res_data = aug_data_modded['ac']['result']
+                # Mods version
+                net_data = aug_data_mods['load']    # Network input data
+                res_data_modded = aug_data_modded['ac']['result']   # Results data from the network file
+                res_data_mods = aug_data_mods['load']   # Results data from the perturbed mods file
+                for k in net_data:
+                    # update pd/qd with augmented config (mods version)
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data[k]['pd'] * 100
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data[k]['qd'] * 100
+                    # update pd/qd with augmented config (modded version)
+                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
+                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
 
-                # read the pg value from solution
-                y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
+                # read the "pg" value from solution
+                # Modded: "status" version
+                # y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
+                # Modded: "qd" version
+                # y = [res_data['solution']['load'][k]['qd'] for k in sorted(res_data['solution']['load'].keys())]
+                # Mods version
+                # sorted(res_data.keys()) --> gets all the keys in the mods file in sorted order
+                # sorted([res_data[k]['source_id'][1] for k in sorted(res_data.keys())]) --> gets all the source bus ids in sorted order
+                #     Must use str() function on the keys because the keys in res_data_mods['solution']['load'][k]['qd'] are strings
+                source_ids = [str(res_data_mods[k]['source_id'][1]) for k in sorted(res_data_mods.keys())]
+                y = [res_data_modded['solution']['load'][k]['qd'] for k in source_ids]
                 h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
+
+                # Store the aligned keys (source ids) without converting them to a string because the indexing
+                # in the forward function doesn't use strings
+                h_data.source_ids = [res_data_mods[k]['source_id'][1] for k in sorted(res_data_mods.keys())]
 
                 ''' node_type: bus '''
                 # convert the `type` to one-hot encoder
@@ -99,10 +121,17 @@ class GMD(InMemoryDataset):
                 h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
                 # build the bus_i to node_i mapping
-                n_nodes = mpc['bus'].shape[0]
+                h_data.num_network_nodes = mpc['bus'].shape[0]  # Store the number of nodes to
+                                                                # use as the input into the forward
+                                                                # function. Don't use num_nodes because
+                                                                # it's a PyTorch variable that stores
+                                                                # the total number of nodes, regardless
+                                                                # of the type.
                 mapping = {}
-                for i in range(n_nodes):
+                for i in range(h_data.num_network_nodes):
                     mapping[mpc['bus'].bus_i[i]] = i
+
+                # print("\n", h_data.num_network_nodes, h_data.source_ids, "\n")
 
                 ''' node_type: gen '''
                 # creating new virtual link between bus and gen to handle multiple generators
