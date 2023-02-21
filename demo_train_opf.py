@@ -49,6 +49,12 @@ class HGT(Module):
 
    # def forward(self, x_dict, edge_index_dict):
     def forward(self, x_dict, edge_index_dict, aligned_keys, num_nodes):
+        # Some small error checks:
+        # The number of entries in aligned_keys should be the same as the number of entries in num_nodes
+        if(not(len(aligned_keys) == len(num_nodes))):
+            print("Dimension mismatch between the aligned keys and number of nodes (forward function).")
+            exit()
+
         for node_type, x in x_dict.items():
             x_dict[node_type] = self.lin_dict[node_type](x).relu_()
 
@@ -66,7 +72,7 @@ class HGT(Module):
         # TODO: mapping idx based on aligned keys (4,5,...,19,20,...)
         # output = [x_dict['bus'][k] for k in aligned_keys[0]]
         extract_final_indices = []
-        index = 0   # Indicates which index we're in for the aligned_keys list
+        index = 0   # Indicates which index we're in for the aligned_keys list.
         shift = 0   # Stores the next index to start from in aligned_keys
         for index in range(len(aligned_keys)):
             # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
