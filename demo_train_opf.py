@@ -13,6 +13,7 @@ from sklearn.preprocessing import normalize
 from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
                       MSELoss, ReLU, Sequential, Dropout)
 from torch_geometric.loader import DataLoader
+import torch.nn.functional as F
 # from torch.utils.data import Dataset
 from torch_geometric.nn import HGTConv, Linear, HANConv
 from tqdm import tqdm
@@ -49,12 +50,15 @@ class HGT(Module):
         # self.lin = Linear(hidden_channels, out_channels)
 
    # def forward(self, x_dict, edge_index_dict):
-    def forward(self, x_dict, edge_index_dict, aligned_keys, num_nodes):
+    def forward(self, data):
         # Some small error checks:
         # The number of entries in aligned_keys should be the same as the number of entries in num_nodes
-        if(not(len(aligned_keys) == len(num_nodes))):
-            print("Dimension mismatch between the aligned keys and number of nodes (forward function).")
-            exit()
+        # if(not(len(aligned_keys) == len(num_nodes))):
+        #     print("Dimension mismatch between the aligned keys and number of nodes (forward function).")
+        # exit()
+        x_dict = data.x_dict
+        edge_index_dict = data.edge_index_dict
+        node_idx = data.node_idx_y
 
         for node_type, x in x_dict.items():
             x_dict[node_type] = self.lin_dict[node_type](x).relu_()
@@ -72,27 +76,26 @@ class HGT(Module):
         #                                                     # one list.
         # TODO: mapping idx based on aligned keys (4,5,...,19,20,...)
         # output = [x_dict['bus'][k] for k in aligned_keys[0]]
-        extract_final_indices = []
-        index = 0   # Indicates which index we're in for the aligned_keys list.
-        shift = 0   # Stores the next index to start from in aligned_keys
-        for index in range(len(aligned_keys)):
-            # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
-            # than a list of integers. I'm not sure why that happens, but I put the int() to typecast the
-            # tensor for now.
-            indices = [(int(k) + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
-            extract_final_indices.extend(indices)   # Add the shifted aligned_keys to the end of the list
-            shift += num_nodes[index]   # Add the number of nodes of the current network to shift to set
-                                        # the starting index for the next iteration through the aligned_keys
+        # extract_final_indices = []
+        # index = 0   # Indicates which index we're in for the aligned_keys list.
+        # shift = 0   # Stores the next index to start from in aligned_keys
+        # for index in range(len(aligned_keys)):
+        #     # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
+        #     # than a list of integers. I'm not sure why that happens, but I put the int() to typecast the
+        #     # tensor for now.
+        #     indices = [(int(k) + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
+        #     extract_final_indices.extend(indices)   # Add the shifted aligned_keys to the end of the list
+        #     shift += num_nodes[index]   # Add the number of nodes of the current network to shift to set
+        #                                 # the starting index for the next iteration through the aligned_keys
 
-        output = x_dict['bus'][extract_final_indices]  # dim: 320 * 128
+        batch_node_idx = []
+        for s in range(data.num_graphs):
+            for idx in node_idx[0]:
+                batch_node_idx.append(idx + 19 * s)
+
+        # batch_node_idx = [node_idx[0] + 19 * s for s in range(data.num_graphs)]
+        output = x_dict['bus'][batch_node_idx]  # dim: 320 * 128
         return self.flatten(output)  # dim: 320 * 1
-
-# class PowerSystemsDataset(Dataset):
-#     def __init__(self):
-        
-#     def __getitem__(self, index):
-    
-#     def __len__(self):
 
 
 if __name__ == "__main__":
@@ -155,12 +158,12 @@ if __name__ == "__main__":
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
-                            batch_size=64,
-                            shuffle=True)
+                                   batch_size=64,
+                                   shuffle=True)
 
     data_loader_test = DataLoader(dataset=dataset_test,
-                            batch_size=64,
-                            shuffle=True)    
+                                  batch_size=64,
+                                  shuffle=True)
 
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
@@ -174,15 +177,16 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
 
     # Training code for the DataLoader version
-    losses = [] # Create a list to store the losses each iteration
+    losses = []  # Create a list to store the losses each iteration
     pbar = tqdm(range(args['epochs']), desc=args['name'])
     for epoch in pbar:
         # Mini-batch settings for multi-graphs
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             # Get the output from the model and compute the loss
-            out = model(data.x_dict, data.edge_index_dict, data.list_load_bus, data.num_network_nodes)
-            loss = loss_fn(out, data['y'])
+            out = model(data)
+            # prob = (F.softmax(out, -1).max(-1)[0]).flatten()
+            loss = F.cross_entropy(out, data['y'])
 
             # Update the gradient and use it
             optimizer.zero_grad()   # Zero the gradient
@@ -195,11 +199,11 @@ if __name__ == "__main__":
             # Print some information about the current iteration
             # print("Epoch", epoch, "i", i, "loss.item()", loss.item())
         pbar.set_postfix({"loss": t_loss})
-        
-        # Store some information about the accumulated loss in the current
-        # iteration of the epoch  
-        losses.append(t_loss)
 
+        # Store some information about the accumulated loss in the current
+        # iteration of the epoch
+        losses.append(t_loss)
+    exit()
     # Evaluate the model
     model.eval()
     for data in data_loader_test:
@@ -211,7 +215,6 @@ if __name__ == "__main__":
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
         plt.savefig("tmp.png")
         exit()
-
 
     # loo = LeaveOneOut()
     # for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):

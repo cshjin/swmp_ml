@@ -53,79 +53,64 @@ class GMD(InMemoryDataset):
 
     def process(self):
         """ Process the raw file, and save to processed files. """
-
-        # NOTE: removed for opf
-        # fn = self.root + "/results/" + self.name + "_results.json"
-        # dc_placement = json.load(open(fn))
-        # res_gmd_bus = pd.DataFrame.from_dict(dc_placement['solution']['gmd_bus']).T.sort_index()
-        # res_gmd_bus = res_gmd_bus.drop(['source_id'], axis=1)
-
-        # for f in glob("../../gic-blocker/data/*_modded_*.json"):
-        #     data = json.load(open(f))
-        #     if "INFEASIBLE" in data['result']['termination_status']:
-        #         pass
-        #     else:
-        #         load_data = data['net']['load']
         data_list = []
         # enumerate the optimized file, send into a list
-        files_modded = glob(f"../gic-blockers/data/{self.name}_modded_*.json")
-        # files_mods = glob(f"../gic-blockers/data/{self.name}_mods_*.json")
-        count = 1
-        for f_modded in list(files_modded):
-        # for f_modded, f_mods in list(zip(files_modded, files_mods)):
-            # Print the file number we're on
-            print("Processing file #" + str(count))
-            count += 1
-
+        res_files = glob(f"../gic-blockers/results/{self.name}_*.json")
+        for res_f in list(res_files):
             # Modded version
-            aug_data = json.load(open(f_modded))
-            # Mods version
-            # aug_data_modded = json.load(open(f_modded))
-            # aug_data_mods = json.load(open(f_mods))
-            # Input filename
-            # TODO: replace with net in aug_data
+            res_data = json.load(open(res_f))
+            # read the matpower file
             fn = self.root + "/" + self.name + ".m"
             mpc = read_file(fn)
-            if "INFEASIBLE" in aug_data['ac']['result']['termination_status']:
-            # if "INFEASIBLE" in aug_data_modded['ac']['result']['termination_status']:
+
+            if "INFEASIBLE" in res_data['ac']['result']['termination_status']:
                 pass
             else:
                 h_data = HeteroData()
                 # Modded version
-                net_data = aug_data['ac']['case']['load']
-                # res_data = aug_data['result']
-                res_data = aug_data['ac']['result']
-                # Mods version
-                # net_data = aug_data_mods['load']    # Network input data
-                # res_data_modded = aug_data_modded['ac']['result']   # Results data from the network file
-                # res_data_mods = aug_data_mods['load']   # Results data from the perturbed mods file
-                h_data.list_load_bus = []  # Stores all the bus_i indices from the "load_bus" variable (basically the
-                                        # aligned keys). Used for extracting the results.
-                for k in net_data:
-                    # update pd/qd with augmented config (mods version)
-                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data[k]['pd'] * 100
-                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data[k]['qd'] * 100
-                    # update pd/qd with augmented config (modded version)
-                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Pd"] = net_data['load'][k]['pd'] * 100
-                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = net_data['load'][k]['qd'] * 100
-                    
-                    # If the "source_id" is "bus" instead of "qloss," then the index stored in the "load_bus"
-                    # variable is an aligned key for the y label output
-                    if (net_data[k]['source_id'][0] == "bus"):
-                        # Type cast to string because the result indices are strings
-                        h_data.list_load_bus.append(str(net_data[k]['source_id'][1])) 
+                case_load = res_data['ac']['case']['load']
+                res_load = res_data['ac']['result']['solution']['load']
+
+                # a dict from bus_i to load_idx
+                map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx
+                                   for load_idx in case_load if case_load[load_idx]['source_id'][0] == "bus"}
+
+                # Stores all the bus_i indices from the "load_bus" variable (basically the
+                # aligned keys). Used for extracting the results.
+                # h_data.list_load_bus = []
+                for k in map_bus_to_load:
+                    # update pd/qd with bus_i
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
+                                   "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
+                                   "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
+
+                if self.problem == "clf":
+                    y = [res_load[map_bus_to_load[k]]['status']
+                         for k in sorted(list(map_bus_to_load.keys()))]
+                    h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
+                else:
+                    y = [res_load[map_bus_to_load[k]]['qd']
+                         for k in sorted(list(map_bus_to_load.keys()))]
+                    h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
+
+                # If the "source_id" is "bus" instead of "qloss," then the index stored in the "load_bus"
+                # variable is an aligned key for the y label output
+                # if (case_data[k]['source_id'][0] == "bus"):
+                #     # Type cast to string because the result indices are strings
+                #     h_data.list_load_bus.append(str(case_data[k]['source_id'][1]))
 
                 # read the "pg" value from solution using the bus_i values (aligned keys)
                 # Modded: "status" version
                 # y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
                 # Different code depending on the problem
-                if(self.problem == "clf"):
-                    y = [res_data['solution']['load'][k]['status'] for k in sorted(h_data.list_load_bus)]
-                elif(self.problem == "reg"):
-                    y = [res_data['solution']['load'][k]['qd'] for k in sorted(h_data.list_load_bus)]
-                else:
-                    print("Invalid problem type: " + self.problem + ". Must be either \"clf\" or \"reg\".")
-                    exit()
+                # if self.problem == "clf":
+                #     y = [res_load[k]['status'] for k in sorted(h_data.list_load_bus)]
+                # elif self.problem == "reg":
+                #     y = [res_load[k]['qd'] for k in sorted(h_data.list_load_bus)]
+                # else:
+                #     print("Invalid problem type: " + self.problem + ". Must be either \"clf\" or \"reg\".")
+                    # exit()
                 # y = [res_data['solution']['load'][k]['status'] for k in sorted(h_data.list_load_bus)]
                 # Modded: "qd" version
                 # y = [res_data['solution']['load'][k]['qd'] for k in sorted(res_data['solution']['load'].keys())]
@@ -135,7 +120,6 @@ class GMD(InMemoryDataset):
                 #     Must use str() function on the keys because the keys in res_data_mods['solution']['load'][k]['qd'] are strings
                 # source_ids = [str(res_data_mods[k]['source_id'][1]) for k in sorted(res_data_mods.keys())]
                 # y = [res_data_modded['solution']['load'][k]['qd'] for k in source_ids]
-                h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
                 # Store the aligned keys (source ids) without converting them to a string because the indexing
                 # in the forward function doesn't use strings
@@ -151,14 +135,17 @@ class GMD(InMemoryDataset):
 
                 # build the bus_i to node_i mapping
                 h_data.num_network_nodes = mpc['bus'].shape[0]  # Store the number of nodes to
-                                                                # use as the input into the forward
-                                                                # function. Don't use num_nodes because
-                                                                # it's a PyTorch variable that stores
-                                                                # the total number of nodes, regardless
-                                                                # of the type.
+                # use as the input into the forward
+                # function. Don't use num_nodes because
+                # it's a PyTorch variable that stores
+                # the total number of nodes, regardless
+                # of the type.
                 mapping = {}
                 for i in range(h_data.num_network_nodes):
                     mapping[mpc['bus'].bus_i[i]] = i
+
+                # NOTE: extract the node_i from bus_i for perturbed load
+                h_data.node_idx_y = [mapping[k] for k in h_data.map_bus_to_load]
 
                 ''' node_type: gen '''
                 # creating new virtual link between bus and gen to handle multiple generators
@@ -273,13 +260,13 @@ class GMD(InMemoryDataset):
         #     data_to_modify.y = torch.Tensor(standard_data)
         # Check to see if we have a pre-transform function
         if(self.pre_transform is not None):
-            y_output = [(data_list[k].y).tolist() for k in range(len(data_list))] # Extract all the y outputs
+            y_output = [(data_list[k].y).tolist() for k in range(len(data_list))]  # Extract all the y outputs
             y_output = [sum(temp_list, []) for temp_list in y_output]   # Each element in the list is actually just a
-                                                                        # list with a single number, so remove those
-                                                                        # extra list bindings. Note: this seems to cause
-                                                                        # a warning because the target size changes, as
-                                                                        # we're no longer storing a list of single-element
-                                                                        # lists for each network.
+            # list with a single number, so remove those
+            # extra list bindings. Note: this seems to cause
+            # a warning because the target size changes, as
+            # we're no longer storing a list of single-element
+            # lists for each network.
             y_output = self.pre_transform(y_output, axis=0)             # Apply sklearn's StandardScalar function
             for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
                 data_to_modify.y = torch.Tensor(standard_data)
