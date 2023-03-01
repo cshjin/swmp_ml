@@ -8,6 +8,7 @@ from sklearn import datasets
 import torch
 from scipy.special import softmax
 from sklearn.model_selection import LeaveOneOut, train_test_split
+from sklearn.preprocessing import normalize
 # from torch import nn
 from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
                       MSELoss, ReLU, Sequential, Dropout)
@@ -78,7 +79,7 @@ class HGT(Module):
             # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
             # than a list of integers. I'm not sure why that happens, but I put the int() to typecast the
             # tensor for now.
-            indices = [int(k + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
+            indices = [(int(k) + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
             extract_final_indices.extend(indices)   # Add the shifted aligned_keys to the end of the list
             shift += num_nodes[index]   # Add the number of nodes of the current network to shift to set
                                         # the starting index for the next iteration through the aligned_keys
@@ -114,14 +115,24 @@ if __name__ == "__main__":
                         help="number of layers in HGT")
     parser.add_argument("--epochs", type=int, default=200,
                         help="number of epochs in training")
+    parser.add_argument("--pre_transform", type=str, default=None, choices=["normalize"],
+                        help="the transform function used while processing the data")
     args = vars(parser.parse_args())
+
+    # Get the type of pre-transform function
+    if(args['pre_transform'] == "normalize"):
+        pre_transform_function = normalize
+    else:
+        pre_transform_function = None
+    # pre_transform_function = normalize
 
     # readout the dataset `pyg.heterodata`
     if args['name'] != "all":
         dataset = GMD("./test/data",
                       name=args['name'],
                       problem=args['problem'],
-                      force_reprocess=args['force'])
+                      force_reprocess=args['force'],
+                      pre_transform=pre_transform_function)
         data = dataset[0]
         # print(data['bus'].x.shape,
         #       data['gen'].x.shape,
@@ -137,7 +148,8 @@ if __name__ == "__main__":
         dataset = MultiGMD("./test/data",
                            name=args['name'],
                            problem=args['problem'],
-                           force_reprocess=args['force'])
+                           force_reprocess=args['force'],
+                           pre_transform=pre_transform_function)
     # data = dataset[0]
     # print(dataset)
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
@@ -169,7 +181,7 @@ if __name__ == "__main__":
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             # Get the output from the model and compute the loss
-            out = model(data.x_dict, data.edge_index_dict, data.source_ids, data.num_network_nodes)
+            out = model(data.x_dict, data.edge_index_dict, data.list_load_bus, data.num_network_nodes)
             loss = loss_fn(out, data['y'])
 
             # Update the gradient and use it
@@ -191,7 +203,7 @@ if __name__ == "__main__":
     # Evaluate the model
     model.eval()
     for data in data_loader_test:
-        pred = model(data.x_dict, data.edge_index_dict, data.source_ids, data.num_network_nodes)
+        pred = model(data.x_dict, data.edge_index_dict, data.list_bus_i, data.num_network_nodes)
         print(pred)
         print(data['y'])
         print((pred - data['y']).T)
