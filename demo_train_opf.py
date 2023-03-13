@@ -67,27 +67,6 @@ class HGT(Module):
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
 
-        # note: return node of generator
-        # return self.lin(torch.nn.Dropout(0.5)(x_dict['gen']))
-        # Update the output with aligned keys only
-        # return self.flatten(x_dict['bus'])
-        # output = [x_dict['bus'][k] for k in sum(aligned_keys, [])]  # sum(aligned_keys, []) will merge
-        #                                                     # all the lists in aligned_keys into
-        #                                                     # one list.
-        # TODO: mapping idx based on aligned keys (4,5,...,19,20,...)
-        # output = [x_dict['bus'][k] for k in aligned_keys[0]]
-        # extract_final_indices = []
-        # index = 0   # Indicates which index we're in for the aligned_keys list.
-        # shift = 0   # Stores the next index to start from in aligned_keys
-        # for index in range(len(aligned_keys)):
-        #     # TODO: starting from the second index (index 1), indices will produce a list of tensors rather
-        #     # than a list of integers. I'm not sure why that happens, but I put the int() to typecast the
-        #     # tensor for now.
-        #     indices = [(int(k) + shift) for k in aligned_keys[index]]  # Shift the aligned keys in the current network
-        #     extract_final_indices.extend(indices)   # Add the shifted aligned_keys to the end of the list
-        #     shift += num_nodes[index]   # Add the number of nodes of the current network to shift to set
-        #                                 # the starting index for the next iteration through the aligned_keys
-
         batch_node_idx = []
         for s in range(data.num_graphs):
             for idx in node_idx[0]:
@@ -137,25 +116,16 @@ if __name__ == "__main__":
                       force_reprocess=args['force'],
                       pre_transform=pre_transform_function)
         data = dataset[0]
-        # print(data['bus'].x.shape,
-        #       data['gen'].x.shape,
-        #       data['gmd_bus'].x.shape)
-        # print(data['branch'].edge_attr.shape,
-        #       data['branch_gmd'].edge_attr.shape,
-        #       data['gmd_branch'].edge_attr.shape)
-        # print(data[("gen", "conn", "bus")].edge_index.shape)
-        # print(data[("gmd_bus", "attach", "bus")].edge_index.shape)
-
-        # exit()
     else:
         dataset = MultiGMD("./test/data",
                            name=args['name'],
                            problem=args['problem'],
                            force_reprocess=args['force'],
                            pre_transform=pre_transform_function)
-    # data = dataset[0]
-    # print(dataset)
+
+    # Train and test split for our datasets
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
+
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
                                    batch_size=64,
@@ -216,51 +186,6 @@ if __name__ == "__main__":
         plt.savefig("tmp.png")
         exit()
 
-    # loo = LeaveOneOut()
-    # for i, (train_idx, test_idx) in enumerate(loo.split(np.arange(len(dataset)))):
-    #     # print("\n\n\n\n\nTEST TEST TEST TEST TEST TEST  ", test_idx, "\n\n\n\n\n")
-    #     losses = []
-    #     model.train()
-    #     pbar = tqdm(range(args['epochs']))
-    #     for epoch in pbar:
-    #         optimizer.zero_grad()
-    #         # data.edge_attr_dict
-    #         # mini-batch settings for multi-graphs
-    #         t_loss = 0
-    #         for data in dataset[list(train_idx[:1])]:
-    #             out = model(data.x_dict, data.edge_index_dict)
-    #             loss = loss_fn(out, data['y'])
-    #             loss.backward()
-    #             optimizer.step()
-    #             t_loss += loss.item()
-    #             if args['problem'] == "reg":
-    #                 # REVIEW: meet the dimension of target
-    #                 out = out.T[0]
-
-    #         pbar.set_postfix({'loss': t_loss})
-    #         losses.append(t_loss)
-
-    #     print(f"split {i}", train_idx, test_idx)
-    #     model.eval()
-    #     # train_data = dataset[train_idx[0]]
-    #     # print("true pg", train_data.y.T)
-    #     # out = out.detach().cpu().numpy()
-    #     # print("pred pg", out.T)
-    #     # exit()
-    #     #
-    #     test_data = dataset[test_idx[0]]
-    #     print("True pg", test_data.y.T.cpu().numpy())
-    #     out = model(test_data.x_dict, test_data.edge_index_dict)
-    #     out = out.detach().cpu().numpy()
-    #     print("pred pg", out.T)
-    #     # print(softmax(out, axis=1))
-    #     # print("Pred bic_placed", out.argmax(1))
-
-    #     # reset parameters
-    #     for layer in model.children():
-    #         if hasattr(layer, 'reset_parameters'):
-    #             layer.reset_parameters()
-
     ''' plot the loss function '''
     # fig = plt.figure(figsize=(4, 3), tight_layout=True)
     # foo = r'training loss'
@@ -269,3 +194,8 @@ if __name__ == "__main__":
     # plt.xlabel("epoch")
     # plt.title(f"Hete-Graph - {args['problem']}")
     # plt.savefig(f"losses - {args['problem']}.png")
+
+# TODO:
+# - Fix the issue with epri21.m in the version_0.5.5 optimizer (finished)
+# - Look into the issue with the "IndexError: list index out of range" error (finished)
+# - Run the optimizer in the ots_test matpower file

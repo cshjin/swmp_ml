@@ -77,7 +77,6 @@ class GMD(InMemoryDataset):
 
                 # Stores all the bus_i indices from the "load_bus" variable (basically the
                 # aligned keys). Used for extracting the results.
-                # h_data.list_load_bus = []
                 for k in h_data.map_bus_to_load:
                     # update pd/qd with bus_i
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
@@ -94,38 +93,6 @@ class GMD(InMemoryDataset):
                          for k in sorted(list(h_data.map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
-                # If the "source_id" is "bus" instead of "qloss," then the index stored in the "load_bus"
-                # variable is an aligned key for the y label output
-                # if (case_data[k]['source_id'][0] == "bus"):
-                #     # Type cast to string because the result indices are strings
-                #     h_data.list_load_bus.append(str(case_data[k]['source_id'][1]))
-
-                # read the "pg" value from solution using the bus_i values (aligned keys)
-                # Modded: "status" version
-                # y = [res_data['solution']['load'][k]['status'] for k in sorted(res_data['solution']['load'].keys())]
-                # Different code depending on the problem
-                # if self.problem == "clf":
-                #     y = [res_load[k]['status'] for k in sorted(h_data.list_load_bus)]
-                # elif self.problem == "reg":
-                #     y = [res_load[k]['qd'] for k in sorted(h_data.list_load_bus)]
-                # else:
-                #     print("Invalid problem type: " + self.problem + ". Must be either \"clf\" or \"reg\".")
-                    # exit()
-                # y = [res_data['solution']['load'][k]['status'] for k in sorted(h_data.list_load_bus)]
-                # Modded: "qd" version
-                # y = [res_data['solution']['load'][k]['qd'] for k in sorted(res_data['solution']['load'].keys())]
-                # Mods version
-                # sorted(res_data.keys()) --> gets all the keys in the mods file in sorted order
-                # sorted([res_data[k]['source_id'][1] for k in sorted(res_data.keys())]) --> gets all the source bus ids in sorted order
-                #     Must use str() function on the keys because the keys in res_data_mods['solution']['load'][k]['qd'] are strings
-                # source_ids = [str(res_data_mods[k]['source_id'][1]) for k in sorted(res_data_mods.keys())]
-                # y = [res_data_modded['solution']['load'][k]['qd'] for k in source_ids]
-
-                # Store the aligned keys (source ids) without converting them to a string because the indexing
-                # in the forward function doesn't use strings
-                # Mods version
-                # h_data.source_ids = [res_data_mods[k]['source_id'][1] for k in sorted(res_data_mods.keys())]
-
                 ''' node_type: bus '''
                 # convert the `type` to one-hot encoder
                 mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
@@ -133,13 +100,11 @@ class GMD(InMemoryDataset):
                 mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
                 h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
-                # build the bus_i to node_i mapping
-                h_data.num_network_nodes = mpc['bus'].shape[0]  # Store the number of nodes to
-                # use as the input into the forward
-                # function. Don't use num_nodes because
-                # it's a PyTorch variable that stores
-                # the total number of nodes, regardless
-                # of the type.
+                # Store the number of nodes to use as the input into the forward function. Don't use num_nodes because
+                # it's a PyTorch variable that stores the total number of nodes, regardless of the type.
+                h_data.num_network_nodes = mpc['bus'].shape[0]  
+
+                # Build the bus_i to node_i mapping.
                 mapping = {}
                 for i in range(h_data.num_network_nodes):
                     mapping[mpc['bus'].bus_i[i]] = i
@@ -206,28 +171,6 @@ class GMD(InMemoryDataset):
                 ''' node_type: gmd_bus '''
                 # NOTE: only read GMD from conf file
                 h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
-                # NOTE: removed in opf problem
-                # process `gmd_bus` from PowerModelsGMD results
-                # if self.problem == 'clf':
-                #     # classification problem
-                #     gmd_bus_attr = res_gmd_bus[['gmd_vdc', 'status', 'g_gnd']].astype('float').to_numpy()
-                #     h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
-
-                #     # same dimension as `gmd_bus`
-                #     h_data['y'] = torch.tensor(res_gmd_bus['blocker_placed'].astype("int").to_numpy(), dtype=torch.long)
-
-                # elif self.problem == "reg":
-                #     # regression problem
-                #     gmd_bus_attr = res_gmd_bus[['blocker_placed', 'status', 'g_gnd']].astype('float').to_numpy()
-                #     h_data['gmd_bus'].x = torch.tensor(gmd_bus_attr, dtype=torch.float32)
-
-                #     # same dimension as `gmd_bus`
-                #     y = res_gmd_bus['gmd_vdc'].astype("float").to_numpy()
-                #     # REVIEW: normalize
-                #     # y = (y-y.min()) / (y.max() - y.min())
-                #     h_data['y'] = torch.tensor(y, dtype=torch.float32)
-                # else:
-                #     raise Exception("Unknown problem setting, `clf` or `reg` only.")
 
                 ''' edge_type: gmd_bus--gmd_branch--gmd_bus '''
                 gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
@@ -258,18 +201,19 @@ class GMD(InMemoryDataset):
         # y_output = scalar.fit_transform(y_output).tolist()  # Apply sklearn's StandardScalar function
         # for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
         #     data_to_modify.y = torch.Tensor(standard_data)
-        # Check to see if we have a pre-transform function
-        if(self.pre_transform is not None):
-            y_output = [(data_list[k].y).tolist() for k in range(len(data_list))]  # Extract all the y outputs
-            y_output = [sum(temp_list, []) for temp_list in y_output]   # Each element in the list is actually just a
-            # list with a single number, so remove those
-            # extra list bindings. Note: this seems to cause
-            # a warning because the target size changes, as
-            # we're no longer storing a list of single-element
-            # lists for each network.
-            y_output = self.pre_transform(y_output, axis=0)             # Apply sklearn's StandardScalar function
-            for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
-                data_to_modify.y = torch.Tensor(standard_data)
+        
+        # # Check to see if we have a pre-transform function
+        # if(self.pre_transform is not None):
+        #     y_output = [(data_list[k].y).tolist() for k in range(len(data_list))]  # Extract all the y outputs
+        #     y_output = [sum(temp_list, []) for temp_list in y_output]   # Each element in the list is actually just a
+        #     # list with a single number, so remove those
+        #     # extra list bindings. Note: this seems to cause
+        #     # a warning because the target size changes, as
+        #     # we're no longer storing a list of single-element
+        #     # lists for each network.
+        #     y_output = self.pre_transform(y_output, axis=0)             # Apply sklearn's StandardScalar function
+        #     for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
+        #         data_to_modify.y = torch.Tensor(standard_data)
 
         # save to the processed path
         torch.save(self.collate(data_list), self.processed_paths[0])
