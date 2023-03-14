@@ -57,23 +57,25 @@ class GMD(InMemoryDataset):
         # enumerate the optimized file, send into a list
         res_files = glob(f"../gic-blockers/results/{self.name}_*.json")
         for res_f in list(res_files):
+            id = str(res_files)[-11:-7]
+            mods_file = f"../gic-blockers/mods/{self.name}_{id}.json"
+            mods_load = json.load(open(mods_file))
+
             # Modded version
             res_data = json.load(open(res_f))
             # read the matpower file
             fn = self.root + "/" + self.name + ".m"
             mpc = read_file(fn)
 
-            if "INFEASIBLE" in res_data['ac']['result']['termination_status']:
+            if "INFEASIBLE" in res_data['termination_status']:
                 pass
             else:
                 h_data = HeteroData()
-                # Modded version
-                case_load = res_data['ac']['case']['load']
-                res_load = res_data['ac']['result']['solution']['load']
+                case_load = mods_load['load']
+                res_load = res_data['solution']['load']
 
                 # a dict from bus_i to load_idx
-                h_data.map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx
-                                   for load_idx in case_load if case_load[load_idx]['source_id'][0] == "bus"}
+                h_data.map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
 
                 # Stores all the bus_i indices from the "load_bus" variable (basically the
                 # aligned keys). Used for extracting the results.
@@ -83,6 +85,10 @@ class GMD(InMemoryDataset):
                                    "Pd"] = case_load[h_data.map_bus_to_load[k]]['pd'] * 100
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
                                    "Qd"] = case_load[h_data.map_bus_to_load[k]]['qd'] * 100
+                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(h_data.map_bus_to_load[k]),
+                    #                "Pd"] = case_load[k]['pd'] * 100
+                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(h_data.map_bus_to_load[k]),
+                    #                "Qd"] = case_load[k]['qd'] * 100
 
                 if self.problem == "clf":
                     y = [res_load[h_data.map_bus_to_load[k]]['status']
@@ -201,7 +207,7 @@ class GMD(InMemoryDataset):
         # y_output = scalar.fit_transform(y_output).tolist()  # Apply sklearn's StandardScalar function
         # for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
         #     data_to_modify.y = torch.Tensor(standard_data)
-        
+
         # # Check to see if we have a pre-transform function
         # if(self.pre_transform is not None):
         #     y_output = [(data_list[k].y).tolist() for k in range(len(data_list))]  # Extract all the y outputs
