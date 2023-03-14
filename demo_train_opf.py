@@ -204,6 +204,4 @@ if __name__ == "__main__":
     # plt.savefig(f"losses - {args['problem']}.png")
 
 # TODO:
-# - Fix the issue with epri21.m in the version_0.5.5 optimizer (finished)
-# - Look into the issue with the "IndexError: list index out of range" error (finished)
-# - Run the optimizer in the ots_test matpower file
+# - python.exe .\demo_train_opf.py --problem reg --force --num_layers 3 --test_split 0.996 --hidden_size 64 --epochs 500
