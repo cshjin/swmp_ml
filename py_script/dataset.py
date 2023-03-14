@@ -97,6 +97,8 @@ class GMD(InMemoryDataset):
                 else:
                     y = [res_load[h_data.map_bus_to_load[k]]['qd']
                          for k in sorted(list(h_data.map_bus_to_load.keys()))]
+                    # y = [res_load[h_data.map_bus_to_load[k]]['status']
+                    #      for k in sorted(list(h_data.map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
                 ''' node_type: bus '''

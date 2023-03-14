@@ -99,6 +99,8 @@ if __name__ == "__main__":
                         help="number of epochs in training")
     parser.add_argument("--pre_transform", type=str, default=None, choices=["normalize"],
                         help="the transform function used while processing the data")
+    parser.add_argument("--test_split", type=float, default=0.2,
+                        help="the proportion of datasets to use for testing")
     args = vars(parser.parse_args())
 
     # Get the type of pre-transform function
@@ -124,7 +126,7 @@ if __name__ == "__main__":
                            pre_transform=pre_transform_function)
 
     # Train and test split for our datasets
-    dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
+    dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'])
 
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
@@ -156,7 +158,11 @@ if __name__ == "__main__":
             # Get the output from the model and compute the loss
             out = model(data)
             # prob = (F.softmax(out, -1).max(-1)[0]).flatten()
-            loss = F.cross_entropy(out, data['y'])
+            # print(out)
+            # print(data['y'])
+            loss = F.mse_loss(out, data['y'])
+            # loss = F.cross_entropy(out, data['y'])
+            # print(loss)
 
             # Update the gradient and use it
             optimizer.zero_grad()   # Zero the gradient
@@ -173,18 +179,20 @@ if __name__ == "__main__":
         # Store some information about the accumulated loss in the current
         # iteration of the epoch
         losses.append(t_loss)
-    exit()
+    
     # Evaluate the model
     model.eval()
-    for data in data_loader_test:
-        pred = model(data.x_dict, data.edge_index_dict, data.list_bus_i, data.num_network_nodes)
+    for data in data_loader_train:
+        # pred = model(data.x_dict, data.edge_index_dict, data.list_bus_i, data.num_network_nodes)
+        pred = model(data)
         print(pred)
         print(data['y'])
-        print((pred - data['y']).T)
+        # print((pred - data['y']).T)
         plt.plot(data['y'], "ro", label="true")
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
+        plt.legend()
         plt.savefig("tmp.png")
-        exit()
+        # exit()
 
     ''' plot the loss function '''
     # fig = plt.figure(figsize=(4, 3), tight_layout=True)
