@@ -45,12 +45,10 @@ class HGT(Module):
             ReLU(),
             Linear(hidden_channels, hidden_channels),
             ReLU(),
-            # Dropout(0.5),
             Linear(hidden_channels, out_channels),
         )
         # self.lin = Linear(hidden_channels, out_channels)
 
-   # def forward(self, x_dict, edge_index_dict):
     def forward(self, data):
         # Some small error checks:
         # The number of entries in aligned_keys should be the same as the number of entries in num_nodes
@@ -147,7 +145,9 @@ if __name__ == "__main__":
 
     # adjust the loss function accordingly
     loss_fn = CrossEntropyLoss() if args['problem'] == "clf" else MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'], weight_decay=args['weight_decay'])
+    optimizer = torch.optim.Adam(model.parameters(),
+                                 lr=args['lr'],
+                                 weight_decay=args['weight_decay'])
 
     # Training code for the DataLoader version
     losses = []  # Create a list to store the losses each iteration
@@ -157,16 +157,11 @@ if __name__ == "__main__":
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             # Get the output from the model and compute the loss
+            optimizer.zero_grad()   # Zero the gradient
             out = model(data)
-            # prob = (F.softmax(out, -1).max(-1)[0]).flatten()
-            # print(out)
-            # print(data['y'])
             loss = F.mse_loss(out, data['y'])
-            # loss = F.cross_entropy(out, data['y'])
-            # print(loss)
 
             # Update the gradient and use it
-            optimizer.zero_grad()   # Zero the gradient
             loss.backward()        # Perform backpropagation
             optimizer.step()        # Update the weights
 
@@ -183,17 +178,13 @@ if __name__ == "__main__":
 
     # Evaluate the model
     model.eval()
-    for data in data_loader_train:
-        # pred = model(data.x_dict, data.edge_index_dict, data.list_bus_i, data.num_network_nodes)
+    for data in data_loader_test:
         pred = model(data)
-        print(pred)
-        print(data['y'])
-        # print((pred - data['y']).T)
         plt.plot(data['y'], "ro", label="true")
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
         plt.legend()
         plt.savefig("tmp.png")
-        # exit()
+        exit()
 
     ''' plot the loss function '''
     # fig = plt.figure(figsize=(4, 3), tight_layout=True)
@@ -206,3 +197,7 @@ if __name__ == "__main__":
 
 # TODO:
 # - python.exe .\demo_train_opf.py --problem reg --force --num_layers 3 --test_split 0.996 --hidden_size 64 --epochs 500
+
+
+# TODO:
+# check without HeteroGNN, use MLP(data.x_dict['bus']) instead.

@@ -4,16 +4,15 @@ Create a dataset with HeteroData format.
 import json
 import os.path as osp
 import shutil
+from glob import glob
 from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
 import torch
 from torch_geometric.data import HeteroData, InMemoryDataset
-from sklearn.preprocessing import StandardScaler
 
 from py_script.utils import create_dir, read_file
-from glob import glob
 
 
 class GMD(InMemoryDataset):
@@ -56,8 +55,8 @@ class GMD(InMemoryDataset):
         data_list = []
         # enumerate the optimized file, send into a list
         res_files = glob(f"../gic-blockers/results/{self.name}_*.json")
-        for res_f in list(res_files):
-            id = str(res_files)[-11:-7]
+        for res_f in res_files:
+            id = res_f[-9:-5]
             mods_file = f"../gic-blockers/mods/{self.name}_{id}.json"
             mods_load = json.load(open(mods_file))
 
@@ -110,7 +109,7 @@ class GMD(InMemoryDataset):
 
                 # Store the number of nodes to use as the input into the forward function. Don't use num_nodes because
                 # it's a PyTorch variable that stores the total number of nodes, regardless of the type.
-                h_data.num_network_nodes = mpc['bus'].shape[0]  
+                h_data.num_network_nodes = mpc['bus'].shape[0]
 
                 # Build the bus_i to node_i mapping.
                 mapping = {}
@@ -196,32 +195,6 @@ class GMD(InMemoryDataset):
                 h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(gmd_bus_bus_edges.T, dtype=torch.long)
 
                 data_list.append(h_data)
-
-        # # Before we save all the datasets, apply sklearn's StandardScaling to the output
-        # scalar = StandardScaler()
-        # y_output = [(data_list[k].y).tolist() for k in range(len(data_list))] # Extract all the y outputs
-        # y_output = [sum(temp_list, []) for temp_list in y_output]   # Each element in the list is actually just a
-        #                                                             # list with a single number, so remove those
-        #                                                             # extra list bindings. Note: this seems to cause
-        #                                                             # a warning because the target size changes, as
-        #                                                             # we're no longer storing a list of single-element
-        #                                                             # lists for each network.
-        # y_output = scalar.fit_transform(y_output).tolist()  # Apply sklearn's StandardScalar function
-        # for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
-        #     data_to_modify.y = torch.Tensor(standard_data)
-
-        # # Check to see if we have a pre-transform function
-        # if(self.pre_transform is not None):
-        #     y_output = [(data_list[k].y).tolist() for k in range(len(data_list))]  # Extract all the y outputs
-        #     y_output = [sum(temp_list, []) for temp_list in y_output]   # Each element in the list is actually just a
-        #     # list with a single number, so remove those
-        #     # extra list bindings. Note: this seems to cause
-        #     # a warning because the target size changes, as
-        #     # we're no longer storing a list of single-element
-        #     # lists for each network.
-        #     y_output = self.pre_transform(y_output, axis=0)             # Apply sklearn's StandardScalar function
-        #     for data_to_modify, standard_data in zip(data_list, y_output):  # Put the modified data back in data_list
-        #         data_to_modify.y = torch.Tensor(standard_data)
 
         # save to the processed path
         torch.save(self.collate(data_list), self.processed_paths[0])
