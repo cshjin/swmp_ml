@@ -19,5 +19,6 @@ Manifest.toml
 
 **/*.pyc
 **/processed/*
+test/data/processed/*
 .vscode/*
 **/*.png
