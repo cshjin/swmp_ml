@@ -17,6 +17,7 @@ import torch.nn.functional as F
 # from torch.utils.data import Dataset
 from torch_geometric.nn import HGTConv, Linear, HANConv
 from tqdm import tqdm
+from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
 
 from py_script.dataset import GMD, MultiGMD
 
@@ -179,7 +180,7 @@ if __name__ == "__main__":
         # Store some information about the accumulated loss in the current
         # iteration of the epoch
         losses.append(t_loss)
-    
+
     # Evaluate the model
     model.eval()
     for data in data_loader_train:
