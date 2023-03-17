@@ -14,7 +14,6 @@ from torch_geometric.data import HeteroData, InMemoryDataset
 
 from py_script.utils import create_dir, read_file
 
-
 class GMD(InMemoryDataset):
     def __init__(self, root: Optional[str] = None,
                  name: Optional[str] = "b4gic",

@@ -16,11 +16,39 @@ from torch_geometric.loader import DataLoader
 import torch.nn.functional as F
 # from torch.utils.data import Dataset
 from torch_geometric.nn import HGTConv, Linear, HANConv
+import torch_geometric.transforms.normalize_features as normalize
 from tqdm import tqdm
 from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
 
 from py_script.dataset import GMD, MultiGMD
 
+from typing import List, Union
+
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
+from torch_geometric.transforms import BaseTransform
+import torch_geometric.transforms as T
+class NormalizeColumnFeatures(BaseTransform):
+    r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
+    (functional name: :obj:`normalize_features`).
+
+    Args:
+        attrs (List[str]): The names of attributes to normalize.
+            (default: :obj:`["x"]`)
+    """
+    def __init__(self, attrs: List[str] = ["x"]):
+        self.attrs = attrs
+
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
+        for store in data.stores:
+            for key, value in store.items(*self.attrs):
+                value = value - value.min()
+                value.div_(value.sum(dim=1, keepdim=True).clamp_(min=1.))
+                store[key] = value
+        return data
 
 class HGT(Module):
     def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
@@ -96,7 +124,7 @@ if __name__ == "__main__":
                         help="number of layers in HGT")
     parser.add_argument("--epochs", type=int, default=200,
                         help="number of epochs in training")
-    parser.add_argument("--pre_transform", type=str, default=None, choices=["normalize"],
+    parser.add_argument("--pre_transform", type=str, default="normalize", choices=["normalize"],
                         help="the transform function used while processing the data")
     parser.add_argument("--test_split", type=float, default=0.2,
                         help="the proportion of datasets to use for testing")
@@ -104,7 +132,7 @@ if __name__ == "__main__":
 
     # Get the type of pre-transform function
     if(args['pre_transform'] == "normalize"):
-        pre_transform_function = normalize
+        pre_transform_function = NormalizeColumnFeatures()
     else:
         pre_transform_function = None
     # pre_transform_function = normalize
@@ -115,7 +143,7 @@ if __name__ == "__main__":
                       name=args['name'],
                       problem=args['problem'],
                       force_reprocess=args['force'],
-                      pre_transform=pre_transform_function)
+                      pre_transform=T.Compose([NormalizeColumnFeatures()]))
         data = dataset[0]
     else:
         dataset = MultiGMD("./test/data",
@@ -148,6 +176,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
+    # optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'])
 
     # Training code for the DataLoader version
     losses = []  # Create a list to store the losses each iteration
@@ -176,24 +205,27 @@ if __name__ == "__main__":
         # iteration of the epoch
         losses.append(t_loss)
 
+    ''' plot the loss function '''
+    fig = plt.figure(figsize=(4, 3), tight_layout=True)
+    foo = r'training loss'
+    plt.plot(losses)
+    plt.ylabel(foo)
+    plt.xlabel("epoch")
+    plt.title(f"Hete-Graph - {args['problem']}")
+    plt.savefig(f"losses - {args['problem']}.png")
+
     # Evaluate the model
+    plt.clf()
     model.eval()
     for data in data_loader_test:
         pred = model(data)
         plt.plot(data['y'], "ro", label="true")
+        loss = F.mse_loss(pred, data['y'])
+        print(loss.item())
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
         plt.legend()
         plt.savefig("tmp.png")
         exit()
-
-    ''' plot the loss function '''
-    # fig = plt.figure(figsize=(4, 3), tight_layout=True)
-    # foo = r'training loss'
-    # plt.plot(losses)
-    # plt.ylabel(foo)
-    # plt.xlabel("epoch")
-    # plt.title(f"Hete-Graph - {args['problem']}")
-    # plt.savefig(f"losses - {args['problem']}.png")
 
 # TODO:
 # - python.exe .\demo_train_opf.py --problem reg --force --num_layers 3 --test_split 0.996 --hidden_size 64 --epochs 500
