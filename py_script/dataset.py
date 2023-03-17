@@ -193,6 +193,7 @@ class GMD(InMemoryDataset):
 
                 h_data['gmd_bus', 'attach', "bus"].edge_index = torch.tensor(gmd_bus_bus_edges.T, dtype=torch.long)
 
+                h_data = h_data if self.pre_transform is None else self.pre_transform(h_data)
                 data_list.append(h_data)
 
         # save to the processed path

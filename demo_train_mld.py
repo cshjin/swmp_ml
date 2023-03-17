@@ -1,33 +1,33 @@
 """ Process dataset with HeteroData and a demo of HeterGNN network """
 
 import argparse
+from typing import List, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import datasets
 import torch
+import torch.nn.functional as F
+import torch_geometric.transforms as T
+import torch_geometric.transforms.normalize_features as normalize
 from scipy.special import softmax
+from sklearn import datasets
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from sklearn.model_selection import LeaveOneOut, train_test_split
 from sklearn.preprocessing import normalize
 # from torch import nn
-from torch.nn import (CrossEntropyLoss, Module, ModuleDict, ModuleList,
-                      MSELoss, ReLU, Sequential, Dropout)
+from torch.nn import (CrossEntropyLoss, Dropout, Module, ModuleDict,
+                      ModuleList, MSELoss, ReLU, Sequential)
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.loader import DataLoader
-import torch.nn.functional as F
 # from torch.utils.data import Dataset
-from torch_geometric.nn import HGTConv, Linear, HANConv
-import torch_geometric.transforms.normalize_features as normalize
+from torch_geometric.nn import HANConv, HGTConv, Linear
+from torch_geometric.transforms import BaseTransform
 from tqdm import tqdm
-from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
 
 from py_script.dataset import GMD, MultiGMD
 
-from typing import List, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.datapipes import functional_transform
-from torch_geometric.transforms import BaseTransform
-import torch_geometric.transforms as T
 class NormalizeColumnFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
     (functional name: :obj:`normalize_features`).
@@ -36,6 +36,7 @@ class NormalizeColumnFeatures(BaseTransform):
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)
     """
+
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
@@ -46,9 +47,10 @@ class NormalizeColumnFeatures(BaseTransform):
         for store in data.stores:
             for key, value in store.items(*self.attrs):
                 value = value - value.min()
-                value.div_(value.sum(dim=1, keepdim=True).clamp_(min=1.))
+                value.div_(value.sum(dim=0, keepdim=True).clamp_(min=1.))
                 store[key] = value
         return data
+
 
 class HGT(Module):
     def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
@@ -105,6 +107,19 @@ class HGT(Module):
 
 
 if __name__ == "__main__":
+
+    # TODO: 
+    # HPS: 
+    # * lr: 1e-3
+    # * weight_decay: 1e-4
+    # * hidden_size: 128
+    # * num_heads: 2
+    # * num_layers: 2
+    # * epochs: 200
+    # * batch_size: 64
+
+
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", type=str, default="epri21",
                         help="name of network")
@@ -124,6 +139,8 @@ if __name__ == "__main__":
                         help="number of layers in HGT")
     parser.add_argument("--epochs", type=int, default=200,
                         help="number of epochs in training")
+    parser.add_argument("--batch_size", type=int, default=64,
+                        help="batch size in training")
     parser.add_argument("--pre_transform", type=str, default="normalize", choices=["normalize"],
                         help="the transform function used while processing the data")
     parser.add_argument("--test_split", type=float, default=0.2,
@@ -143,7 +160,7 @@ if __name__ == "__main__":
                       name=args['name'],
                       problem=args['problem'],
                       force_reprocess=args['force'],
-                      pre_transform=T.Compose([NormalizeColumnFeatures()]))
+                      pre_transform=T.Compose([NormalizeColumnFeatures(['x', 'edge_attr'])]))
         data = dataset[0]
     else:
         dataset = MultiGMD("./test/data",
@@ -219,7 +236,7 @@ if __name__ == "__main__":
     model.eval()
     for data in data_loader_test:
         pred = model(data)
-        plt.plot(data['y'], "ro", label="true")
+        plt.plot(data['y'], "r.", label="true")
         loss = F.mse_loss(pred, data['y'])
         print(loss.item())
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
@@ -228,7 +245,7 @@ if __name__ == "__main__":
         exit()
 
 # TODO:
-# - python.exe .\demo_train_opf.py --problem reg --force --num_layers 3 --test_split 0.996 --hidden_size 64 --epochs 500
+# - python.exe .\demo_train_mlp.py --problem reg --force --num_layers 3 --test_split 0.2 --hidden_size 64 --epochs 500
 
 
 # TODO:
