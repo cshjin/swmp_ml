@@ -27,6 +27,7 @@ from tqdm import tqdm
 
 from py_script.dataset import GMD, MultiGMD
 
+import os, os.path
 
 class NormalizeColumnFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
@@ -65,9 +66,8 @@ class HGT(Module):
 
         self.convs = ModuleList()
         for _ in range(self.num_layers):
-            # conv = HGTConv(hidden_channels, hidden_channels, data.metadata(),
-            #    self.num_heads, group='min')
-            conv = HANConv(hidden_channels, hidden_channels, data.metadata(), self.num_heads, dropout=0)
+            conv = HGTConv(hidden_channels, hidden_channels, data.metadata(), self.num_heads, group='min')
+            # conv = HANConv(hidden_channels, hidden_channels, data.metadata(), self.num_heads, dropout=0)
             self.convs.append(conv)
 
         self.flatten = Sequential(
@@ -222,6 +222,11 @@ if __name__ == "__main__":
         # iteration of the epoch
         losses.append(t_loss)
 
+    # Count the number of files that exist in the Figures directory, so
+    # we can give a unique name to the two new figures we're creating
+    losses_count = len([file_name for file_name in os.listdir('./Figures/Losses/')])
+    predictions_count = len([file_name for file_name in os.listdir('./Figures/Predictions/')])
+
     ''' plot the loss function '''
     fig = plt.figure(figsize=(4, 3), tight_layout=True)
     foo = r'training loss'
@@ -229,7 +234,7 @@ if __name__ == "__main__":
     plt.ylabel(foo)
     plt.xlabel("epoch")
     plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"losses - {args['problem']}.png")
+    plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}.png")
 
     # Evaluate the model
     plt.clf()
@@ -241,7 +246,7 @@ if __name__ == "__main__":
         print(loss.item())
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
         plt.legend()
-        plt.savefig("tmp.png")
+        plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         exit()
 
 # TODO:
