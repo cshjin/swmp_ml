@@ -15,7 +15,7 @@ TODO:
 
 import argparse
 import os.path as osp
-
+import os
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
@@ -128,7 +128,11 @@ if __name__ == "__main__":
         pbar.set_postfix({"loss": t_loss})
         losses.append(t_loss)
 
-    exit()
+    # Count the number of files that exist in the Figures directory, so
+    # we can give a unique name to the two new figures we're creating
+    losses_count = len([file_name for file_name in os.listdir('./Figures/Losses/')])
+    predictions_count = len([file_name for file_name in os.listdir('./Figures/Predictions/')])
+
     ''' plot the loss function '''
     fig = plt.figure(figsize=(4, 3), tight_layout=True)
     foo = r'training loss'
@@ -136,7 +140,7 @@ if __name__ == "__main__":
     plt.ylabel(foo)
     plt.xlabel("epoch")
     plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"losses - {args['problem']}.png")
+    plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
 
     # Evaluate the model
     plt.clf()
@@ -148,5 +152,5 @@ if __name__ == "__main__":
         print(loss.item())
         plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
         plt.legend()
-        plt.savefig("tmp.png")
+        plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         exit()
