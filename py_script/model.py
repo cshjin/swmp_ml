@@ -12,7 +12,7 @@ class HGT(Module):
         num_layers (int): Number of layers for HGTConv.
         dropout (float, optional): Dropout rate. Defaults to 0.0.
         node_types (list, optional): List of string for node types. Defaults to None.
-        metadata (list, optional): List of metadata. Defaults to None.
+        metadata (tuple, optional): List of metadata. Defaults to None.
     """
 
     def __init__(

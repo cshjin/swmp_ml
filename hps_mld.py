@@ -73,6 +73,7 @@ def run(config):
     model.eval()
     test_loss = 0
     for batch in loader_test:
+        batch = batch.to(DEVICE)
         pred = model(batch)
         loss = F.mse_loss(pred, batch.y)
         test_loss += loss.item() / batch.num_graphs
@@ -90,7 +91,7 @@ dataset = GMD(ROOT,
               problem="reg",
               force_reprocess=False,
               pre_transform=pre_transform)
-data = dataset[0].to(DEVICE)
+data = dataset[0]
 
 # %%
 dataset_train, dataset_test = train_test_split(dataset, test_size=0.2, random_state=41)
@@ -103,14 +104,14 @@ problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "batch_size", default_value=64)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6],
                            "num_layers", default_value=1)
-problem.add_hyperparameter([1, 2, 3, 4, 5, 6],
+problem.add_hyperparameter([1, 2, 4, 8],
                            "num_heads", default_value=2)
 problem.add_hyperparameter([0., 0.1, 0.2, 0.3, 0.4, 0.5],
                            "dropout", default_value=0.5)
 problem.add_hyperparameter((1e-5, 1e-1, "log-uniform"),
                            "lr", default_value=1e-3)
 problem.add_hyperparameter([0., 1e-5, 5e-5, 1e-4],
-                           "weight_decay", default_value=0)
+                           "weight_decay", default_value=0.)
 
 evaluator = Evaluator.create(run,
                              method="thread",
@@ -126,6 +127,8 @@ evaluator = Evaluator.create(run,
 print("Number of workers: ", evaluator.num_workers)
 
 # %%
-search = AMBS(problem, evaluator, initial_points=[problem.default_configuration])
+search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 results = search.search(10)
 print(results)
+
+# %%

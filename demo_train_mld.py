@@ -69,6 +69,7 @@ if __name__ == "__main__":
         pre_transform = None
 
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
+    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if args['name'] != "all":
         dataset = GMD(ROOT,
                       name=args['name'],
@@ -104,7 +105,7 @@ if __name__ == "__main__":
                 dropout=args['dropout'],
                 node_types=data.node_types,
                 metadata=data.metadata()
-                )
+                ).to(DEVICE)
 
     # adjust the loss function accordingly
     loss_fn = CrossEntropyLoss() if args['problem'] == "clf" else MSELoss()
@@ -118,6 +119,7 @@ if __name__ == "__main__":
     for epoch in pbar:
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
+            data = data.to(DEVICE)
             optimizer.zero_grad()
             out = model(data)
             loss = F.mse_loss(out, data['y'])
