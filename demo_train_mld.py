@@ -1,4 +1,17 @@
-""" Process dataset with HeteroData and a demo of HeterGNN network """
+""" Process dataset with HeteroData and a demo of HeterGNN network
+
+TODO:
+* HPS:
+    * lr: 1e-3
+    * weight_decay: 1e-4
+    * hidden_size: 128
+    * num_heads: 2
+    * num_layers: 2
+    * epochs: 200
+    * batch_size: 64
+* replace `HANConv` with `HGTConv`
+
+"""
 
 import argparse
 import os.path as osp
@@ -21,22 +34,10 @@ torch.manual_seed(12345)
 
 if __name__ == "__main__":
 
-    # TODO: 
-    # HPS: 
-    # * lr: 1e-3
-    # * weight_decay: 1e-4
-    # * hidden_size: 128
-    # * num_heads: 2
-    # * num_layers: 2
-    # * epochs: 200
-    # * batch_size: 64
-
-
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", type=str, default="epri21",
                         help="name of network")
-    parser.add_argument("--problem", "-p", type=str, default="clf", choices=["clf", "reg"],
+    parser.add_argument("--problem", "-p", type=str, default="reg", choices=["clf", "reg"],
                         help="Specify the problem, either `clf` or `reg`")
     parser.add_argument("--force", action="store_true",
                         help="Force to reprocess data")
@@ -56,7 +57,8 @@ if __name__ == "__main__":
                         help="number of epochs in training")
     parser.add_argument("--batch_size", type=int, default=64,
                         help="batch size in training")
-    parser.add_argument("--normalize", action="store_true", help="normalize the data")
+    parser.add_argument("--normalize", action="store_true",
+                        help="normalize the data")
     parser.add_argument("--test_split", type=float, default=0.2,
                         help="the proportion of datasets to use for testing")
     args = vars(parser.parse_args())
@@ -66,31 +68,31 @@ if __name__ == "__main__":
     else:
         pre_transform = None
 
-    # readout the dataset `pyg.heterodata`
+    ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
     if args['name'] != "all":
-        dataset = GMD("./test/data",
+        dataset = GMD(ROOT,
                       name=args['name'],
                       problem=args['problem'],
                       force_reprocess=args['force'],
                       pre_transform=pre_transform)
         data = dataset[0]
     else:
-        dataset = MultiGMD("./test/data",
+        dataset = MultiGMD(ROOT,
                            name=args['name'],
                            problem=args['problem'],
                            force_reprocess=args['force'],
                            pre_transform=pre_transform)
 
     # Train and test split for our datasets
-    dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'])
+    dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
 
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
-                                   batch_size=64,
+                                   batch_size=args['batch_size'],
                                    shuffle=True)
 
     data_loader_test = DataLoader(dataset=dataset_test,
-                                  batch_size=64,
+                                  batch_size=args['batch_size'],
                                   shuffle=True)
 
     # adjust the output dimension accordingly
@@ -98,43 +100,35 @@ if __name__ == "__main__":
     model = HGT(hidden_channels=args['hidden_size'],
                 out_channels=out_channels,
                 num_heads=args['num_heads'],
-                num_layers=args['num_layers'], 
-                dropout=args['dropout'])
+                num_layers=args['num_layers'],
+                dropout=args['dropout'],
+                node_types=data.node_types,
+                metadata=data.metadata()
+                )
 
     # adjust the loss function accordingly
     loss_fn = CrossEntropyLoss() if args['problem'] == "clf" else MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
-    # optimizer = torch.optim.Adam(model.parameters(), lr=args['lr'])
 
-    # Training code for the DataLoader version
-    losses = []  # Create a list to store the losses each iteration
+    losses = []
     pbar = tqdm(range(args['epochs']), desc=args['name'])
+    model.train()
     for epoch in pbar:
-        # Mini-batch settings for multi-graphs
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
-            # Get the output from the model and compute the loss
-            optimizer.zero_grad()   # Zero the gradient
+            optimizer.zero_grad()
             out = model(data)
             loss = F.mse_loss(out, data['y'])
+            loss.backward()
+            optimizer.step()
 
-            # Update the gradient and use it
-            loss.backward()        # Perform backpropagation
-            optimizer.step()        # Update the weights
-
-            # Add the loss of the current iteration to the total for the epoch
-            t_loss += loss.item()
-
-            # Print some information about the current iteration
-            # print("Epoch", epoch, "i", i, "loss.item()", loss.item())
+            t_loss += loss.item() / data.num_graphs
         pbar.set_postfix({"loss": t_loss})
-
-        # Store some information about the accumulated loss in the current
-        # iteration of the epoch
         losses.append(t_loss)
 
+    exit()
     ''' plot the loss function '''
     fig = plt.figure(figsize=(4, 3), tight_layout=True)
     foo = r'training loss'
@@ -156,10 +150,3 @@ if __name__ == "__main__":
         plt.legend()
         plt.savefig("tmp.png")
         exit()
-
-# TODO:
-# - python.exe .\demo_train_mlp.py --problem reg --force --num_layers 3 --test_split 0.2 --hidden_size 64 --epochs 500
-
-
-# TODO:
-# check without HeteroGNN, use MLP(data.x_dict['bus']) instead.
