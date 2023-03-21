@@ -2,6 +2,7 @@
 Create a dataset with HeteroData format.
 """
 import json
+import os
 import os.path as osp
 import shutil
 from glob import glob
@@ -13,6 +14,7 @@ import torch
 from torch_geometric.data import HeteroData, InMemoryDataset
 
 from py_script.utils import create_dir, read_file
+
 
 class GMD(InMemoryDataset):
     def __init__(self, root: Optional[str] = None,
@@ -33,19 +35,17 @@ class GMD(InMemoryDataset):
         self.pre_filter = pre_filter
 
         if self.force_reprocess:
-            dir_path = osp.dirname(osp.realpath(__file__))
-            SAVED_PATH = osp.join(dir_path, "processed", self.name)
-            if osp.exists(SAVED_PATH):
-                shutil.rmtree(SAVED_PATH)
-                shutil.rmtree(osp.join(self.root, "processed"))
+            SAVED_PATH = osp.join(osp.abspath(self.root), "processed", self.name)
+            SAVED_FILE = f"{SAVED_PATH}/processed.pt"
+            if osp.exists(SAVED_FILE):
+                os.remove(SAVED_FILE)
 
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def processed_file_names(self):
-        dir_path = osp.dirname(osp.realpath(__file__))
-        SAVED_PATH = osp.join(dir_path, "processed", self.name)
+        SAVED_PATH = osp.join(osp.abspath(self.root), "processed", self.name)
         create_dir(SAVED_PATH)
         return [f'{SAVED_PATH}/processed.pt']
 
@@ -62,7 +62,8 @@ class GMD(InMemoryDataset):
             # Modded version
             res_data = json.load(open(res_f))
             # read the matpower file
-            fn = self.root + "/" + self.name + ".m"
+            # fn = self.root + "/" + self.name + ".m"
+            fn = osp.join(os.path.dirname(os.path.realpath(__file__)), "..", "test", "data", "epri21.m")
             mpc = read_file(fn)
 
             if "INFEASIBLE" in res_data['termination_status']:
