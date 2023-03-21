@@ -234,7 +234,7 @@ if __name__ == "__main__":
     plt.ylabel(foo)
     plt.xlabel("epoch")
     plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}.png")
+    plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
 
     # Evaluate the model
     plt.clf()
@@ -255,3 +255,4 @@ if __name__ == "__main__":
 
 # TODO:
 # check without HeteroGNN, use MLP(data.x_dict['bus']) instead.
+# Try out batch normalization
