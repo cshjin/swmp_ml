@@ -1,4 +1,4 @@
-from torch.nn import Module, ModuleDict, Sequential, ModuleList, ReLU, Dropout
+from torch.nn import Module, ModuleDict, Sequential, ModuleList, ReLU, Dropout, BatchNorm1d
 from torch_geometric.nn import HANConv, HGTConv, Linear
 
 
@@ -47,9 +47,19 @@ class HGT(Module):
 
         self.flatten = Sequential(
             Linear(hidden_channels, hidden_channels),
+            BatchNorm1d(hidden_channels),
             ReLU(),
             Dropout(self.dropout),
             Linear(hidden_channels, hidden_channels),
+            BatchNorm1d(hidden_channels),
+            ReLU(),
+            Dropout(self.dropout),
+            Linear(hidden_channels, hidden_channels),
+            BatchNorm1d(hidden_channels),
+            ReLU(),
+            Dropout(self.dropout),
+            Linear(hidden_channels, hidden_channels),
+            BatchNorm1d(hidden_channels),
             ReLU(),
             Dropout(self.dropout),
             Linear(hidden_channels, out_channels),
