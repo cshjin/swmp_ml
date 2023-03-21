@@ -84,6 +84,8 @@ def run(config):
 # %%
 ROOT = osp.join(osp.expanduser("~"), "tmp", "data", "GMD")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device('cpu')
+
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
 dataset = GMD(ROOT,

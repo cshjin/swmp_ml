@@ -61,6 +61,8 @@ if __name__ == "__main__":
                         help="normalize the data")
     parser.add_argument("--test_split", type=float, default=0.2,
                         help="the proportion of datasets to use for testing")
+    parser.add_argument("--processor", type=str, default="auto", choices=["auto", "cpu", "cuda"],
+                        help="selects between CPU or CUDA")
     args = vars(parser.parse_args())
 
     if args['normalize']:
@@ -70,6 +72,18 @@ if __name__ == "__main__":
 
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    # Select the processor to use
+    if args['processor'] == "cpu":
+        DEVICE = torch.device('cpu')
+    elif args['processor'] == "cuda":
+        DEVICE = torch.device('cuda')
+    elif args['processor'] == "auto":
+        DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    else:
+        print("Unknown processor type: " + args['processor'] + ". Defaulting to \"auto\".")
+        DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     if args['name'] != "all":
         dataset = GMD(ROOT,
                       name=args['name'],
