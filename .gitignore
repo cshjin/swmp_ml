@@ -22,3 +22,6 @@ Manifest.toml
 test/data/processed/*
 .vscode/*
 **/*.png
+
+context.yaml
+results.csv
