@@ -7,6 +7,8 @@ class HGT(Module):
 
     Args:
         hidden_channels (int): Number of hidden channels.
+        num_sequential_layers (int): Number of layers in the sequential container
+        conv_type (str): The type of convolutional layer to use
         out_channels (int): Number of output channels.
         num_heads (int): Number of heads in HGTConv.
         num_layers (int): Number of layers for HGTConv.
@@ -18,9 +20,11 @@ class HGT(Module):
     def __init__(
             self,
             hidden_channels,
+            # num_sequential_layers,
+            conv_type,
             out_channels,
             num_heads,
-            num_layers,
+            num_conv_layers,
             dropout=0.0,
             node_types=None,
             metadata=None, **kwargs):
@@ -28,7 +32,9 @@ class HGT(Module):
         super().__init__()
 
         self.num_heads = num_heads
-        self.num_layers = num_layers
+        self.num_conv_layers = num_conv_layers
+        # self.num_sequential_layers = num_sequential_layers
+        self.conv_type = conv_type
         self.dropout = dropout
         self.node_types = node_types
         self.metadata = metadata
@@ -39,11 +45,18 @@ class HGT(Module):
             self.lin_dict[node_type] = Linear(-1, hidden_channels)
 
         self.convs = ModuleList()
-        for _ in range(self.num_layers):
-            conv = HGTConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, group=self.group)
-            # NOTE: option of HANConv
-            # conv = HANConv(hidden_channels, hidden_channels, data.metadata(), self.num_heads, dropout=self.dropout)
+        for _ in range(self.num_conv_layers):
+            # Chose between HGT or HAN conv
+            if self.conv_type == "hgt":
+                conv = HGTConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, group=self.group)
+            else:
+                conv = HANConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, dropout=self.dropout)
             self.convs.append(conv)
+        
+        # functions = [("linear", Linear(hidden_channels, hidden_channels)), ("batch_norm", BatchNorm1d(hidden_channels)), ("relu", ReLU()), ("dropout", Dropout(self.dropout))] * self.num_sequential_layers
+        # functions.append(Linear(hidden_channels, out_channels))
+        # print(functions)
+        # self.flatten = Sequential(OrderedDict(functions))
 
         self.flatten = Sequential(
             Linear(hidden_channels, hidden_channels),
@@ -99,3 +112,7 @@ class HGT(Module):
         for layer in self.children():
             if hasattr(layer, 'reset_parameters'):
                 layer.reset_parameters()
+
+# TODO:
+# - Make the following hyper-parameters in the deephyper code:
+#   - Number of layers in the sequential container

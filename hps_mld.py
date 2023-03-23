@@ -23,6 +23,7 @@ torch.manual_seed(12345)
 
 def run(config):
     batch_size = config.get("batch_size", 64)
+    conv_type = config.get("conv_type", "hgt")
     hidden_channels = config.get("hidden_channels", 64)
     num_heads = config.get("num_heads", 2)
     num_layers = config.get("num_layers", 1)
@@ -40,9 +41,10 @@ def run(config):
                              shuffle=True)
 
     model = HGT(hidden_channels=hidden_channels,
+                conv_type=conv_type,
                 out_channels=1,
                 num_heads=num_heads,
-                num_layers=num_layers,
+                num_conv_layers=num_layers,
                 dropout=dropout,
                 node_types=data.node_types,
                 metadata=data.metadata(),
@@ -103,9 +105,13 @@ problem = HpProblem()
 problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "hidden_channels", default_value=128)
 problem.add_hyperparameter([16, 32, 64, 128, 256],
+                           "hidden_size", default_value=128)
+problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "batch_size", default_value=64)
-problem.add_hyperparameter([1, 2, 3, 4, 5, 6],
-                           "num_layers", default_value=1)
+problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8],
+                           "num_conv_layers", default_value=1)
+problem.add_hyperparameter(["hgt", "han"],
+                           "conv_type", default_value="hgt")
 problem.add_hyperparameter([1, 2, 4, 8],
                            "num_heads", default_value=2)
 problem.add_hyperparameter([0., 0.1, 0.2, 0.3, 0.4, 0.5],

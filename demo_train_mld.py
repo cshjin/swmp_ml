@@ -6,7 +6,7 @@ TODO:
     * weight_decay: 1e-4
     * hidden_size: 128
     * num_heads: 2
-    * num_layers: 2
+    * num_conv_layers: 2
     * epochs: 200
     * batch_size: 64
 * replace `HANConv` with `HGTConv`
@@ -49,8 +49,12 @@ if __name__ == "__main__":
                         help="hidden dimension in HGT")
     parser.add_argument("--num_heads", type=int, default=2,
                         help="number of heads in HGT")
-    parser.add_argument("--num_layers", type=int, default=1,
+    parser.add_argument("--num_conv_layers", type=int, default=1,
                         help="number of layers in HGT")
+    # parser.add_argument("--num_sequential_layers", type=int, default=4,
+    #                     help="number of layers in the sequential container")
+    parser.add_argument("--conv_type", type=str, default="hgt", choices=["hgt", "han"],
+                        help="select the type of convolutional layer (hgt or han)")
     parser.add_argument("--dropout", type=float, default=0.5,
                         help="dropout rate")
     parser.add_argument("--epochs", type=int, default=200,
@@ -72,6 +76,11 @@ if __name__ == "__main__":
 
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # Error checking for the type of convolutional layer
+    if (args['conv_type'] != "hgt") and (args['conv_type'] != 'han'):
+        print("Invalid convolutional type: " + args['conv_type'] + ".")
+        exit()
     
     # Select the processor to use
     if args['processor'] == "cpu":
@@ -113,9 +122,11 @@ if __name__ == "__main__":
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
     model = HGT(hidden_channels=args['hidden_size'],
+                # num_sequential_layers=args['num_sequential_layers'],
+                conv_type=args['conv_type'],
                 out_channels=out_channels,
                 num_heads=args['num_heads'],
-                num_layers=args['num_layers'],
+                num_conv_layers=args['num_conv_layers'],
                 dropout=args['dropout'],
                 node_types=data.node_types,
                 metadata=data.metadata()
@@ -170,3 +181,29 @@ if __name__ == "__main__":
         plt.legend()
         plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         exit()
+
+# Uninstall commands
+# sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*"
+# sudo rm -rf /usr/local/cuda*
+#
+# pip uninstall torch torchvision torchaudio
+# pip uninstall pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric
+
+# Reinstall commands
+# CPU
+# pip install torch==1.13.1+cpu torchvision==0.14.1+cpu torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cpu
+# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+# pip install pandas deephyper
+#
+# CUDA
+# pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
+# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu117.html
+#
+# Reinstall CUDA itself
+# wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+# sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+# wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
+# sudo dpkg -i cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
+# sudo cp /var/cuda-repo-wsl-ubuntu-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/
+# sudo apt-get update
+# sudo apt-get -y install cuda
