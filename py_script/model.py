@@ -1,30 +1,31 @@
-from torch.nn import Module, ModuleDict, Sequential, ModuleList, ReLU, Dropout, BatchNorm1d
+from torch.nn import Module, ModuleDict, ModuleList
 from torch_geometric.nn import HANConv, HGTConv, Linear
+from torch_geometric.nn.models import MLP
 
 
 class HGT(Module):
-    """ Heterogeneous Graph Transformer (HGT) model.
+    r""" Heterogeneous Graph Transformer (HGT) model.
 
     Args:
-        hidden_channels (int): Number of hidden channels.
-        num_sequential_layers (int): Number of layers in the sequential container
-        conv_type (str): The type of convolutional layer to use
-        out_channels (int): Number of output channels.
-        num_heads (int): Number of heads in HGTConv.
-        num_layers (int): Number of layers for HGTConv.
+        hidden_channels (int, optional): Number of hidden channels. Defaults to 64.
+        out_channels (int, optional): Number of output channels. Defaults to 1.
+        num_conv_layers (int, optional): Number of layers for Conv. Defaults to 2.
+        conv_type (str, optional): The type of convolutional layer to use. Defaults to "hgt".
+        num_heads (str, optional): Number of heads in HGTConv. Defaults to "2".
+        num_mlp_layers (int, optional): Number of layers for MLP. Defaults to 3.
         dropout (float, optional): Dropout rate. Defaults to 0.0.
-        node_types (list, optional): List of string for node types. Defaults to None.
-        metadata (tuple, optional): List of metadata. Defaults to None.
+        node_types (tuple, optional): List of string for node types. Defaults to None.
+        metadata (list, optional): List of metadata. Defaults to None.
     """
 
     def __init__(
             self,
-            hidden_channels,
-            # num_sequential_layers,
-            conv_type,
-            out_channels,
-            num_heads,
-            num_conv_layers,
+            hidden_channels=64,
+            out_channels=1,
+            num_conv_layers=2,
+            conv_type="hgt",
+            num_heads="2",
+            num_mlp_layers=3,
             dropout=0.0,
             node_types=None,
             metadata=None, **kwargs):
@@ -33,7 +34,7 @@ class HGT(Module):
 
         self.num_heads = num_heads
         self.num_conv_layers = num_conv_layers
-        # self.num_sequential_layers = num_sequential_layers
+        self.num_mlp_layers = num_mlp_layers
         self.conv_type = conv_type
         self.dropout = dropout
         self.node_types = node_types
@@ -52,34 +53,15 @@ class HGT(Module):
             else:
                 conv = HANConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, dropout=self.dropout)
             self.convs.append(conv)
-        
-        # functions = [("linear", Linear(hidden_channels, hidden_channels)), ("batch_norm", BatchNorm1d(hidden_channels)), ("relu", ReLU()), ("dropout", Dropout(self.dropout))] * self.num_sequential_layers
-        # functions.append(Linear(hidden_channels, out_channels))
-        # print(functions)
-        # self.flatten = Sequential(OrderedDict(functions))
 
-        self.flatten = Sequential(
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, out_channels),
-        )
+        self.flatten = MLP(in_channels=hidden_channels,
+                           out_channels=out_channels,
+                           hidden_channels=hidden_channels,
+                           num_layers=self.num_mlp_layers,
+                           dropout=self.dropout, **kwargs)
 
     def forward(self, data):
-        """ Forward pass of the model.
+        r""" Forward pass of the model.
 
         Args:
             data (pyg.HeteroData): Input data.
@@ -107,12 +89,8 @@ class HGT(Module):
         return self.flatten(output)
 
     def reset_parameters(self):
-        """ Reset parameters of the model. """
+        r""" Reset parameters of the model. """
 
         for layer in self.children():
             if hasattr(layer, 'reset_parameters'):
                 layer.reset_parameters()
-
-# TODO:
-# - Make the following hyper-parameters in the deephyper code:
-#   - Number of layers in the sequential container
