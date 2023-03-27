@@ -24,7 +24,7 @@ class HGT(Module):
             out_channels=1,
             num_conv_layers=2,
             conv_type="hgt",
-            num_heads="2",
+            num_heads=2,
             num_mlp_layers=3,
             dropout=0.0,
             node_types=None,
@@ -72,7 +72,6 @@ class HGT(Module):
 
         x_dict = data.x_dict
         edge_index_dict = data.edge_index_dict
-        node_idx = data.node_idx_y
 
         for node_type, x in x_dict.items():
             x_dict[node_type] = self.lin_dict[node_type](x).relu_()
@@ -80,12 +79,7 @@ class HGT(Module):
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
 
-        batch_node_idx = []
-        for s in range(data.num_graphs):
-            for idx in node_idx[0]:
-                batch_node_idx.append(idx + 19 * s)
-
-        output = x_dict['bus'][batch_node_idx]
+        output = x_dict['bus']
         return self.flatten(output)
 
     def reset_parameters(self):

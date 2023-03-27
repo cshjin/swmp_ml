@@ -109,14 +109,17 @@ if __name__ == "__main__":
 
     # Train and test split for our datasets
     dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
+    dataset_train, dataset_val = train_test_split(dataset_train, test_size=args['test_split'], random_state=12345)
 
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
                                    batch_size=args['batch_size'],
                                    shuffle=True)
-
+    data_loader_val = DataLoader(dataset=dataset_val,
+                                 batch_size=1,
+                                 shuffle=True)
     data_loader_test = DataLoader(dataset=dataset_test,
-                                  batch_size=args['batch_size'],
+                                  batch_size=1,
                                   shuffle=True)
 
     # adjust the output dimension accordingly
@@ -146,12 +149,12 @@ if __name__ == "__main__":
         for i, data in enumerate(data_loader_train, 0):
             data = data.to(DEVICE)
             optimizer.zero_grad()
-            out = model(data)
+            out = model(data)[data.load_bus_mask]
             loss = F.mse_loss(out, data['y'])
             loss.backward()
             optimizer.step()
-
-            t_loss += loss.item() / data.num_graphs
+            # FIXED: we don't need to devide by num_graphs
+            t_loss += loss.item()
         pbar.set_postfix({"loss": t_loss})
         losses.append(t_loss)
 
@@ -173,7 +176,7 @@ if __name__ == "__main__":
     plt.clf()
     model.eval()
     for data in data_loader_test:
-        pred = model(data)
+        pred = model(data)[data.load_bus_mask]
         plt.plot(data['y'], "r.", label="true")
         loss = F.mse_loss(pred, data['y'])
         print(loss.item())
