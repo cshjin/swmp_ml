@@ -1,5 +1,6 @@
 from torch.nn import Module, ModuleDict, Sequential, ModuleList, ReLU, Dropout, BatchNorm1d
 from torch_geometric.nn import HANConv, HGTConv, Linear
+from torch_geometric.nn.models import MLP
 
 
 class HGT(Module):
@@ -7,7 +8,7 @@ class HGT(Module):
 
     Args:
         hidden_channels (int): Number of hidden channels.
-        num_sequential_layers (int): Number of layers in the sequential container
+        num_mlp_layers (int): Number of layers in the sequential container
         conv_type (str): The type of convolutional layer to use
         out_channels (int): Number of output channels.
         num_heads (int): Number of heads in HGTConv.
@@ -20,8 +21,9 @@ class HGT(Module):
     def __init__(
             self,
             hidden_channels,
-            # num_sequential_layers,
+            num_mlp_layers,
             conv_type,
+            activation,
             out_channels,
             num_heads,
             num_conv_layers,
@@ -32,9 +34,11 @@ class HGT(Module):
         super().__init__()
 
         self.num_heads = num_heads
+        self.hidden_channels = hidden_channels
         self.num_conv_layers = num_conv_layers
-        # self.num_sequential_layers = num_sequential_layers
+        self.num_mlp_layers = num_mlp_layers
         self.conv_type = conv_type
+        self.activation = activation
         self.dropout = dropout
         self.node_types = node_types
         self.metadata = metadata
@@ -58,25 +62,35 @@ class HGT(Module):
         # print(functions)
         # self.flatten = Sequential(OrderedDict(functions))
 
-        self.flatten = Sequential(
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, hidden_channels),
-            BatchNorm1d(hidden_channels),
-            ReLU(),
-            Dropout(self.dropout),
-            Linear(hidden_channels, out_channels),
-        )
+        # self.flatten = Sequential(
+        #     Linear(hidden_channels, hidden_channels),
+        #     BatchNorm1d(hidden_channels),
+        #     ReLU(),
+        #     Dropout(dropout),
+        #     Linear(hidden_channels, hidden_channels),
+        #     BatchNorm1d(hidden_channels),
+        #     ReLU(),
+        #     Dropout(dropout),
+        #     Linear(hidden_channels, hidden_channels),
+        #     BatchNorm1d(hidden_channels),
+        #     ReLU(),
+        #     Dropout(dropout),
+        #     Linear(hidden_channels, hidden_channels),
+        #     BatchNorm1d(hidden_channels),
+        #     ReLU(),
+        #     Dropout(dropout),
+        #     Linear(hidden_channels, out_channels),
+        # )
+
+        # print(acts = [act for act in vars(activation).values()])
+
+        self.flatten = MLP(in_channels=hidden_channels,
+                           hidden_channels=hidden_channels,
+                           out_channels=out_channels,
+                           num_layers=num_mlp_layers,
+                           act=activation,
+                           norm="batch_norm",
+                           dropout=dropout)
 
     def forward(self, data):
         """ Forward pass of the model.

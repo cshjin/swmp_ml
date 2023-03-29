@@ -25,6 +25,8 @@ def run(config):
     batch_size = config.get("batch_size", 64)
     conv_type = config.get("conv_type", "hgt")
     hidden_channels = config.get("hidden_channels", 64)
+    num_mlp_layers = config.get("num_mlp_layers", 64)
+    activation = config.get("activation", "relu")
     num_heads = config.get("num_heads", 2)
     num_layers = config.get("num_layers", 1)
     dropout = config.get("dropout", 0.5)
@@ -42,6 +44,8 @@ def run(config):
 
     model = HGT(hidden_channels=hidden_channels,
                 conv_type=conv_type,
+                num_mlp_layers=num_mlp_layers,
+                activation=activation,
                 out_channels=1,
                 num_heads=num_heads,
                 num_conv_layers=num_layers,
@@ -100,6 +104,14 @@ data = dataset[0]
 # %%
 dataset_train, dataset_test = train_test_split(dataset, test_size=0.2, random_state=41)
 
+import torch
+base_cls = torch.nn.Module
+base_cls_repr = 'Act'
+acts = [
+    act for act in vars(torch.nn.modules.activation).values()
+    if isinstance(act, type) and issubclass(act, base_cls)
+]
+
 problem = HpProblem()
 # TODO: add hyperparameters
 problem.add_hyperparameter([16, 32, 64, 128, 256],
@@ -108,8 +120,17 @@ problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "hidden_size", default_value=128)
 problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "batch_size", default_value=64)
-problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8],
+problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_conv_layers", default_value=1)
+problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                           "num_mlp_layers", default_value=1)
+# activation_choices = ["relu", "rrelu", "hardtanh", "relu6", "sigmoid", "hardsigmoid", "tanh", "silu",
+#                       "mish", "hardswish", "elu", "celu", "selu", "glu", "gelu", "hardshrink",
+#                       "leakyrelu", "logsigmoid", "softplus", "tanhshrink"]
+activation_choices = ["relu", "sigmoid", "tanh", "elu", "leakyrelu"]
+problem.add_hyperparameter(activation_choices, "activation", default_value="relu")
+problem.add_hyperparameter([50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800],
+                           "epochs", default_value=200)
 problem.add_hyperparameter(["hgt", "han"],
                            "conv_type", default_value="hgt")
 problem.add_hyperparameter([1, 2, 4, 8],

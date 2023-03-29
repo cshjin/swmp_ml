@@ -51,8 +51,13 @@ if __name__ == "__main__":
                         help="number of heads in HGT")
     parser.add_argument("--num_conv_layers", type=int, default=1,
                         help="number of layers in HGT")
-    # parser.add_argument("--num_sequential_layers", type=int, default=4,
-    #                     help="number of layers in the sequential container")
+    parser.add_argument("--num_mlp_layers", type=int, default=4,
+                        help="number of layers in MLP")
+    activation_choices = ["relu", "rrelu", "hardtanh", "relu6", "sigmoid", "hardsigmoid", "tanh", "silu",
+                          "mish", "hardswish", "elu", "celu", "selu", "glu", "gelu", "hardshrink",
+                          "leakyrelu", "logsigmoid", "softplus", "tanhshrink"]
+    parser.add_argument("--activation", type=str, default="relu", choices=activation_choices,
+                        help="specify the activation function used")
     parser.add_argument("--conv_type", type=str, default="hgt", choices=["hgt", "han"],
                         help="select the type of convolutional layer (hgt or han)")
     parser.add_argument("--dropout", type=float, default=0.5,
@@ -77,11 +82,16 @@ if __name__ == "__main__":
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Error checking for the type of convolutional layer
-    if (args['conv_type'] != "hgt") and (args['conv_type'] != 'han'):
-        print("Invalid convolutional type: " + args['conv_type'] + ".")
-        exit()
+    # # Error checking for the type of convolutional layer
+    # if (args['conv_type'] != "hgt") and (args['conv_type'] != 'han'):
+    #     print("Invalid convolutional type: " + args['conv_type'] + ".")
+    #     exit()
     
+    # # Error checking for types of activation functions
+    # if (activation_choices.count(args['activation']) <= 0):
+    #     print("Invalid activation function type: " + args['activation'] + ".")
+    #     exit()
+
     # Select the processor to use
     if args['processor'] == "cpu":
         DEVICE = torch.device('cpu')
@@ -122,8 +132,9 @@ if __name__ == "__main__":
     # adjust the output dimension accordingly
     out_channels = 2 if args['problem'] == "clf" else 1
     model = HGT(hidden_channels=args['hidden_size'],
-                # num_sequential_layers=args['num_sequential_layers'],
+                num_mlp_layers=args['num_mlp_layers'],
                 conv_type=args['conv_type'],
+                activation=args['activation'],
                 out_channels=out_channels,
                 num_heads=args['num_heads'],
                 num_conv_layers=args['num_conv_layers'],
@@ -207,3 +218,10 @@ if __name__ == "__main__":
 # sudo cp /var/cuda-repo-wsl-ubuntu-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/
 # sudo apt-get update
 # sudo apt-get -y install cuda
+
+# TODO:
+# - (finished) Add num_mlp_layers support
+# - (finished) Add the activation functions as a hyperparameters
+# - (finished) Make a 1 slide summary of Hongwei's presentation
+# - Try out the other datasets like ots_test, UIUC-150, etc.
+# - Remove the hard-coded 19 and replace it with the variable for the number of busses
