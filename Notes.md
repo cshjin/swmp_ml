@@ -40,3 +40,40 @@ Things I tried for each figure
     plt.xlabel("epoch")
     plt.title(f"Hete-Graph - {args['problem']}")
     plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-training-loss={round(t_loss, 3)}_test-loss={round(loss.item(), 3)}.png")
+
+
+Uninstall commands
+sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*"
+sudo rm -rf /usr/local/cuda*
+
+pip uninstall torch torchvision torchaudio
+pip uninstall pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric
+
+
+Reinstall commands
+CPU
+pip install torch==1.13.1+cpu torchvision==0.14.1+cpu torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cpu
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+pip install pandas deephyper
+
+CUDA
+pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu117.html
+
+
+Reinstall CUDA itself
+wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
+sudo dpkg -i cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
+sudo cp /var/cuda-repo-wsl-ubuntu-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/
+sudo apt-get update
+sudo apt-get -y install cuda
+
+
+TODO:
+- (finished) Add num_mlp_layers support
+- (finished) Add the activation functions as a hyperparameters
+- (finished) Make a 1 slide summary of Hongwei's presentation
+- Try out the other datasets like ots_test, UIUC-150, etc.
+- Remove the hard-coded 19 and replace it with the variable for the number of busses

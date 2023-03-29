@@ -24,6 +24,7 @@ class HGT(Module):
             out_channels=1,
             num_conv_layers=2,
             conv_type="hgt",
+            activation="relu",
             num_heads=2,
             num_mlp_layers=3,
             dropout=0.0,

@@ -82,16 +82,6 @@ if __name__ == "__main__":
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # # Error checking for the type of convolutional layer
-    # if (args['conv_type'] != "hgt") and (args['conv_type'] != 'han'):
-    #     print("Invalid convolutional type: " + args['conv_type'] + ".")
-    #     exit()
-    
-    # # Error checking for types of activation functions
-    # if (activation_choices.count(args['activation']) <= 0):
-    #     print("Invalid activation function type: " + args['activation'] + ".")
-    #     exit()
-
     # Select the processor to use
     if args['processor'] == "cpu":
         DEVICE = torch.device('cpu')
@@ -140,9 +130,7 @@ if __name__ == "__main__":
                 activation=args['activation'],
                 out_channels=out_channels,
                 num_conv_layers=args['num_conv_layers'],
-                conv_type=args['conv_type'],
                 num_heads=args['num_heads'],
-                num_mlp_layers=args['num_mlp_layers'],
                 dropout=args['dropout'],
                 node_types=data.node_types,
                 metadata=data.metadata()

@@ -27,7 +27,7 @@ HEADERS = {
 }
 
 
-def read_file(fn):
+def read_mpc(fn):
     """ Read the MPC file ".m" into dictionary.
     Args:
         fn (str): Filename.
