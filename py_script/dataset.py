@@ -1,10 +1,8 @@
-"""
-Create a dataset with HeteroData format.
+""" Create a dataset with HeteroData format.
 """
 import json
 import os
 import os.path as osp
-import shutil
 from glob import glob
 from typing import Callable, Optional
 
@@ -13,26 +11,39 @@ import pandas as pd
 import torch
 from torch_geometric.data import HeteroData, InMemoryDataset
 
-from py_script.utils import create_dir, read_file
+from py_script.utils import create_dir, read_mpc
 
 
 class GMD(InMemoryDataset):
-    def __init__(self, root: Optional[str] = None,
+    """ GMD dataset.
+
+    Args:
+        root (Optional[str], optional): The root folder for data to be stored. Defaults to './'.
+        name (Optional[str], optional): Name of the grid. Defaults to "b4gic".
+        problem (Optional[str], optional): Specify the problem to solve. Defaults to 'clf'.
+        force_reprocess (Optional[bool], optional): Force to reprocess data if `True`. Defaults to False.
+        transform (Optional[Callable], optional): Transfom modules. Defaults to None.
+        pre_transform (Optional[Callable], optional): Pre_transform modules. Defaults to None.
+        pre_filter (Optional[Callable], optional): Pre_filter modules. Defaults to None.
+    """
+
+    def __init__(self, root: Optional[str] = "./",
                  name: Optional[str] = "b4gic",
-                 transform: Optional[Callable] = None,
+                 problem: Optional[str] = 'reg',
                  force_reprocess: Optional[bool] = False,
-                 problem: Optional[str] = 'clf',
+                 transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
 
         self.root = root
         self.name = name
-        self.solution_name = name + "_blocker_placement_results"
         self.transform = transform
         self.force_reprocess = force_reprocess
         self.problem = problem
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+
+        self.mpc_file = osp.join(osp.dirname(osp.realpath(__file__)), "..", "test", "data", f"{self.name}.m")
 
         if self.force_reprocess:
             SAVED_PATH = osp.join(osp.abspath(self.root), "processed", self.name)
@@ -54,6 +65,7 @@ class GMD(InMemoryDataset):
         data_list = []
         # enumerate the optimized file, send into a list
         res_files = glob(f"../gic-blockers/results/{self.name}_*.json")
+
         for res_f in res_files:
             id = res_f[-9:-5]
             mods_file = f"../gic-blockers/mods/{self.name}_{id}.json"
@@ -62,9 +74,11 @@ class GMD(InMemoryDataset):
             # Modded version
             res_data = json.load(open(res_f))
             # read the matpower file
-            # fn = self.root + "/" + self.name + ".m"
-            fn = osp.join(os.path.dirname(os.path.realpath(__file__)), "..", "test", "data", "epri21.m")
-            mpc = read_file(fn)
+            # TODO: make the data processing more efficiently, no need to read the MPC in every loop
+            mpc = read_mpc(self.mpc_file)
+
+            n_bus = mpc['bus'].shape[0]
+            mapping = dict((v, k) for k, v in mpc['bus'].bus_i.items())
 
             if "INFEASIBLE" in res_data['termination_status']:
                 pass
@@ -73,31 +87,31 @@ class GMD(InMemoryDataset):
                 case_load = mods_load['load']
                 res_load = res_data['solution']['load']
 
+                load_bus_idx = [case_load[load_idx]['source_id'][1] for load_idx in case_load]
+                h_data.load_bus_mask = torch.zeros(n_bus).bool()
+                h_data.load_bus_mask[load_bus_idx] = True
+
                 # a dict from bus_i to load_idx
-                h_data.map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
+                map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
 
                 # Stores all the bus_i indices from the "load_bus" variable (basically the
                 # aligned keys). Used for extracting the results.
-                for k in h_data.map_bus_to_load:
+                for k in map_bus_to_load:
                     # update pd/qd with bus_i
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                   "Pd"] = case_load[h_data.map_bus_to_load[k]]['pd'] * 100
+                                   "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                   "Qd"] = case_load[h_data.map_bus_to_load[k]]['qd'] * 100
-                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(h_data.map_bus_to_load[k]),
-                    #                "Pd"] = case_load[k]['pd'] * 100
-                    # mpc['bus'].loc[mpc['bus']['bus_i'] == int(h_data.map_bus_to_load[k]),
-                    #                "Qd"] = case_load[k]['qd'] * 100
+                                   "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
 
                 if self.problem == "clf":
-                    y = [res_load[h_data.map_bus_to_load[k]]['status']
-                         for k in sorted(list(h_data.map_bus_to_load.keys()))]
+                    y = [res_load[map_bus_to_load[k]]['status']
+                         for k in sorted(list(map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
                 else:
-                    y = [res_load[h_data.map_bus_to_load[k]]['qd']
-                         for k in sorted(list(h_data.map_bus_to_load.keys()))]
-                    # y = [res_load[h_data.map_bus_to_load[k]]['status']
-                    #      for k in sorted(list(h_data.map_bus_to_load.keys()))]
+                    y = [res_load[map_bus_to_load[k]]['qd']
+                         for k in sorted(list(map_bus_to_load.keys()))]
+                    # y = [res_load[map_bus_to_load[k]]['status']
+                    #      for k in sorted(list(map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
 
                 ''' node_type: bus '''
@@ -111,13 +125,8 @@ class GMD(InMemoryDataset):
                 # it's a PyTorch variable that stores the total number of nodes, regardless of the type.
                 h_data.num_network_nodes = mpc['bus'].shape[0]
 
-                # Build the bus_i to node_i mapping.
-                mapping = {}
-                for i in range(h_data.num_network_nodes):
-                    mapping[mpc['bus'].bus_i[i]] = i
-
-                # NOTE: extract the node_i from bus_i for perturbed load
-                h_data.node_idx_y = [mapping[k] for k in h_data.map_bus_to_load]
+                # extract the node_i from bus_i for perturbed load
+                node_idx_y = [mapping[k] for k in map_bus_to_load]
 
                 ''' node_type: gen '''
                 # creating new virtual link between bus and gen to handle multiple generators
@@ -125,7 +134,7 @@ class GMD(InMemoryDataset):
 
                 ''' edge_type (virtual): gen--conn--bus '''
                 n_gen = mpc['gen'].shape[0]
-                # DEBUG
+
                 gen_bus_edges = np.zeros((n_gen, 2))
                 for i in range(n_gen):
                     gen_bus_edges[i] = [mapping[mpc['gen'].bus[i]], i]
