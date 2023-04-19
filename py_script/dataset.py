@@ -255,8 +255,7 @@ class MultiGMD(InMemoryDataset):
 
     @ property
     def processed_file_names(self):
-        dir_path = osp.dirname(osp.realpath(__file__))
-        SAVED_PATH = osp.join(dir_path, "processed", self.name)
+        SAVED_PATH = osp.join(osp.join(osp.abspath(self.root)), "processed", self.name)
         create_dir(SAVED_PATH)
         return [f'{SAVED_PATH}/processed.pt']
 
