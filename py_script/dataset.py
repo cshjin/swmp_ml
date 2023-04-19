@@ -263,7 +263,7 @@ class MultiGMD(InMemoryDataset):
         """ Process multiple grids into single dataset in PyG
         """
         data_list = []
-        dir_path = osp.dirname(osp.realpath(__file__))
+        dir_path = osp.join(osp.abspath(self.root))
         for name in self.test_grids:
             data_path = osp.join(dir_path, "processed", name)
             data = torch.load(f"{data_path}/processed.pt")[0]
