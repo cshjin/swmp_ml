@@ -35,8 +35,8 @@ torch.manual_seed(12345)
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--names", type=str, default="epri21", nargs='+',
-                        help="list of names of network")
+    parser.add_argument("--names", type=str, default=["epri21"], nargs='+',
+                        help="list of names of networks")
     parser.add_argument("--problem", "-p", type=str, default="reg", choices=["clf", "reg"],
                         help="Specify the problem, either `clf` or `reg`")
     parser.add_argument("--force", action="store_true",
@@ -74,8 +74,6 @@ if __name__ == "__main__":
                         help="selects between CPU or CUDA")
     args = vars(parser.parse_args())
 
-    print(args["names"])
-
     if args['normalize']:
         pre_transform = T.Compose([NormalizeColumnFeatures(['x', 'edge_attr'])])
     else:
@@ -95,12 +93,12 @@ if __name__ == "__main__":
         print("Unknown processor type: " + args['processor'] + ". Defaulting to \"auto\".")
         DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    print(args['names'])
     dataset = GMD(ROOT,
                   names=args['names'],
                   problem=args['problem'],
                   force_reprocess=args['force'],
                   pre_transform=pre_transform)
+    data = dataset[0]
 
     # Train and test split for our datasets
     dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
@@ -138,9 +136,10 @@ if __name__ == "__main__":
                                  weight_decay=args['weight_decay'])
 
     losses = []
-    pbar = tqdm(range(args['epochs']), desc=args['names'])
+    pbar = tqdm(range(args['epochs']))
     model.train()
     for epoch in pbar:
+    # for epoch in range(args['epochs']):
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             data = data.to(DEVICE)
@@ -181,35 +180,6 @@ if __name__ == "__main__":
         plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         exit()
 
-# Uninstall commands
-# sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*"
-# sudo rm -rf /usr/local/cuda*
-#
-# pip uninstall torch torchvision torchaudio
-# pip uninstall pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric
-
-# Reinstall commands
-# CPU
-# pip install torch==1.13.1+cpu torchvision==0.14.1+cpu torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cpu
-# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
-# pip install pandas deephyper
-#
-# CUDA
-# pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
-# pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/torch-1.13.0+cu117.html
-#
-# Reinstall CUDA itself
-# wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
-# sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
-# wget https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
-# sudo dpkg -i cuda-repo-wsl-ubuntu-12-1-local_12.1.0-1_amd64.deb
-# sudo cp /var/cuda-repo-wsl-ubuntu-12-1-local/cuda-*-keyring.gpg /usr/share/keyrings/
-# sudo apt-get update
-# sudo apt-get -y install cuda
-
-# TODO:
-# - (finished) Add num_mlp_layers support
-# - (finished) Add the activation functions as a hyperparameters
-# - (finished) Make a 1 slide summary of Hongwei's presentation
-# - Try out the other datasets like ots_test, UIUC-150, etc.
-# - Remove the hard-coded 19 and replace it with the variable for the number of busses
+# Existing bugs
+# - dataset.py files have the line "self.name = names[0]." This is to make sure any accesses to self.processed_paths[0] don't crash.
+# - "pbar = tqdm(range(args['epochs']), desc=args['name'])" has been changed to "pbar = tqdm(range(args['epochs']))"

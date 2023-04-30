@@ -36,6 +36,9 @@ class GMD(InMemoryDataset):
                  pre_filter: Optional[Callable] = None):
 
         self.root = root
+        self.name = names[0]    # self.name seems to be needed for processed paths.
+                                # I'm not sure how to deal with this, so I'll use
+                                # --force for now.
         self.test_grids = names
         self.transform = transform
         self.force_reprocess = force_reprocess
