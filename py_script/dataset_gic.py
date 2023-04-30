@@ -51,6 +51,10 @@ class GMD(InMemoryDataset):
             if osp.exists(SAVED_FILE):
                 os.remove(SAVED_FILE)
 
+        # print(root)
+        # print(transform)
+        # print(pre_transform)
+        # print(pre_filter)
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 

@@ -111,8 +111,14 @@ if __name__ == "__main__":
                            pre_transform=pre_transform)
 
     # Train and test split for our datasets
-    dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
-    dataset_train, dataset_val = train_test_split(dataset_train, test_size=args['test_split'], random_state=12345)
+    dataset_train, dataset_test = train_test_split(dataset,
+                                                   test_size=args['test_split'],
+                                                   random_state=12345,
+                                                   shuffle=True)
+    dataset_train, dataset_val = train_test_split(dataset_train,
+                                                  test_size=args['test_split'],
+                                                  random_state=12345,
+                                                  shuffle=True)
 
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
@@ -153,12 +159,15 @@ if __name__ == "__main__":
         for i, data in enumerate(data_loader_train, 0):
             data = data.to(DEVICE)
             optimizer.zero_grad()
+            # out = model(data)
             out = model(data, "gmd_bus")
             # loss = F.mse_loss(out, data['y'])
             if args['weight']:
                 weight = len(data['y']) / (2 * data['y'].bincount())
                 loss = F.cross_entropy(out, data['y'], weight=weight)
             else:
+                # print(len(out))
+                # print(len(data['y']))
                 loss = F.cross_entropy(out, data['y'])
             loss.backward()
             optimizer.step()
@@ -166,8 +175,8 @@ if __name__ == "__main__":
             t_loss += loss.item()
             train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
                 dim=1).detach().cpu().numpy()).sum() / len(data['y'])
-            roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
-        pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
+            # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+        # pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
         losses.append(t_loss)
 
     # exit()

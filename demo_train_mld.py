@@ -35,8 +35,8 @@ torch.manual_seed(12345)
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", type=str, default="epri21",
-                        help="name of network")
+    parser.add_argument("--names", type=str, default="epri21", nargs='+',
+                        help="list of names of network")
     parser.add_argument("--problem", "-p", type=str, default="reg", choices=["clf", "reg"],
                         help="Specify the problem, either `clf` or `reg`")
     parser.add_argument("--force", action="store_true",
@@ -74,6 +74,8 @@ if __name__ == "__main__":
                         help="selects between CPU or CUDA")
     args = vars(parser.parse_args())
 
+    print(args["names"])
+
     if args['normalize']:
         pre_transform = T.Compose([NormalizeColumnFeatures(['x', 'edge_attr'])])
     else:
@@ -93,19 +95,12 @@ if __name__ == "__main__":
         print("Unknown processor type: " + args['processor'] + ". Defaulting to \"auto\".")
         DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    if args['name'] != "all":
-        dataset = GMD(ROOT,
-                      name=args['name'],
-                      problem=args['problem'],
-                      force_reprocess=args['force'],
-                      pre_transform=pre_transform)
-        data = dataset[0]
-    else:
-        dataset = MultiGMD(ROOT,
-                           name=args['name'],
-                           problem=args['problem'],
-                           force_reprocess=args['force'],
-                           pre_transform=pre_transform)
+    print(args['names'])
+    dataset = GMD(ROOT,
+                  names=args['names'],
+                  problem=args['problem'],
+                  force_reprocess=args['force'],
+                  pre_transform=pre_transform)
 
     # Train and test split for our datasets
     dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
@@ -143,7 +138,7 @@ if __name__ == "__main__":
                                  weight_decay=args['weight_decay'])
 
     losses = []
-    pbar = tqdm(range(args['epochs']), desc=args['name'])
+    pbar = tqdm(range(args['epochs']), desc=args['names'])
     model.train()
     for epoch in pbar:
         t_loss = 0

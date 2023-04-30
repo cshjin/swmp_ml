@@ -63,7 +63,7 @@ class HGT(Module):
                            num_layers=self.num_mlp_layers,
                            dropout=self.dropout, **kwargs)
 
-    def forward(self, data):
+    def forward(self, data, type="bus"):
         r""" Forward pass of the model.
 
         Args:
@@ -82,7 +82,7 @@ class HGT(Module):
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
 
-        output = x_dict['bus']
+        output = x_dict[type]
         return self.flatten(output)
 
     def reset_parameters(self):
