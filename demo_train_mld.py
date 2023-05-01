@@ -72,6 +72,10 @@ if __name__ == "__main__":
                         help="the proportion of datasets to use for testing")
     parser.add_argument("--processor", type=str, default="auto", choices=["auto", "cpu", "cuda"],
                         help="selects between CPU or CUDA")
+    parser.add_argument("--weight", action="store_true",
+                        help="use weighted loss.")
+    parser.add_argument("--setting", "-s", type=str, default="gic", choices=["mld", "gic"],
+                        help="Specify the problem setting, either `mld` or `gic`")
     args = vars(parser.parse_args())
 
     if args['normalize']:
@@ -95,14 +99,21 @@ if __name__ == "__main__":
 
     dataset = GMD(ROOT,
                   names=args['names'],
+                  setting=args['setting'],
                   problem=args['problem'],
                   force_reprocess=args['force'],
                   pre_transform=pre_transform)
     data = dataset[0]
 
     # Train and test split for our datasets
-    dataset_train, dataset_test = train_test_split(dataset, test_size=args['test_split'], random_state=12345)
-    dataset_train, dataset_val = train_test_split(dataset_train, test_size=args['test_split'], random_state=12345)
+    dataset_train, dataset_test = train_test_split(dataset,
+                                                   test_size=args['test_split'],
+                                                   random_state=12345,
+                                                   shuffle=True)
+    dataset_train, dataset_val = train_test_split(dataset_train,
+                                                  test_size=args['test_split'],
+                                                  random_state=12345,
+                                                  shuffle=True)
 
     # Create a DataLoader for our datasets
     data_loader_train = DataLoader(dataset=dataset_train,
@@ -144,15 +155,38 @@ if __name__ == "__main__":
         for i, data in enumerate(data_loader_train, 0):
             data = data.to(DEVICE)
             optimizer.zero_grad()
-            out = model(data)[data.load_bus_mask]
-            loss = F.mse_loss(out, data['y'])
+
+            # Decide between MLD or GIC
+            if args['setting'] == "mld":
+                out = model(data)[data.load_bus_mask]
+                loss = F.mse_loss(out, data['y'])
+            else:
+                out = model(data, "gmd_bus")
+                # loss = F.mse_loss(out, data['y'])
+                if args['weight']:
+                    weight = len(data['y']) / (2 * data['y'].bincount())
+                    loss = F.cross_entropy(out, data['y'], weight=weight)
+                else:
+                    loss = F.cross_entropy(out, data['y'])
+                
+                train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
+                dim=1).detach().cpu().numpy()).sum() / len(data['y'])
+                # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
             loss.backward()
             optimizer.step()
+
             # FIXED: we don't need to devide by num_graphs
             t_loss += loss.item()
-        pbar.set_postfix({"loss": t_loss})
+        
+        # Choose how to handle the pbar based on the problem setting
+        if args['setting'] == "mld":
+            pbar.set_postfix({"loss": t_loss})
+        else:
+            # pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
+            print("pbar code commented out")
         losses.append(t_loss)
 
+    exit()
     # Count the number of files that exist in the Figures directory, so
     # we can give a unique name to the two new figures we're creating
     losses_count = len([file_name for file_name in os.listdir('./Figures/Losses/')])
@@ -164,22 +198,44 @@ if __name__ == "__main__":
     plt.plot(losses)
     plt.ylabel(foo)
     plt.xlabel("epoch")
-    plt.title(f"Hete-Graph - {args['problem']}")
-    plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
 
-    # Evaluate the model
-    plt.clf()
-    model.eval()
-    for data in data_loader_test:
-        pred = model(data)[data.load_bus_mask]
-        plt.plot(data['y'], "r.", label="true")
-        loss = F.mse_loss(pred, data['y'])
-        print(loss.item())
-        plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
-        plt.legend()
-        plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
-        exit()
+    # Choose how to handle the figure based on the problem setting
+    if args['setting'] == "mld":
+        plt.title(f"Hete-Graph - {args['problem']}")
+        plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
+
+        # Evaluate the model
+        plt.clf()
+        model.eval()
+        for data in data_loader_test:
+            pred = model(data)[data.load_bus_mask]
+            plt.plot(data['y'], "r.", label="true")
+            loss = F.mse_loss(pred, data['y'])
+            print(loss.item())
+            plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
+            plt.legend()
+            plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
+            exit()
+    else:
+        if args['weight']:
+            plt.title(f"weighted loss: {t_loss:.4f}"
+                    + "\n"
+                    + f"accuracy: {train_acc:.4f}"
+                    + "\n"
+                    + f"ROC_AUC score: {roc_auc:.4f}")
+        else:
+            plt.title(f"loss: {t_loss:.4f}"
+                    + "\n"
+                    + f"accuracy: {train_acc:.4f}"
+                    + "\n"
+                    + f"ROC_AUC score: {roc_auc:.4f}")
+        # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
+        plt.savefig("GIC-loss.png")
 
 # Existing bugs
 # - dataset.py files have the line "self.name = names[0]." This is to make sure any accesses to self.processed_paths[0] don't crash.
+#   This does cause the dataset variable in the demo_train files to be named the first power grid in the argument passed into --names,
+#   but otherwise.
 # - "pbar = tqdm(range(args['epochs']), desc=args['name'])" has been changed to "pbar = tqdm(range(args['epochs']))"
+# - Some lines of code for the GIC code in the training loop have been commented out because they cause errors. For example,
+#   the one about MSE loss.
