@@ -85,16 +85,15 @@ class GMD(InMemoryDataset):
             print(grid)
             # enumerate the optimized file, send into a list
             if self.setting == "mld":
-                res_files = glob("./gic_blocker_results/*.json")
-            else:
                 res_files = glob(f"../gic-blockers/results/{grid}_*.json")
+            else:
+                res_files = glob("./gic_blocker_results/*.json")
 
             for res_f in res_files:
                 # For mld only, read in the mods files
                 if self.setting == "mld":
                     id = res_f[-9:-5]
                     mods_file = f"../gic-blockers/mods/{grid}_{id}.json"
-                    print(id, res_f)
                     mods_load = json.load(open(mods_file))
 
                 # Modded version
