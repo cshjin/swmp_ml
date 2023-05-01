@@ -25,7 +25,7 @@ from torch.nn import CrossEntropyLoss, MSELoss
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from py_script.dataset import GMD, MultiGMD
+from py_script.dataset import GMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 

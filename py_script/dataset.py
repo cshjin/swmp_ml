@@ -53,7 +53,6 @@ class GMD(InMemoryDataset):
             self.mpc_file = osp.join(osp.dirname(osp.realpath(__file__)), "..", "test", "data", f"{grid}.m")
 
             if self.force_reprocess:
-                print(grid)
                 SAVED_PATH = osp.join(osp.abspath(self.root), "processed", grid)
                 SAVED_FILE = f"{SAVED_PATH}/processed.pt"
                 if osp.exists(SAVED_FILE):
@@ -81,8 +80,6 @@ class GMD(InMemoryDataset):
         data_list = []
 
         for grid in self.test_grids:
-            print(len(data_list))
-            print(grid)
             # enumerate the optimized file, send into a list
             if self.setting == "mld":
                 res_files = glob(f"../gic-blockers/results/{grid}_*.json")
@@ -257,62 +254,3 @@ class GMD(InMemoryDataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr}) {self.name}'
-
-
-class MultiGMD(InMemoryDataset):
-
-    def __init__(self, root: Optional[str] = None,
-                 name: Optional[str] = "all",
-                 transform: Optional[Callable] = None,
-                 force_reprocess: Optional[bool] = False,
-                 problem: Optional[str] = 'clf',
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-
-        self.root = root
-        self.name = name
-        self.transform = transform
-        self.force_reprocess = force_reprocess
-        self.problem = problem
-        self.pre_transform = pre_transform
-        self.pre_filter = pre_filter
-
-        self.test_grids = ['b4gic',
-                           'b6gic_nerc',
-                           'case24_ieee_rts_0',
-                           'epri21',
-                           'ots_test',
-                           'uiuc150_95pct_loading',
-                           'uiuc150',
-                           ]
-
-        for name in self.test_grids:
-            dataset = GMD(root=self.root,
-                          name=name,
-                          transform=self.transform,
-                          force_reprocess=self.force_reprocess,
-                          problem=self.problem,
-                          pre_transform=self.pre_transform,
-                          pre_filter=self.pre_filter)
-
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
-
-    @ property
-    def processed_file_names(self):
-        SAVED_PATH = osp.join(osp.join(osp.abspath(self.root)), "processed", self.name)
-        create_dir(SAVED_PATH)
-        return [f'{SAVED_PATH}/processed.pt']
-
-    def process(self):
-        """ Process multiple grids into single dataset in PyG
-        """
-        data_list = []
-        dir_path = osp.join(osp.abspath(self.root))
-        for name in self.test_grids:
-            data_path = osp.join(dir_path, "processed", name)
-            data = torch.load(f"{data_path}/processed.pt")[0]
-            data_list.append(data)
-
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
