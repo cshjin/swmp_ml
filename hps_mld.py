@@ -130,8 +130,20 @@ def run(config):
     test_loss = 0
     for batch in loader_test:
         batch = batch.to(DEVICE)
-        pred = model(batch)
-        loss = F.mse_loss(pred, batch.y)
+
+        # Compute between MLD or GIC
+        if setting == "mld":
+            pred = model(data)[data.load_bus_mask]
+            loss = F.mse_loss(pred, batch.y)
+        else:
+            pred = model(data, "gmd_bus")
+            # loss = F.mse_loss(out, data['y'])
+            if weight_arg:
+                weight = len(batch.y) / (2 * (batch.y).bincount())
+                loss = F.cross_entropy(pred, batch.y, weight=weight)
+            else:
+                loss = F.cross_entropy(pred, batch.y)
+        
         test_loss += loss.item() / batch.num_graphs
 
     return test_loss
