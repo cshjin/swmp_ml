@@ -22,6 +22,18 @@ torch.manual_seed(12345)
 
 
 def run(config):
+    pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
+
+    setting="mld"
+    weight_arg=True
+    dataset = GMD(ROOT,
+                    names=["epri21"],
+                    setting=setting,
+                    problem="reg",
+                    force_reprocess=True,
+                    pre_transform=pre_transform)
+    data = dataset[0]
+
     batch_size = config.get("batch_size", 64)
     conv_type = config.get("conv_type", "hgt")
     hidden_channels = config.get("hidden_channels", 64)
@@ -60,20 +72,58 @@ def run(config):
                                  lr=lr,
                                  weight_decay=weight_decay)
 
-    pbar = tqdm(range(200), desc="epri21")
+    # pbar = tqdm(range(200), desc="epri21")
+    # losses = []
+    # model.train()
+    # # for epoch in range(200):
+    # for epoch in pbar:
+    #     t_loss = 0
+    #     for i, batch in enumerate(loader_train):
+    #         batch = batch.to(DEVICE)
+    #         optimizer.zero_grad()
+    #         out = model(batch)
+    #         loss = F.mse_loss(out, batch.y)
+    #         loss.backward()
+    #         optimizer.step()
+    #         t_loss += loss.item() / batch.num_graphs
+    #     losses.append(t_loss)
+
     losses = []
+    pbar = tqdm(range(200), desc="epri21")
     model.train()
-    # for epoch in range(200):
     for epoch in pbar:
         t_loss = 0
-        for i, batch in enumerate(loader_train):
-            batch = batch.to(DEVICE)
+        for i, data in enumerate(loader_train):
+            data = data.to(DEVICE)
             optimizer.zero_grad()
-            out = model(batch)
-            loss = F.mse_loss(out, batch.y)
+
+            # Decide between MLD or GIC
+            if setting == "mld":
+                out = model(data)[data.load_bus_mask]
+                loss = F.mse_loss(out, data['y'])
+            else:
+                out = model(data, "gmd_bus")
+                # loss = F.mse_loss(out, data['y'])
+                if weight_arg:
+                    weight = len(data['y']) / (2 * data['y'].bincount())
+                    loss = F.cross_entropy(out, data['y'], weight=weight)
+                else:
+                    loss = F.cross_entropy(out, data['y'])
+                
+                train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
+                dim=1).detach().cpu().numpy()).sum() / len(data['y'])
+                # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
             loss.backward()
             optimizer.step()
-            t_loss += loss.item() / batch.num_graphs
+
+            # FIXED: we don't need to devide by num_graphs
+            t_loss += loss.item()
+        
+        # Choose how to handle the pbar based on the problem setting
+        if setting == "mld":
+            pbar.set_postfix({"loss": t_loss})
+        # else:
+        #     # pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
         losses.append(t_loss)
 
     model.eval()
@@ -94,11 +144,14 @@ DEVICE = torch.device('cpu')
 
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
+setting="mld"
+weight_arg=True
 dataset = GMD(ROOT,
-              name="epri21",
-              problem="reg",
-              force_reprocess=False,
-              pre_transform=pre_transform)
+                names=["epri21"],
+                setting=setting,
+                problem="reg",
+                force_reprocess=True,
+                pre_transform=pre_transform)
 data = dataset[0]
 
 # %%
@@ -124,9 +177,6 @@ problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_conv_layers", default_value=1)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_mlp_layers", default_value=1)
-# activation_choices = ["relu", "rrelu", "hardtanh", "relu6", "sigmoid", "hardsigmoid", "tanh", "silu",
-#                       "mish", "hardswish", "elu", "celu", "selu", "glu", "gelu", "hardshrink",
-#                       "leakyrelu", "logsigmoid", "softplus", "tanhshrink"]
 activation_choices = ["relu", "sigmoid", "tanh", "elu", "leakyrelu"]
 problem.add_hyperparameter(activation_choices, "activation", default_value="relu")
 problem.add_hyperparameter([50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800],

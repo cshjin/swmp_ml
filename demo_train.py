@@ -238,3 +238,4 @@ if __name__ == "__main__":
 # - "pbar = tqdm(range(args['epochs']), desc=args['name'])" has been changed to "pbar = tqdm(range(args['epochs']))"
 # - Some lines of code for the GIC code in the training loop have been commented out because they cause errors. For example,
 #   the one about MSE loss.
+# - hps_mld.py has duplicate code for dataset and data because I'm not sure how to pass data in as an argument for the run() function
