@@ -17,7 +17,7 @@ then
     -c pytorch -c pyg -y
 elif [ "$device" == "gpu" ]
   echo "Install packages with CUDA available"
-  conda install pytorch torchvision torchaudio cudatoolkit=11.6 pyg tensorboard \
+  conda install pytorch torchvision torchaudio cudatoolkit=11.7 pyg tensorboard \
     matplotlib seaborn joblib networkx numba \
     ipykernel flake8 autopep8 graphviz jupyter ipywidgets pytest \
     -c pytorch -c nvidia -c pyg 

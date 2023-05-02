@@ -109,38 +109,30 @@ class GMD(InMemoryDataset):
                     pass
 
                 h_data = HeteroData()
+                case_load = mods_load['load']
+                res_load = res_data['solution']['load']
 
-                # Different code for handling nodes in the heterogeneous graph neural network
-                if self.setting == "mld":
-                    case_load = mods_load['load']
-                    res_load = res_data['solution']['load']
+                load_bus_idx = [case_load[load_idx]['source_id'][1] for load_idx in case_load]
+                h_data.load_bus_mask = torch.zeros(n_bus).bool()
+                h_data.load_bus_mask[load_bus_idx] = True
 
-                    load_bus_idx = [case_load[load_idx]['source_id'][1] for load_idx in case_load]
-                    h_data.load_bus_mask = torch.zeros(n_bus).bool()
-                    h_data.load_bus_mask[load_bus_idx] = True
+                # a dict from bus_i to load_idx
+                map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
 
-                    # a dict from bus_i to load_idx
-                    map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
+                # Stores all the bus_i indices from the "load_bus" variable (basically the
+                # aligned keys). Used for extracting the results.
+                # TODO: replace 100 with mpc['baseMVA'] or ignore it
+                for k in map_bus_to_load:
+                    # update pd/qd with bus_i
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
+                                   "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
+                    mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
+                                   "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
 
-                    # Stores all the bus_i indices from the "load_bus" variable (basically the
-                    # aligned keys). Used for extracting the results.
-                    for k in map_bus_to_load:
-                        # update pd/qd with bus_i
-                        mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                    "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
-                        mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                    "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
-
-                    if self.problem == "clf":
-                        y = [res_load[map_bus_to_load[k]]['status']
-                            for k in sorted(list(map_bus_to_load.keys()))]
-                        h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
-                    else:
-                        y = [res_load[map_bus_to_load[k]]['qd']
-                            for k in sorted(list(map_bus_to_load.keys()))]
-                        # y = [res_load[map_bus_to_load[k]]['status']
-                        #      for k in sorted(list(map_bus_to_load.keys()))]
-                        h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
+                if self.problem == "clf":
+                    y = [res_load[map_bus_to_load[k]]['status']
+                         for k in sorted(list(map_bus_to_load.keys()))]
+                    h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
                 else:
                     # Stores all the bus_i indices from the "load_bus" variable (basically the
                     # aligned keys). Used for extracting the results.
