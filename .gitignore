@@ -19,5 +19,10 @@ Manifest.toml
 
 **/*.pyc
 **/processed/*
+test/data/processed/*
 .vscode/*
 **/*.png
+**/gic_blocker_results/*
+
+context.yaml
+results.csv

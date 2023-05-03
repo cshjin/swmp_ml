@@ -1,1 +1,2236 @@
-{"solve_time":0.02312183380126953,"optimizer":"Ipopt","termination_status":"LOCALLY_SOLVED","dual_status":"FEASIBLE_POINT","primal_status":"FEASIBLE_POINT","objective":0.0,"solution":{"baseMVA":100,"gmd_branch":{"32":{"br_r":1.6942177200000001,"gmd_idc":169.42824032177057,"name":"dc_br8","parent_index":32,"br_v":370.32326093810366,"len_km":43.2521215051179,"source_id":["gmd_branch",32],"f_bus":24,"br_status":1,"t_bus":29,"index":32},"29":{"br_r":2.09242776,"gmd_idc":169.42824032177057,"name":"dc_br4","parent_index":29,"br_v":289.80321075597607,"len_km":53.43329799574202,"source_id":["gmd_branch",29],"f_bus":22,"br_status":1,"t_bus":24,"index":29},"1":{"br_r":0.21913296000000002,"gmd_idc":0.0,"name":"dc_br1","parent_index":1,"br_v":3.934502219563054e-15,"len_km":6.425529748336267,"source_id":["gmd_branch",1],"f_bus":21,"br_status":0,"t_bus":22,"index":1},"54":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf26_hi","parent_index":52,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",54],"f_bus":35,"br_status":0,"t_bus":12,"index":54},"2":{"br_r":1.10080668,"gmd_idc":164.0191385414125,"name":"dc_br10","parent_index":2,"br_v":-48.30462067956072,"len_km":32.19687879754137,"source_id":["gmd_branch",2],"f_bus":26,"br_status":1,"t_bus":30,"index":2},"74":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf7_hi","parent_index":69,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",74],"f_bus":21,"br_status":0,"t_bus":1,"index":74},"41":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf15_hi","parent_index":40,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",41],"f_bus":27,"br_status":0,"t_bus":7,"index":41},"65":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf35_hi","parent_index":62,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",65],"f_bus":42,"br_status":0,"t_bus":19,"index":65},"51":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf23_hi","parent_index":49,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",51],"f_bus":35,"br_status":0,"t_bus":12,"index":51},"53":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf25_hi","parent_index":51,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",53],"f_bus":35,"br_status":0,"t_bus":12,"index":53},"27":{"br_r":0.5133063333333333,"gmd_idc":182.23967831608988,"name":"dc_br37","parent_index":27,"br_v":17.759147745179977,"len_km":25.155858586499022,"source_id":["gmd_branch",27],"f_bus":40,"br_status":1,"t_bus":43,"index":27},"75":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf8_hi","parent_index":70,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",75],"f_bus":21,"br_status":0,"t_bus":1,"index":75},"42":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf16_hi","parent_index":41,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",42],"f_bus":27,"br_status":0,"t_bus":7,"index":42},"33":{"br_r":1.47140292,"gmd_idc":216.3012639476456,"name":"dc_br9","parent_index":33,"br_v":370.32326093810366,"len_km":37.57867311336557,"source_id":["gmd_branch",33],"f_bus":25,"br_status":1,"t_bus":30,"index":33},"28":{"br_r":1.6917419999999999,"gmd_idc":3.2703152090829435,"name":"dc_br38","parent_index":28,"br_v":515.3504766381113,"len_km":83.4988965122832,"source_id":["gmd_branch",28],"f_bus":41,"br_status":1,"t_bus":42,"index":28},"50":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf22_hi","parent_index":48,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",50],"f_bus":35,"br_status":0,"t_bus":12,"index":50},"52":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf24_hi","parent_index":50,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",52],"f_bus":35,"br_status":0,"t_bus":12,"index":52},"63":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf33_hi","parent_index":60,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",63],"f_bus":42,"br_status":0,"t_bus":19,"index":63},"26":{"br_r":0.5133063333333333,"gmd_idc":182.23967831608988,"name":"dc_br36","parent_index":26,"br_v":17.759147745179977,"len_km":25.155858586499022,"source_id":["gmd_branch",26],"f_bus":40,"br_status":1,"t_bus":43,"index":26},"10":{"br_r":2.300092,"gmd_idc":410.638520732458,"name":"dc_br21","parent_index":10,"br_v":1096.6497006497518,"len_km":113.29358943973146,"source_id":["gmd_branch",10],"f_bus":32,"br_status":1,"t_bus":43,"index":10},"24":{"br_r":0.9802369999999999,"gmd_idc":182.23967831608988,"name":"dc_br34","parent_index":24,"br_v":257.66215968961114,"len_km":48.301752843369876,"source_id":["gmd_branch",24],"f_bus":39,"br_status":1,"t_bus":40,"index":24},"58":{"br_r":0.02,"gmd_idc":285.9380125825285,"name":"dc_xf3_series","parent_index":56,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",58],"f_bus":29,"br_status":1,"t_bus":32,"index":58},"25":{"br_r":0.9802369999999999,"gmd_idc":182.23967831608988,"name":"dc_br35","parent_index":25,"br_v":257.66215968961114,"len_km":48.301752843369876,"source_id":["gmd_branch",25],"f_bus":39,"br_status":1,"t_bus":40,"index":25},"23":{"br_r":0.5806656666666666,"gmd_idc":-10.530477412482009,"name":"dc_br33","parent_index":23,"br_v":-64.41652045626684,"len_km":28.97129649216555,"source_id":["gmd_branch",23],"f_bus":38,"br_status":1,"t_bus":41,"index":23},"49":{"br_r":0.03333333333333333,"gmd_idc":279.2332314817506,"name":"dc_xf21_hi","parent_index":47,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",49],"f_bus":35,"br_status":1,"t_bus":12,"index":49},"59":{"br_r":0.013333333333333334,"gmd_idc":-64.47835093042545,"name":"dc_xf3_common","parent_index":56,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",59],"f_bus":29,"br_status":1,"t_bus":9,"index":59},"5":{"br_r":2.7429708,"gmd_idc":121.66749011055637,"name":"dc_br13","parent_index":5,"br_v":563.5268595267823,"len_km":70.01706570387006,"source_id":["gmd_branch",5],"f_bus":28,"br_status":1,"t_bus":30,"index":5},"31":{"br_r":2.1165501599999996,"gmd_idc":59.181632802959214,"name":"dc_br6","parent_index":31,"br_v":144.91166459485748,"len_km":54.11995261078864,"source_id":["gmd_branch",31],"f_bus":23,"br_status":1,"t_bus":29,"index":31},"62":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf32_hi","parent_index":59,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",62],"f_bus":42,"br_status":0,"t_bus":19,"index":62},"43":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf17_hi","parent_index":42,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",43],"f_bus":33,"br_status":0,"t_bus":10,"index":43},"39":{"br_r":0.03333333333333333,"gmd_idc":-83.36184471579577,"name":"dc_xf13_hi","parent_index":38,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",39],"f_bus":22,"br_status":1,"t_bus":2,"index":39},"34":{"br_r":0.02,"gmd_idc":419.4934314111486,"name":"dc_xf1_series","parent_index":34,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",34],"f_bus":23,"br_status":1,"t_bus":44,"index":34},"44":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf18_hi","parent_index":43,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",44],"f_bus":33,"br_status":0,"t_bus":10,"index":44},"55":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf27_hi","parent_index":53,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",55],"f_bus":36,"br_status":0,"t_bus":13,"index":55},"17":{"br_r":0.606763,"gmd_idc":-24.33127003404696,"name":"dc_br28","parent_index":17,"br_v":257.6556256995011,"len_km":30.19764739266044,"source_id":["gmd_branch",17],"f_bus":36,"br_status":1,"t_bus":37,"index":17},"71":{"br_r":0.02,"gmd_idc":316.2359358148319,"name":"dc_xf5_series","parent_index":67,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",71],"f_bus":30,"br_status":1,"t_bus":32,"index":71},"37":{"br_r":0.03333333333333333,"gmd_idc":-83.36184471579577,"name":"dc_xf11_hi","parent_index":36,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",37],"f_bus":22,"br_status":1,"t_bus":2,"index":37},"47":{"br_r":0.013333333333333334,"gmd_idc":-64.47835093042545,"name":"dc_xf2_common","parent_index":45,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",47],"f_bus":29,"br_status":1,"t_bus":9,"index":47},"9":{"br_r":1.1719113333333333,"gmd_idc":191.53542766490241,"name":"dc_br20","parent_index":9,"br_v":209.3226690375479,"len_km":57.9670779773549,"source_id":["gmd_branch",9],"f_bus":32,"br_status":1,"t_bus":33,"index":9},"73":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf6_hi","parent_index":68,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",73],"f_bus":21,"br_status":0,"t_bus":1,"index":73},"12":{"br_r":0.8933046666666667,"gmd_idc":224.21915670278182,"name":"dc_br23","parent_index":12,"br_v":161.02946073616317,"len_km":44.111403726089435,"source_id":["gmd_branch",12],"f_bus":34,"br_status":1,"t_bus":36,"index":12},"20":{"br_r":0.341205,"gmd_idc":-21.060954824964018,"name":"dc_br30","parent_index":20,"br_v":161.04007537334166,"len_km":17.285607726605107,"source_id":["gmd_branch",20],"f_bus":37,"br_status":1,"t_bus":38,"index":20},"6":{"br_r":1.1719113333333333,"gmd_idc":193.11269796236135,"name":"dc_br18","parent_index":6,"br_v":209.3226690375479,"len_km":57.9670779773549,"source_id":["gmd_branch",6],"f_bus":31,"br_status":1,"t_bus":33,"index":6},"70":{"br_r":0.013333333333333334,"gmd_idc":-19.03146608197039,"name":"dc_xf4_common","parent_index":66,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",70],"f_bus":30,"br_status":1,"t_bus":9,"index":70},"14":{"br_r":1.157981,"gmd_idc":12.16563501702348,"name":"dc_br25","parent_index":14,"br_v":547.5140407399668,"len_km":56.9744215058332,"source_id":["gmd_branch",14],"f_bus":35,"br_status":1,"t_bus":41,"index":14},"7":{"br_r":1.115661,"gmd_idc":224.21915670278182,"name":"dc_br19","parent_index":7,"br_v":499.1654202251109,"len_km":54.63631486819532,"source_id":["gmd_branch",7],"f_bus":31,"br_status":1,"t_bus":34,"index":7},"57":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf29_hi","parent_index":55,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",57],"f_bus":41,"br_status":0,"t_bus":18,"index":57},"8":{"br_r":3.34958568,"gmd_idc":150.32996158253928,"name":"dc_br2","parent_index":8,"br_v":515.2148050309372,"len_km":85.62152789957952,"source_id":["gmd_branch",8],"f_bus":21,"br_status":1,"t_bus":23,"index":8},"64":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf34_hi","parent_index":61,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",64],"f_bus":42,"br_status":0,"t_bus":19,"index":64},"19":{"br_r":1.4328705599999998,"gmd_idc":216.3012639476456,"name":"dc_br3","parent_index":19,"br_v":289.80321075597607,"len_km":36.65615352037294,"source_id":["gmd_branch",19],"f_bus":21,"br_status":1,"t_bus":25,"index":19},"69":{"br_r":0.02,"gmd_idc":223.8148889487233,"name":"dc_xf4_series","parent_index":66,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",69],"f_bus":30,"br_status":1,"t_bus":31,"index":69},"60":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf30_hi","parent_index":57,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",60],"f_bus":42,"br_status":0,"t_bus":19,"index":60},"4":{"br_r":2.7429708,"gmd_idc":121.88840331336773,"name":"dc_br12","parent_index":4,"br_v":563.5268595267823,"len_km":70.01706570387006,"source_id":["gmd_branch",4],"f_bus":28,"br_status":1,"t_bus":29,"index":4},"22":{"br_r":0.5806656666666666,"gmd_idc":-10.530477412482009,"name":"dc_br32","parent_index":22,"br_v":-64.41652045626684,"len_km":28.97129649216555,"source_id":["gmd_branch",22],"f_bus":38,"br_status":1,"t_bus":41,"index":22},"11":{"br_r":1.8719546666666667,"gmd_idc":384.64812562726377,"name":"dc_br22","parent_index":11,"br_v":887.3270473915318,"len_km":92.25438860412025,"source_id":["gmd_branch",11],"f_bus":33,"br_status":1,"t_bus":43,"index":11},"35":{"br_r":0.013333333333333334,"gmd_idc":-328.3451026315685,"name":"dc_xf1_common","parent_index":34,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",35],"f_bus":23,"br_status":1,"t_bus":3,"index":35},"13":{"br_r":0.36359933333333333,"gmd_idc":115.928929895351,"name":"dc_br24","parent_index":13,"br_v":193.23486336698187,"len_km":19.580115928517046,"source_id":["gmd_branch",13],"f_bus":35,"br_status":1,"t_bus":36,"index":13},"15":{"br_r":1.157981,"gmd_idc":12.16563501702348,"name":"dc_br26","parent_index":15,"br_v":547.5140407399668,"len_km":56.9744215058332,"source_id":["gmd_branch",15],"f_bus":35,"br_status":1,"t_bus":41,"index":15},"61":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf31_hi","parent_index":58,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",61],"f_bus":42,"br_status":0,"t_bus":19,"index":61},"67":{"br_r":0.03333333333333333,"gmd_idc":386.58866766396716,"name":"dc_xf37_hi","parent_index":64,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",67],"f_bus":43,"br_status":1,"t_bus":20,"index":67},"16":{"br_r":1.261136,"gmd_idc":-419.4934314111486,"name":"dc_br27","parent_index":16,"br_v":-611.8716792401644,"len_km":61.75980609583138,"source_id":["gmd_branch",16],"f_bus":35,"br_status":1,"t_bus":44,"index":16},"40":{"br_r":0.03333333333333333,"gmd_idc":-243.55589342392412,"name":"dc_xf14_hi","parent_index":39,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",40],"f_bus":27,"br_status":1,"t_bus":7,"index":40},"21":{"br_r":2.3753863333333336,"gmd_idc":-3.2703152090829435,"name":"dc_br31","parent_index":21,"br_v":611.9740296874829,"len_km":117.39278204146677,"source_id":["gmd_branch",21],"f_bus":37,"br_status":1,"t_bus":42,"index":21},"38":{"br_r":0.03333333333333333,"gmd_idc":-83.36184471579577,"name":"dc_xf12_hi","parent_index":37,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",38],"f_bus":22,"br_status":1,"t_bus":2,"index":38},"46":{"br_r":0.02,"gmd_idc":193.51696571641986,"name":"dc_xf2_series","parent_index":45,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",46],"f_bus":29,"br_status":1,"t_bus":31,"index":46},"72":{"br_r":0.013333333333333334,"gmd_idc":-19.03146608197039,"name":"dc_xf5_common","parent_index":67,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",72],"f_bus":30,"br_status":1,"t_bus":9,"index":72},"45":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf19_hi","parent_index":44,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",45],"f_bus":33,"br_status":0,"t_bus":10,"index":45},"68":{"br_r":0.03333333333333333,"gmd_idc":386.58866766396716,"name":"dc_xf38_hi","parent_index":65,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",68],"f_bus":43,"br_status":1,"t_bus":20,"index":68},"56":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf28_hi","parent_index":54,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",56],"f_bus":38,"br_status":0,"t_bus":15,"index":56},"36":{"br_r":0.03333333333333333,"gmd_idc":-83.36184471579577,"name":"dc_xf10_hi","parent_index":35,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",36],"f_bus":22,"br_status":1,"t_bus":2,"index":36},"66":{"br_r":0.03333333333333333,"gmd_idc":386.58866766396716,"name":"dc_xf36_hi","parent_index":63,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",66],"f_bus":43,"br_status":1,"t_bus":20,"index":66},"76":{"br_r":0.03333333333333333,"gmd_idc":-366.63122553018485,"name":"dc_xf9_hi","parent_index":71,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",76],"f_bus":21,"br_status":1,"t_bus":1,"index":76},"48":{"br_r":0.03333333333333333,"gmd_idc":0.0,"name":"dc_xf20_hi","parent_index":46,"br_v":0.0,"len_km":0.0,"source_id":["gmd_branch",48],"f_bus":34,"br_status":0,"t_bus":11,"index":48},"18":{"br_r":0.6138163333333334,"gmd_idc":364.47935663217976,"name":"dc_br29","parent_index":18,"br_v":161.03354139410982,"len_km":29.918911521577147,"source_id":["gmd_branch",18],"f_bus":36,"br_status":1,"t_bus":39,"index":18},"30":{"br_r":2.8070221199999996,"gmd_idc":164.0191385414125,"name":"dc_br5","parent_index":30,"br_v":708.4310837828218,"len_km":71.48960655992506,"source_id":["gmd_branch",30],"f_bus":22,"br_status":1,"t_bus":26,"index":30},"3":{"br_r":1.01199816,"gmd_idc":243.55589342392412,"name":"dc_br11","parent_index":3,"br_v":32.200031997547654,"len_km":25.8756240354825,"source_id":["gmd_branch",3],"f_bus":27,"br_status":1,"t_bus":28,"index":3}},"multiinfrastructure":false,"multinetwork":false,"gmd_bus":{"32":{"source_id":["gmd_bus",32],"g_gnd":0.0,"name":"dc_bus12","gmd_vdc":-23.280434999868746,"status":1,"parent_index":12,"index":32,"blocker_placed":0.0},"29":{"source_id":["gmd_bus",29],"g_gnd":0.0,"name":"dc_bus9","gmd_vdc":-17.561674748218177,"status":1,"parent_index":9,"index":29,"blocker_placed":0.0},"1":{"source_id":["gmd_bus",1],"g_gnd":10.0,"name":"dc_sub1","gmd_vdc":-36.66312255301849,"status":1,"parent_index":1,"index":1,"blocker_placed":0.0},"54":{"source_id":["gmd_bus",54],"g_gnd":0.0,"name":"dc_bus34","gmd_vdc":0.0,"status":1,"parent_index":34,"index":54,"blocker_placed":0.0},"2":{"source_id":["gmd_bus",2],"g_gnd":10.0,"name":"dc_sub2","gmd_vdc":-33.344737886318306,"status":1,"parent_index":2,"index":2,"blocker_placed":0.0},"74":{"source_id":["gmd_bus",74],"g_gnd":0.0,"name":"dc_bus54","gmd_vdc":0.0,"status":1,"parent_index":54,"index":74,"blocker_placed":0.0},"41":{"source_id":["gmd_bus",41],"g_gnd":0.0,"name":"dc_bus21","gmd_vdc":570.657564068219,"status":1,"parent_index":21,"index":41,"blocker_placed":0.0},"65":{"source_id":["gmd_bus",65],"g_gnd":0.0,"name":"dc_bus45","gmd_vdc":0.0,"status":1,"parent_index":45,"index":65,"blocker_placed":0.0},"51":{"source_id":["gmd_bus",51],"g_gnd":0.0,"name":"dc_bus31","gmd_vdc":0.0,"status":1,"parent_index":31,"index":51,"blocker_placed":0.0},"53":{"source_id":["gmd_bus",53],"g_gnd":0.0,"name":"dc_bus33","gmd_vdc":0.0,"status":1,"parent_index":33,"index":53,"blocker_placed":0.0},"27":{"source_id":["gmd_bus",27],"g_gnd":0.0,"name":"dc_bus7","gmd_vdc":-32.47411912318989,"status":1,"parent_index":7,"index":27,"blocker_placed":0.0},"75":{"source_id":["gmd_bus",75],"g_gnd":0.0,"name":"dc_bus55","gmd_vdc":0.0,"status":1,"parent_index":55,"index":75,"blocker_placed":0.0},"42":{"source_id":["gmd_bus",42],"g_gnd":0.0,"name":"dc_bus22","gmd_vdc":1080.475511113886,"status":1,"parent_index":22,"index":42,"blocker_placed":0.0},"33":{"source_id":["gmd_bus",33],"g_gnd":0.0,"name":"dc_bus13","gmd_vdc":-38.42030437766682,"status":1,"parent_index":13,"index":33,"blocker_placed":0.0},"28":{"source_id":["gmd_bus",28],"g_gnd":0.0,"name":"dc_bus8","gmd_vdc":-246.75220312780957,"status":1,"parent_index":8,"index":28,"blocker_placed":0.0},"50":{"source_id":["gmd_bus",50],"g_gnd":0.0,"name":"dc_bus30","gmd_vdc":0.0,"status":1,"parent_index":30,"index":50,"blocker_placed":0.0},"52":{"source_id":["gmd_bus",52],"g_gnd":0.0,"name":"dc_bus32","gmd_vdc":0.0,"status":1,"parent_index":32,"index":52,"blocker_placed":0.0},"63":{"source_id":["gmd_bus",63],"g_gnd":0.0,"name":"dc_bus43","gmd_vdc":0.0,"status":1,"parent_index":43,"index":63,"blocker_placed":0.0},"26":{"source_id":["gmd_bus",26],"g_gnd":0.0,"name":"dc_bus6","gmd_vdc":211.90226775022097,"status":1,"parent_index":6,"index":26,"blocker_placed":0.0},"10":{"source_id":["gmd_bus",10],"g_gnd":10.0,"name":"dc_sub10","gmd_vdc":0.0,"status":1,"parent_index":10,"index":10,"blocker_placed":0.0},"77":{"source_id":["gmd_bus",77],"g_gnd":0.0,"name":"dc_bus57","gmd_vdc":0.0,"status":1,"parent_index":57,"index":77,"blocker_placed":0.0},"24":{"source_id":["gmd_bus",24],"g_gnd":0.0,"name":"dc_bus4","gmd_vdc":-100.83660866475955,"status":1,"parent_index":4,"index":24,"blocker_placed":0.0},"58":{"source_id":["gmd_bus",58],"g_gnd":0.0,"name":"dc_bus38","gmd_vdc":0.0,"status":1,"parent_index":38,"index":58,"blocker_placed":0.0},"25":{"source_id":["gmd_bus",25],"g_gnd":0.0,"name":"dc_bus5","gmd_vdc":-69.0126658494193,"status":1,"parent_index":5,"index":25,"blocker_placed":0.0},"23":{"source_id":["gmd_bus",23],"g_gnd":0.0,"name":"dc_bus3","gmd_vdc":-37.2124449649111,"status":1,"parent_index":3,"index":23,"blocker_placed":0.0},"49":{"source_id":["gmd_bus",49],"g_gnd":0.0,"name":"dc_bus29","gmd_vdc":0.0,"status":1,"parent_index":29,"index":49,"blocker_placed":0.0},"59":{"source_id":["gmd_bus",59],"g_gnd":0.0,"name":"dc_bus39","gmd_vdc":0.0,"status":1,"parent_index":39,"index":59,"blocker_placed":0.0},"5":{"source_id":["gmd_bus",5],"g_gnd":10.0,"name":"dc_sub5","gmd_vdc":0.0,"status":1,"parent_index":5,"index":5,"blocker_placed":0.0},"31":{"source_id":["gmd_bus",31],"g_gnd":0.0,"name":"dc_bus11","gmd_vdc":-21.432014062546575,"status":1,"parent_index":11,"index":31,"blocker_placed":0.0},"62":{"source_id":["gmd_bus",62],"g_gnd":0.0,"name":"dc_bus42","gmd_vdc":0.0,"status":1,"parent_index":42,"index":62,"blocker_placed":0.0},"43":{"source_id":["gmd_bus",43],"g_gnd":0.0,"name":"dc_bus23","gmd_vdc":128.8628892213224,"status":1,"parent_index":23,"index":43,"blocker_placed":0.0},"39":{"source_id":["gmd_bus",39],"g_gnd":0.0,"name":"dc_bus19","gmd_vdc":125.6244384043385,"status":1,"parent_index":19,"index":39,"blocker_placed":0.0},"34":{"source_id":["gmd_bus",34],"g_gnd":0.0,"name":"dc_bus14","gmd_vdc":227.58083757638207,"status":1,"parent_index":14,"index":34,"blocker_placed":0.0},"44":{"source_id":["gmd_bus",44],"g_gnd":0.0,"name":"dc_bus24","gmd_vdc":-45.60231359313407,"status":1,"parent_index":24,"index":44,"blocker_placed":0.0},"55":{"source_id":["gmd_bus",55],"g_gnd":0.0,"name":"dc_bus35","gmd_vdc":0.0,"status":1,"parent_index":35,"index":55,"blocker_placed":0.0},"17":{"source_id":["gmd_bus",17],"g_gnd":10.0,"name":"dc_sub17","gmd_vdc":0.0,"status":1,"parent_index":17,"index":17,"blocker_placed":0.0},"71":{"source_id":["gmd_bus",71],"g_gnd":0.0,"name":"dc_bus51","gmd_vdc":0.0,"status":1,"parent_index":51,"index":71,"blocker_placed":0.0},"37":{"source_id":["gmd_bus",37],"g_gnd":0.0,"name":"dc_bus17","gmd_vdc":460.7332193730552,"status":1,"parent_index":17,"index":37,"blocker_placed":0.0},"47":{"source_id":["gmd_bus",47],"g_gnd":0.0,"name":"dc_bus27","gmd_vdc":0.0,"status":1,"parent_index":27,"index":47,"blocker_placed":0.0},"9":{"source_id":["gmd_bus",9],"g_gnd":10.0,"name":"dc_sub9","gmd_vdc":-16.70196340247917,"status":1,"parent_index":9,"index":9,"blocker_placed":0.0},"73":{"source_id":["gmd_bus",73],"g_gnd":0.0,"name":"dc_bus53","gmd_vdc":0.0,"status":1,"parent_index":53,"index":73,"blocker_placed":0.0},"12":{"source_id":["gmd_bus",12],"g_gnd":10.0,"name":"dc_sub12","gmd_vdc":27.92332314817506,"status":1,"parent_index":12,"index":12,"blocker_placed":0.0},"20":{"source_id":["gmd_bus",20],"g_gnd":10.0,"name":"dc_sub20","gmd_vdc":115.97660029919015,"status":1,"parent_index":20,"index":20,"blocker_placed":0.0},"6":{"source_id":["gmd_bus",6],"g_gnd":10.0,"name":"dc_sub6","gmd_vdc":0.0,"status":1,"parent_index":6,"index":6,"blocker_placed":0.0},"70":{"source_id":["gmd_bus",70],"g_gnd":0.0,"name":"dc_bus50","gmd_vdc":0.0,"status":1,"parent_index":50,"index":70,"blocker_placed":0.0},"14":{"source_id":["gmd_bus",14],"g_gnd":10.0,"name":"dc_sub14","gmd_vdc":0.0,"status":1,"parent_index":14,"index":14,"blocker_placed":0.0},"7":{"source_id":["gmd_bus",7],"g_gnd":10.0,"name":"dc_sub7","gmd_vdc":-24.355589342392413,"status":1,"parent_index":7,"index":7,"blocker_placed":0.0},"57":{"source_id":["gmd_bus",57],"g_gnd":0.0,"name":"dc_bus37","gmd_vdc":0.0,"status":1,"parent_index":37,"index":57,"blocker_placed":0.0},"8":{"source_id":["gmd_bus",8],"g_gnd":10.0,"name":"dc_sub8","gmd_vdc":0.0,"status":1,"parent_index":8,"index":8,"blocker_placed":0.0},"64":{"source_id":["gmd_bus",64],"g_gnd":0.0,"name":"dc_bus44","gmd_vdc":0.0,"status":1,"parent_index":44,"index":64,"blocker_placed":0.0},"19":{"source_id":["gmd_bus",19],"g_gnd":10.0,"name":"dc_sub19","gmd_vdc":0.0,"status":1,"parent_index":19,"index":19,"blocker_placed":0.0},"69":{"source_id":["gmd_bus",69],"g_gnd":0.0,"name":"dc_bus49","gmd_vdc":0.0,"status":1,"parent_index":49,"index":69,"blocker_placed":0.0},"60":{"source_id":["gmd_bus",60],"g_gnd":0.0,"name":"dc_bus40","gmd_vdc":0.0,"status":1,"parent_index":40,"index":60,"blocker_placed":0.0},"4":{"source_id":["gmd_bus",4],"g_gnd":10.0,"name":"dc_sub4","gmd_vdc":0.0,"status":1,"parent_index":4,"index":4,"blocker_placed":0.0},"22":{"source_id":["gmd_bus",22],"g_gnd":0.0,"name":"dc_bus2","gmd_vdc":-36.1234660435115,"status":1,"parent_index":2,"index":22,"blocker_placed":0.0},"11":{"source_id":["gmd_bus",11],"g_gnd":10.0,"name":"dc_sub11","gmd_vdc":0.0,"status":1,"parent_index":11,"index":11,"blocker_placed":0.0},"35":{"source_id":["gmd_bus",35],"g_gnd":0.0,"name":"dc_bus15","gmd_vdc":37.23109753090008,"status":1,"parent_index":15,"index":35,"blocker_placed":0.0},"13":{"source_id":["gmd_bus",13],"g_gnd":10.0,"name":"dc_sub13","gmd_vdc":0.0,"status":1,"parent_index":13,"index":13,"blocker_placed":0.0},"15":{"source_id":["gmd_bus",15],"g_gnd":10.0,"name":"dc_sub15","gmd_vdc":0.0,"status":1,"parent_index":15,"index":15,"blocker_placed":0.0},"61":{"source_id":["gmd_bus",61],"g_gnd":0.0,"name":"dc_bus41","gmd_vdc":0.0,"status":1,"parent_index":41,"index":61,"blocker_placed":0.0},"67":{"source_id":["gmd_bus",67],"g_gnd":0.0,"name":"dc_bus47","gmd_vdc":0.0,"status":1,"parent_index":47,"index":67,"blocker_placed":0.0},"16":{"source_id":["gmd_bus",16],"g_gnd":10.0,"name":"dc_sub16","gmd_vdc":0.0,"status":1,"parent_index":16,"index":16,"blocker_placed":0.0},"40":{"source_id":["gmd_bus",40],"g_gnd":0.0,"name":"dc_bus20","gmd_vdc":204.6485225404207,"status":1,"parent_index":20,"index":40,"blocker_placed":0.0},"21":{"source_id":["gmd_bus",21],"g_gnd":0.0,"name":"dc_bus1","gmd_vdc":-48.88416340402465,"status":1,"parent_index":1,"index":21,"blocker_placed":0.0},"38":{"source_id":["gmd_bus",38],"g_gnd":0.0,"name":"dc_bus18","gmd_vdc":628.9593978374487,"status":1,"parent_index":18,"index":38,"blocker_placed":0.0},"46":{"source_id":["gmd_bus",46],"g_gnd":0.0,"name":"dc_bus26","gmd_vdc":0.0,"status":1,"parent_index":26,"index":46,"blocker_placed":0.0},"72":{"source_id":["gmd_bus",72],"g_gnd":0.0,"name":"dc_bus52","gmd_vdc":0.0,"status":1,"parent_index":52,"index":72,"blocker_placed":0.0},"45":{"source_id":["gmd_bus",45],"g_gnd":0.0,"name":"dc_bus25","gmd_vdc":0.0,"status":1,"parent_index":25,"index":45,"blocker_placed":0.0},"68":{"source_id":["gmd_bus",68],"g_gnd":0.0,"name":"dc_bus48","gmd_vdc":0.0,"status":1,"parent_index":48,"index":68,"blocker_placed":0.0},"56":{"source_id":["gmd_bus",56],"g_gnd":0.0,"name":"dc_bus36","gmd_vdc":0.0,"status":1,"parent_index":36,"index":56,"blocker_placed":0.0},"36":{"source_id":["gmd_bus",36],"g_gnd":0.0,"name":"dc_bus16","gmd_vdc":188.31427927388563,"status":1,"parent_index":16,"index":36,"blocker_placed":0.0},"66":{"source_id":["gmd_bus",66],"g_gnd":0.0,"name":"dc_bus46","gmd_vdc":0.0,"status":1,"parent_index":46,"index":66,"blocker_placed":0.0},"76":{"source_id":["gmd_bus",76],"g_gnd":0.0,"name":"dc_bus56","gmd_vdc":0.0,"status":1,"parent_index":56,"index":76,"blocker_placed":0.0},"48":{"source_id":["gmd_bus",48],"g_gnd":0.0,"name":"dc_bus28","gmd_vdc":0.0,"status":1,"parent_index":28,"index":48,"blocker_placed":0.0},"18":{"source_id":["gmd_bus",18],"g_gnd":10.0,"name":"dc_sub18","gmd_vdc":0.0,"status":1,"parent_index":18,"index":18,"blocker_placed":0.0},"30":{"source_id":["gmd_bus",30],"g_gnd":0.0,"name":"dc_bus10","gmd_vdc":-16.95571628357211,"status":1,"parent_index":10,"index":30,"blocker_placed":0.0},"3":{"source_id":["gmd_bus",3],"g_gnd":10.0,"name":"dc_sub3","gmd_vdc":-32.83451026315685,"status":1,"parent_index":3,"index":3,"blocker_placed":0.0}},"per_unit":true},"objective_lb":null}
+{
+  "solve_time": 0.02312183380126953,
+  "optimizer": "Ipopt",
+  "termination_status": "LOCALLY_SOLVED",
+  "dual_status": "FEASIBLE_POINT",
+  "primal_status": "FEASIBLE_POINT",
+  "objective": 0.0,
+  "solution": {
+    "baseMVA": 100,
+    "gmd_branch": {
+      "32": {
+        "br_r": 1.6942177200000001,
+        "gmd_idc": 169.42824032177057,
+        "name": "dc_br8",
+        "parent_index": 32,
+        "br_v": 370.32326093810366,
+        "len_km": 43.2521215051179,
+        "source_id": [
+          "gmd_branch",
+          32
+        ],
+        "f_bus": 24,
+        "br_status": 1,
+        "t_bus": 29,
+        "index": 32
+      },
+      "29": {
+        "br_r": 2.09242776,
+        "gmd_idc": 169.42824032177057,
+        "name": "dc_br4",
+        "parent_index": 29,
+        "br_v": 289.80321075597607,
+        "len_km": 53.43329799574202,
+        "source_id": [
+          "gmd_branch",
+          29
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 24,
+        "index": 29
+      },
+      "1": {
+        "br_r": 0.21913296000000002,
+        "gmd_idc": 0.0,
+        "name": "dc_br1",
+        "parent_index": 1,
+        "br_v": 3.934502219563054e-15,
+        "len_km": 6.425529748336267,
+        "source_id": [
+          "gmd_branch",
+          1
+        ],
+        "f_bus": 21,
+        "br_status": 0,
+        "t_bus": 22,
+        "index": 1
+      },
+      "54": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf26_hi",
+        "parent_index": 52,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          54
+        ],
+        "f_bus": 35,
+        "br_status": 0,
+        "t_bus": 12,
+        "index": 54
+      },
+      "2": {
+        "br_r": 1.10080668,
+        "gmd_idc": 164.0191385414125,
+        "name": "dc_br10",
+        "parent_index": 2,
+        "br_v": -48.30462067956072,
+        "len_km": 32.19687879754137,
+        "source_id": [
+          "gmd_branch",
+          2
+        ],
+        "f_bus": 26,
+        "br_status": 1,
+        "t_bus": 30,
+        "index": 2
+      },
+      "74": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf7_hi",
+        "parent_index": 69,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          74
+        ],
+        "f_bus": 21,
+        "br_status": 0,
+        "t_bus": 1,
+        "index": 74
+      },
+      "41": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf15_hi",
+        "parent_index": 40,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          41
+        ],
+        "f_bus": 27,
+        "br_status": 0,
+        "t_bus": 7,
+        "index": 41
+      },
+      "65": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf35_hi",
+        "parent_index": 62,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          65
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 65
+      },
+      "51": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf23_hi",
+        "parent_index": 49,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          51
+        ],
+        "f_bus": 35,
+        "br_status": 0,
+        "t_bus": 12,
+        "index": 51
+      },
+      "53": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf25_hi",
+        "parent_index": 51,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          53
+        ],
+        "f_bus": 35,
+        "br_status": 0,
+        "t_bus": 12,
+        "index": 53
+      },
+      "27": {
+        "br_r": 0.5133063333333333,
+        "gmd_idc": 182.23967831608988,
+        "name": "dc_br37",
+        "parent_index": 27,
+        "br_v": 17.759147745179977,
+        "len_km": 25.155858586499022,
+        "source_id": [
+          "gmd_branch",
+          27
+        ],
+        "f_bus": 40,
+        "br_status": 1,
+        "t_bus": 43,
+        "index": 27
+      },
+      "75": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf8_hi",
+        "parent_index": 70,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          75
+        ],
+        "f_bus": 21,
+        "br_status": 0,
+        "t_bus": 1,
+        "index": 75
+      },
+      "42": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf16_hi",
+        "parent_index": 41,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          42
+        ],
+        "f_bus": 27,
+        "br_status": 0,
+        "t_bus": 7,
+        "index": 42
+      },
+      "33": {
+        "br_r": 1.47140292,
+        "gmd_idc": 216.3012639476456,
+        "name": "dc_br9",
+        "parent_index": 33,
+        "br_v": 370.32326093810366,
+        "len_km": 37.57867311336557,
+        "source_id": [
+          "gmd_branch",
+          33
+        ],
+        "f_bus": 25,
+        "br_status": 1,
+        "t_bus": 30,
+        "index": 33
+      },
+      "28": {
+        "br_r": 1.6917419999999999,
+        "gmd_idc": 3.2703152090829435,
+        "name": "dc_br38",
+        "parent_index": 28,
+        "br_v": 515.3504766381113,
+        "len_km": 83.4988965122832,
+        "source_id": [
+          "gmd_branch",
+          28
+        ],
+        "f_bus": 41,
+        "br_status": 1,
+        "t_bus": 42,
+        "index": 28
+      },
+      "50": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf22_hi",
+        "parent_index": 48,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          50
+        ],
+        "f_bus": 35,
+        "br_status": 0,
+        "t_bus": 12,
+        "index": 50
+      },
+      "52": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf24_hi",
+        "parent_index": 50,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          52
+        ],
+        "f_bus": 35,
+        "br_status": 0,
+        "t_bus": 12,
+        "index": 52
+      },
+      "63": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf33_hi",
+        "parent_index": 60,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          63
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 63
+      },
+      "26": {
+        "br_r": 0.5133063333333333,
+        "gmd_idc": 182.23967831608988,
+        "name": "dc_br36",
+        "parent_index": 26,
+        "br_v": 17.759147745179977,
+        "len_km": 25.155858586499022,
+        "source_id": [
+          "gmd_branch",
+          26
+        ],
+        "f_bus": 40,
+        "br_status": 1,
+        "t_bus": 43,
+        "index": 26
+      },
+      "10": {
+        "br_r": 2.300092,
+        "gmd_idc": 410.638520732458,
+        "name": "dc_br21",
+        "parent_index": 10,
+        "br_v": 1096.6497006497518,
+        "len_km": 113.29358943973146,
+        "source_id": [
+          "gmd_branch",
+          10
+        ],
+        "f_bus": 32,
+        "br_status": 1,
+        "t_bus": 43,
+        "index": 10
+      },
+      "24": {
+        "br_r": 0.9802369999999999,
+        "gmd_idc": 182.23967831608988,
+        "name": "dc_br34",
+        "parent_index": 24,
+        "br_v": 257.66215968961114,
+        "len_km": 48.301752843369876,
+        "source_id": [
+          "gmd_branch",
+          24
+        ],
+        "f_bus": 39,
+        "br_status": 1,
+        "t_bus": 40,
+        "index": 24
+      },
+      "58": {
+        "br_r": 0.02,
+        "gmd_idc": 285.9380125825285,
+        "name": "dc_xf3_series",
+        "parent_index": 56,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          58
+        ],
+        "f_bus": 29,
+        "br_status": 1,
+        "t_bus": 32,
+        "index": 58
+      },
+      "25": {
+        "br_r": 0.9802369999999999,
+        "gmd_idc": 182.23967831608988,
+        "name": "dc_br35",
+        "parent_index": 25,
+        "br_v": 257.66215968961114,
+        "len_km": 48.301752843369876,
+        "source_id": [
+          "gmd_branch",
+          25
+        ],
+        "f_bus": 39,
+        "br_status": 1,
+        "t_bus": 40,
+        "index": 25
+      },
+      "23": {
+        "br_r": 0.5806656666666666,
+        "gmd_idc": -10.530477412482009,
+        "name": "dc_br33",
+        "parent_index": 23,
+        "br_v": -64.41652045626684,
+        "len_km": 28.97129649216555,
+        "source_id": [
+          "gmd_branch",
+          23
+        ],
+        "f_bus": 38,
+        "br_status": 1,
+        "t_bus": 41,
+        "index": 23
+      },
+      "49": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 279.2332314817506,
+        "name": "dc_xf21_hi",
+        "parent_index": 47,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          49
+        ],
+        "f_bus": 35,
+        "br_status": 1,
+        "t_bus": 12,
+        "index": 49
+      },
+      "59": {
+        "br_r": 0.013333333333333334,
+        "gmd_idc": -64.47835093042545,
+        "name": "dc_xf3_common",
+        "parent_index": 56,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          59
+        ],
+        "f_bus": 29,
+        "br_status": 1,
+        "t_bus": 9,
+        "index": 59
+      },
+      "5": {
+        "br_r": 2.7429708,
+        "gmd_idc": 121.66749011055637,
+        "name": "dc_br13",
+        "parent_index": 5,
+        "br_v": 563.5268595267823,
+        "len_km": 70.01706570387006,
+        "source_id": [
+          "gmd_branch",
+          5
+        ],
+        "f_bus": 28,
+        "br_status": 1,
+        "t_bus": 30,
+        "index": 5
+      },
+      "31": {
+        "br_r": 2.1165501599999996,
+        "gmd_idc": 59.181632802959214,
+        "name": "dc_br6",
+        "parent_index": 31,
+        "br_v": 144.91166459485748,
+        "len_km": 54.11995261078864,
+        "source_id": [
+          "gmd_branch",
+          31
+        ],
+        "f_bus": 23,
+        "br_status": 1,
+        "t_bus": 29,
+        "index": 31
+      },
+      "62": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf32_hi",
+        "parent_index": 59,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          62
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 62
+      },
+      "43": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf17_hi",
+        "parent_index": 42,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          43
+        ],
+        "f_bus": 33,
+        "br_status": 0,
+        "t_bus": 10,
+        "index": 43
+      },
+      "39": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -83.36184471579577,
+        "name": "dc_xf13_hi",
+        "parent_index": 38,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          39
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 2,
+        "index": 39
+      },
+      "34": {
+        "br_r": 0.02,
+        "gmd_idc": 419.4934314111486,
+        "name": "dc_xf1_series",
+        "parent_index": 34,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          34
+        ],
+        "f_bus": 23,
+        "br_status": 1,
+        "t_bus": 44,
+        "index": 34
+      },
+      "44": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf18_hi",
+        "parent_index": 43,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          44
+        ],
+        "f_bus": 33,
+        "br_status": 0,
+        "t_bus": 10,
+        "index": 44
+      },
+      "55": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf27_hi",
+        "parent_index": 53,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          55
+        ],
+        "f_bus": 36,
+        "br_status": 0,
+        "t_bus": 13,
+        "index": 55
+      },
+      "17": {
+        "br_r": 0.606763,
+        "gmd_idc": -24.33127003404696,
+        "name": "dc_br28",
+        "parent_index": 17,
+        "br_v": 257.6556256995011,
+        "len_km": 30.19764739266044,
+        "source_id": [
+          "gmd_branch",
+          17
+        ],
+        "f_bus": 36,
+        "br_status": 1,
+        "t_bus": 37,
+        "index": 17
+      },
+      "71": {
+        "br_r": 0.02,
+        "gmd_idc": 316.2359358148319,
+        "name": "dc_xf5_series",
+        "parent_index": 67,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          71
+        ],
+        "f_bus": 30,
+        "br_status": 1,
+        "t_bus": 32,
+        "index": 71
+      },
+      "37": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -83.36184471579577,
+        "name": "dc_xf11_hi",
+        "parent_index": 36,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          37
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 2,
+        "index": 37
+      },
+      "47": {
+        "br_r": 0.013333333333333334,
+        "gmd_idc": -64.47835093042545,
+        "name": "dc_xf2_common",
+        "parent_index": 45,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          47
+        ],
+        "f_bus": 29,
+        "br_status": 1,
+        "t_bus": 9,
+        "index": 47
+      },
+      "9": {
+        "br_r": 1.1719113333333333,
+        "gmd_idc": 191.53542766490241,
+        "name": "dc_br20",
+        "parent_index": 9,
+        "br_v": 209.3226690375479,
+        "len_km": 57.9670779773549,
+        "source_id": [
+          "gmd_branch",
+          9
+        ],
+        "f_bus": 32,
+        "br_status": 1,
+        "t_bus": 33,
+        "index": 9
+      },
+      "73": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf6_hi",
+        "parent_index": 68,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          73
+        ],
+        "f_bus": 21,
+        "br_status": 0,
+        "t_bus": 1,
+        "index": 73
+      },
+      "12": {
+        "br_r": 0.8933046666666667,
+        "gmd_idc": 224.21915670278182,
+        "name": "dc_br23",
+        "parent_index": 12,
+        "br_v": 161.02946073616317,
+        "len_km": 44.111403726089435,
+        "source_id": [
+          "gmd_branch",
+          12
+        ],
+        "f_bus": 34,
+        "br_status": 1,
+        "t_bus": 36,
+        "index": 12
+      },
+      "20": {
+        "br_r": 0.341205,
+        "gmd_idc": -21.060954824964018,
+        "name": "dc_br30",
+        "parent_index": 20,
+        "br_v": 161.04007537334166,
+        "len_km": 17.285607726605107,
+        "source_id": [
+          "gmd_branch",
+          20
+        ],
+        "f_bus": 37,
+        "br_status": 1,
+        "t_bus": 38,
+        "index": 20
+      },
+      "6": {
+        "br_r": 1.1719113333333333,
+        "gmd_idc": 193.11269796236135,
+        "name": "dc_br18",
+        "parent_index": 6,
+        "br_v": 209.3226690375479,
+        "len_km": 57.9670779773549,
+        "source_id": [
+          "gmd_branch",
+          6
+        ],
+        "f_bus": 31,
+        "br_status": 1,
+        "t_bus": 33,
+        "index": 6
+      },
+      "70": {
+        "br_r": 0.013333333333333334,
+        "gmd_idc": -19.03146608197039,
+        "name": "dc_xf4_common",
+        "parent_index": 66,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          70
+        ],
+        "f_bus": 30,
+        "br_status": 1,
+        "t_bus": 9,
+        "index": 70
+      },
+      "14": {
+        "br_r": 1.157981,
+        "gmd_idc": 12.16563501702348,
+        "name": "dc_br25",
+        "parent_index": 14,
+        "br_v": 547.5140407399668,
+        "len_km": 56.9744215058332,
+        "source_id": [
+          "gmd_branch",
+          14
+        ],
+        "f_bus": 35,
+        "br_status": 1,
+        "t_bus": 41,
+        "index": 14
+      },
+      "7": {
+        "br_r": 1.115661,
+        "gmd_idc": 224.21915670278182,
+        "name": "dc_br19",
+        "parent_index": 7,
+        "br_v": 499.1654202251109,
+        "len_km": 54.63631486819532,
+        "source_id": [
+          "gmd_branch",
+          7
+        ],
+        "f_bus": 31,
+        "br_status": 1,
+        "t_bus": 34,
+        "index": 7
+      },
+      "57": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf29_hi",
+        "parent_index": 55,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          57
+        ],
+        "f_bus": 41,
+        "br_status": 0,
+        "t_bus": 18,
+        "index": 57
+      },
+      "8": {
+        "br_r": 3.34958568,
+        "gmd_idc": 150.32996158253928,
+        "name": "dc_br2",
+        "parent_index": 8,
+        "br_v": 515.2148050309372,
+        "len_km": 85.62152789957952,
+        "source_id": [
+          "gmd_branch",
+          8
+        ],
+        "f_bus": 21,
+        "br_status": 1,
+        "t_bus": 23,
+        "index": 8
+      },
+      "64": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf34_hi",
+        "parent_index": 61,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          64
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 64
+      },
+      "19": {
+        "br_r": 1.4328705599999998,
+        "gmd_idc": 216.3012639476456,
+        "name": "dc_br3",
+        "parent_index": 19,
+        "br_v": 289.80321075597607,
+        "len_km": 36.65615352037294,
+        "source_id": [
+          "gmd_branch",
+          19
+        ],
+        "f_bus": 21,
+        "br_status": 1,
+        "t_bus": 25,
+        "index": 19
+      },
+      "69": {
+        "br_r": 0.02,
+        "gmd_idc": 223.8148889487233,
+        "name": "dc_xf4_series",
+        "parent_index": 66,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          69
+        ],
+        "f_bus": 30,
+        "br_status": 1,
+        "t_bus": 31,
+        "index": 69
+      },
+      "60": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf30_hi",
+        "parent_index": 57,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          60
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 60
+      },
+      "4": {
+        "br_r": 2.7429708,
+        "gmd_idc": 121.88840331336773,
+        "name": "dc_br12",
+        "parent_index": 4,
+        "br_v": 563.5268595267823,
+        "len_km": 70.01706570387006,
+        "source_id": [
+          "gmd_branch",
+          4
+        ],
+        "f_bus": 28,
+        "br_status": 1,
+        "t_bus": 29,
+        "index": 4
+      },
+      "22": {
+        "br_r": 0.5806656666666666,
+        "gmd_idc": -10.530477412482009,
+        "name": "dc_br32",
+        "parent_index": 22,
+        "br_v": -64.41652045626684,
+        "len_km": 28.97129649216555,
+        "source_id": [
+          "gmd_branch",
+          22
+        ],
+        "f_bus": 38,
+        "br_status": 1,
+        "t_bus": 41,
+        "index": 22
+      },
+      "11": {
+        "br_r": 1.8719546666666667,
+        "gmd_idc": 384.64812562726377,
+        "name": "dc_br22",
+        "parent_index": 11,
+        "br_v": 887.3270473915318,
+        "len_km": 92.25438860412025,
+        "source_id": [
+          "gmd_branch",
+          11
+        ],
+        "f_bus": 33,
+        "br_status": 1,
+        "t_bus": 43,
+        "index": 11
+      },
+      "35": {
+        "br_r": 0.013333333333333334,
+        "gmd_idc": -328.3451026315685,
+        "name": "dc_xf1_common",
+        "parent_index": 34,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          35
+        ],
+        "f_bus": 23,
+        "br_status": 1,
+        "t_bus": 3,
+        "index": 35
+      },
+      "13": {
+        "br_r": 0.36359933333333333,
+        "gmd_idc": 115.928929895351,
+        "name": "dc_br24",
+        "parent_index": 13,
+        "br_v": 193.23486336698187,
+        "len_km": 19.580115928517046,
+        "source_id": [
+          "gmd_branch",
+          13
+        ],
+        "f_bus": 35,
+        "br_status": 1,
+        "t_bus": 36,
+        "index": 13
+      },
+      "15": {
+        "br_r": 1.157981,
+        "gmd_idc": 12.16563501702348,
+        "name": "dc_br26",
+        "parent_index": 15,
+        "br_v": 547.5140407399668,
+        "len_km": 56.9744215058332,
+        "source_id": [
+          "gmd_branch",
+          15
+        ],
+        "f_bus": 35,
+        "br_status": 1,
+        "t_bus": 41,
+        "index": 15
+      },
+      "61": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf31_hi",
+        "parent_index": 58,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          61
+        ],
+        "f_bus": 42,
+        "br_status": 0,
+        "t_bus": 19,
+        "index": 61
+      },
+      "67": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 386.58866766396716,
+        "name": "dc_xf37_hi",
+        "parent_index": 64,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          67
+        ],
+        "f_bus": 43,
+        "br_status": 1,
+        "t_bus": 20,
+        "index": 67
+      },
+      "16": {
+        "br_r": 1.261136,
+        "gmd_idc": -419.4934314111486,
+        "name": "dc_br27",
+        "parent_index": 16,
+        "br_v": -611.8716792401644,
+        "len_km": 61.75980609583138,
+        "source_id": [
+          "gmd_branch",
+          16
+        ],
+        "f_bus": 35,
+        "br_status": 1,
+        "t_bus": 44,
+        "index": 16
+      },
+      "40": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -243.55589342392412,
+        "name": "dc_xf14_hi",
+        "parent_index": 39,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          40
+        ],
+        "f_bus": 27,
+        "br_status": 1,
+        "t_bus": 7,
+        "index": 40
+      },
+      "21": {
+        "br_r": 2.3753863333333336,
+        "gmd_idc": -3.2703152090829435,
+        "name": "dc_br31",
+        "parent_index": 21,
+        "br_v": 611.9740296874829,
+        "len_km": 117.39278204146677,
+        "source_id": [
+          "gmd_branch",
+          21
+        ],
+        "f_bus": 37,
+        "br_status": 1,
+        "t_bus": 42,
+        "index": 21
+      },
+      "38": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -83.36184471579577,
+        "name": "dc_xf12_hi",
+        "parent_index": 37,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          38
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 2,
+        "index": 38
+      },
+      "46": {
+        "br_r": 0.02,
+        "gmd_idc": 193.51696571641986,
+        "name": "dc_xf2_series",
+        "parent_index": 45,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          46
+        ],
+        "f_bus": 29,
+        "br_status": 1,
+        "t_bus": 31,
+        "index": 46
+      },
+      "72": {
+        "br_r": 0.013333333333333334,
+        "gmd_idc": -19.03146608197039,
+        "name": "dc_xf5_common",
+        "parent_index": 67,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          72
+        ],
+        "f_bus": 30,
+        "br_status": 1,
+        "t_bus": 9,
+        "index": 72
+      },
+      "45": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf19_hi",
+        "parent_index": 44,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          45
+        ],
+        "f_bus": 33,
+        "br_status": 0,
+        "t_bus": 10,
+        "index": 45
+      },
+      "68": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 386.58866766396716,
+        "name": "dc_xf38_hi",
+        "parent_index": 65,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          68
+        ],
+        "f_bus": 43,
+        "br_status": 1,
+        "t_bus": 20,
+        "index": 68
+      },
+      "56": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf28_hi",
+        "parent_index": 54,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          56
+        ],
+        "f_bus": 38,
+        "br_status": 0,
+        "t_bus": 15,
+        "index": 56
+      },
+      "36": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -83.36184471579577,
+        "name": "dc_xf10_hi",
+        "parent_index": 35,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          36
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 2,
+        "index": 36
+      },
+      "66": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 386.58866766396716,
+        "name": "dc_xf36_hi",
+        "parent_index": 63,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          66
+        ],
+        "f_bus": 43,
+        "br_status": 1,
+        "t_bus": 20,
+        "index": 66
+      },
+      "76": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": -366.63122553018485,
+        "name": "dc_xf9_hi",
+        "parent_index": 71,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          76
+        ],
+        "f_bus": 21,
+        "br_status": 1,
+        "t_bus": 1,
+        "index": 76
+      },
+      "48": {
+        "br_r": 0.03333333333333333,
+        "gmd_idc": 0.0,
+        "name": "dc_xf20_hi",
+        "parent_index": 46,
+        "br_v": 0.0,
+        "len_km": 0.0,
+        "source_id": [
+          "gmd_branch",
+          48
+        ],
+        "f_bus": 34,
+        "br_status": 0,
+        "t_bus": 11,
+        "index": 48
+      },
+      "18": {
+        "br_r": 0.6138163333333334,
+        "gmd_idc": 364.47935663217976,
+        "name": "dc_br29",
+        "parent_index": 18,
+        "br_v": 161.03354139410982,
+        "len_km": 29.918911521577147,
+        "source_id": [
+          "gmd_branch",
+          18
+        ],
+        "f_bus": 36,
+        "br_status": 1,
+        "t_bus": 39,
+        "index": 18
+      },
+      "30": {
+        "br_r": 2.8070221199999996,
+        "gmd_idc": 164.0191385414125,
+        "name": "dc_br5",
+        "parent_index": 30,
+        "br_v": 708.4310837828218,
+        "len_km": 71.48960655992506,
+        "source_id": [
+          "gmd_branch",
+          30
+        ],
+        "f_bus": 22,
+        "br_status": 1,
+        "t_bus": 26,
+        "index": 30
+      },
+      "3": {
+        "br_r": 1.01199816,
+        "gmd_idc": 243.55589342392412,
+        "name": "dc_br11",
+        "parent_index": 3,
+        "br_v": 32.200031997547654,
+        "len_km": 25.8756240354825,
+        "source_id": [
+          "gmd_branch",
+          3
+        ],
+        "f_bus": 27,
+        "br_status": 1,
+        "t_bus": 28,
+        "index": 3
+      }
+    },
+    "multiinfrastructure": false,
+    "multinetwork": false,
+    "gmd_bus": {
+      "32": {
+        "source_id": [
+          "gmd_bus",
+          32
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus12",
+        "gmd_vdc": -23.280434999868746,
+        "status": 1,
+        "parent_index": 12,
+        "index": 32,
+        "blocker_placed": 0.0
+      },
+      "29": {
+        "source_id": [
+          "gmd_bus",
+          29
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus9",
+        "gmd_vdc": -17.561674748218177,
+        "status": 1,
+        "parent_index": 9,
+        "index": 29,
+        "blocker_placed": 0.0
+      },
+      "1": {
+        "source_id": [
+          "gmd_bus",
+          1
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub1",
+        "gmd_vdc": -36.66312255301849,
+        "status": 1,
+        "parent_index": 1,
+        "index": 1,
+        "blocker_placed": 0.0
+      },
+      "54": {
+        "source_id": [
+          "gmd_bus",
+          54
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus34",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 34,
+        "index": 54,
+        "blocker_placed": 0.0
+      },
+      "2": {
+        "source_id": [
+          "gmd_bus",
+          2
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub2",
+        "gmd_vdc": -33.344737886318306,
+        "status": 1,
+        "parent_index": 2,
+        "index": 2,
+        "blocker_placed": 0.0
+      },
+      "74": {
+        "source_id": [
+          "gmd_bus",
+          74
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus54",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 54,
+        "index": 74,
+        "blocker_placed": 0.0
+      },
+      "41": {
+        "source_id": [
+          "gmd_bus",
+          41
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus21",
+        "gmd_vdc": 570.657564068219,
+        "status": 1,
+        "parent_index": 21,
+        "index": 41,
+        "blocker_placed": 0.0
+      },
+      "65": {
+        "source_id": [
+          "gmd_bus",
+          65
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus45",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 45,
+        "index": 65,
+        "blocker_placed": 0.0
+      },
+      "51": {
+        "source_id": [
+          "gmd_bus",
+          51
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus31",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 31,
+        "index": 51,
+        "blocker_placed": 0.0
+      },
+      "53": {
+        "source_id": [
+          "gmd_bus",
+          53
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus33",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 33,
+        "index": 53,
+        "blocker_placed": 0.0
+      },
+      "27": {
+        "source_id": [
+          "gmd_bus",
+          27
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus7",
+        "gmd_vdc": -32.47411912318989,
+        "status": 1,
+        "parent_index": 7,
+        "index": 27,
+        "blocker_placed": 0.0
+      },
+      "75": {
+        "source_id": [
+          "gmd_bus",
+          75
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus55",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 55,
+        "index": 75,
+        "blocker_placed": 0.0
+      },
+      "42": {
+        "source_id": [
+          "gmd_bus",
+          42
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus22",
+        "gmd_vdc": 1080.475511113886,
+        "status": 1,
+        "parent_index": 22,
+        "index": 42,
+        "blocker_placed": 0.0
+      },
+      "33": {
+        "source_id": [
+          "gmd_bus",
+          33
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus13",
+        "gmd_vdc": -38.42030437766682,
+        "status": 1,
+        "parent_index": 13,
+        "index": 33,
+        "blocker_placed": 0.0
+      },
+      "28": {
+        "source_id": [
+          "gmd_bus",
+          28
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus8",
+        "gmd_vdc": -246.75220312780957,
+        "status": 1,
+        "parent_index": 8,
+        "index": 28,
+        "blocker_placed": 0.0
+      },
+      "50": {
+        "source_id": [
+          "gmd_bus",
+          50
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus30",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 30,
+        "index": 50,
+        "blocker_placed": 0.0
+      },
+      "52": {
+        "source_id": [
+          "gmd_bus",
+          52
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus32",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 32,
+        "index": 52,
+        "blocker_placed": 0.0
+      },
+      "63": {
+        "source_id": [
+          "gmd_bus",
+          63
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus43",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 43,
+        "index": 63,
+        "blocker_placed": 0.0
+      },
+      "26": {
+        "source_id": [
+          "gmd_bus",
+          26
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus6",
+        "gmd_vdc": 211.90226775022097,
+        "status": 1,
+        "parent_index": 6,
+        "index": 26,
+        "blocker_placed": 0.0
+      },
+      "10": {
+        "source_id": [
+          "gmd_bus",
+          10
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub10",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 10,
+        "index": 10,
+        "blocker_placed": 0.0
+      },
+      "77": {
+        "source_id": [
+          "gmd_bus",
+          77
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus57",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 57,
+        "index": 77,
+        "blocker_placed": 0.0
+      },
+      "24": {
+        "source_id": [
+          "gmd_bus",
+          24
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus4",
+        "gmd_vdc": -100.83660866475955,
+        "status": 1,
+        "parent_index": 4,
+        "index": 24,
+        "blocker_placed": 0.0
+      },
+      "58": {
+        "source_id": [
+          "gmd_bus",
+          58
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus38",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 38,
+        "index": 58,
+        "blocker_placed": 0.0
+      },
+      "25": {
+        "source_id": [
+          "gmd_bus",
+          25
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus5",
+        "gmd_vdc": -69.0126658494193,
+        "status": 1,
+        "parent_index": 5,
+        "index": 25,
+        "blocker_placed": 0.0
+      },
+      "23": {
+        "source_id": [
+          "gmd_bus",
+          23
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus3",
+        "gmd_vdc": -37.2124449649111,
+        "status": 1,
+        "parent_index": 3,
+        "index": 23,
+        "blocker_placed": 0.0
+      },
+      "49": {
+        "source_id": [
+          "gmd_bus",
+          49
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus29",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 29,
+        "index": 49,
+        "blocker_placed": 0.0
+      },
+      "59": {
+        "source_id": [
+          "gmd_bus",
+          59
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus39",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 39,
+        "index": 59,
+        "blocker_placed": 0.0
+      },
+      "5": {
+        "source_id": [
+          "gmd_bus",
+          5
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub5",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 5,
+        "index": 5,
+        "blocker_placed": 0.0
+      },
+      "31": {
+        "source_id": [
+          "gmd_bus",
+          31
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus11",
+        "gmd_vdc": -21.432014062546575,
+        "status": 1,
+        "parent_index": 11,
+        "index": 31,
+        "blocker_placed": 0.0
+      },
+      "62": {
+        "source_id": [
+          "gmd_bus",
+          62
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus42",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 42,
+        "index": 62,
+        "blocker_placed": 0.0
+      },
+      "43": {
+        "source_id": [
+          "gmd_bus",
+          43
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus23",
+        "gmd_vdc": 128.8628892213224,
+        "status": 1,
+        "parent_index": 23,
+        "index": 43,
+        "blocker_placed": 0.0
+      },
+      "39": {
+        "source_id": [
+          "gmd_bus",
+          39
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus19",
+        "gmd_vdc": 125.6244384043385,
+        "status": 1,
+        "parent_index": 19,
+        "index": 39,
+        "blocker_placed": 0.0
+      },
+      "34": {
+        "source_id": [
+          "gmd_bus",
+          34
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus14",
+        "gmd_vdc": 227.58083757638207,
+        "status": 1,
+        "parent_index": 14,
+        "index": 34,
+        "blocker_placed": 0.0
+      },
+      "44": {
+        "source_id": [
+          "gmd_bus",
+          44
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus24",
+        "gmd_vdc": -45.60231359313407,
+        "status": 1,
+        "parent_index": 24,
+        "index": 44,
+        "blocker_placed": 0.0
+      },
+      "55": {
+        "source_id": [
+          "gmd_bus",
+          55
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus35",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 35,
+        "index": 55,
+        "blocker_placed": 0.0
+      },
+      "17": {
+        "source_id": [
+          "gmd_bus",
+          17
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub17",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 17,
+        "index": 17,
+        "blocker_placed": 0.0
+      },
+      "71": {
+        "source_id": [
+          "gmd_bus",
+          71
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus51",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 51,
+        "index": 71,
+        "blocker_placed": 0.0
+      },
+      "37": {
+        "source_id": [
+          "gmd_bus",
+          37
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus17",
+        "gmd_vdc": 460.7332193730552,
+        "status": 1,
+        "parent_index": 17,
+        "index": 37,
+        "blocker_placed": 0.0
+      },
+      "47": {
+        "source_id": [
+          "gmd_bus",
+          47
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus27",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 27,
+        "index": 47,
+        "blocker_placed": 0.0
+      },
+      "9": {
+        "source_id": [
+          "gmd_bus",
+          9
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub9",
+        "gmd_vdc": -16.70196340247917,
+        "status": 1,
+        "parent_index": 9,
+        "index": 9,
+        "blocker_placed": 0.0
+      },
+      "73": {
+        "source_id": [
+          "gmd_bus",
+          73
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus53",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 53,
+        "index": 73,
+        "blocker_placed": 0.0
+      },
+      "12": {
+        "source_id": [
+          "gmd_bus",
+          12
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub12",
+        "gmd_vdc": 27.92332314817506,
+        "status": 1,
+        "parent_index": 12,
+        "index": 12,
+        "blocker_placed": 0.0
+      },
+      "20": {
+        "source_id": [
+          "gmd_bus",
+          20
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub20",
+        "gmd_vdc": 115.97660029919015,
+        "status": 1,
+        "parent_index": 20,
+        "index": 20,
+        "blocker_placed": 0.0
+      },
+      "6": {
+        "source_id": [
+          "gmd_bus",
+          6
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub6",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 6,
+        "index": 6,
+        "blocker_placed": 0.0
+      },
+      "70": {
+        "source_id": [
+          "gmd_bus",
+          70
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus50",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 50,
+        "index": 70,
+        "blocker_placed": 0.0
+      },
+      "14": {
+        "source_id": [
+          "gmd_bus",
+          14
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub14",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 14,
+        "index": 14,
+        "blocker_placed": 0.0
+      },
+      "7": {
+        "source_id": [
+          "gmd_bus",
+          7
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub7",
+        "gmd_vdc": -24.355589342392413,
+        "status": 1,
+        "parent_index": 7,
+        "index": 7,
+        "blocker_placed": 0.0
+      },
+      "57": {
+        "source_id": [
+          "gmd_bus",
+          57
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus37",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 37,
+        "index": 57,
+        "blocker_placed": 0.0
+      },
+      "8": {
+        "source_id": [
+          "gmd_bus",
+          8
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub8",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 8,
+        "index": 8,
+        "blocker_placed": 0.0
+      },
+      "64": {
+        "source_id": [
+          "gmd_bus",
+          64
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus44",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 44,
+        "index": 64,
+        "blocker_placed": 0.0
+      },
+      "19": {
+        "source_id": [
+          "gmd_bus",
+          19
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub19",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 19,
+        "index": 19,
+        "blocker_placed": 0.0
+      },
+      "69": {
+        "source_id": [
+          "gmd_bus",
+          69
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus49",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 49,
+        "index": 69,
+        "blocker_placed": 0.0
+      },
+      "60": {
+        "source_id": [
+          "gmd_bus",
+          60
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus40",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 40,
+        "index": 60,
+        "blocker_placed": 0.0
+      },
+      "4": {
+        "source_id": [
+          "gmd_bus",
+          4
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub4",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 4,
+        "index": 4,
+        "blocker_placed": 0.0
+      },
+      "22": {
+        "source_id": [
+          "gmd_bus",
+          22
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus2",
+        "gmd_vdc": -36.1234660435115,
+        "status": 1,
+        "parent_index": 2,
+        "index": 22,
+        "blocker_placed": 0.0
+      },
+      "11": {
+        "source_id": [
+          "gmd_bus",
+          11
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub11",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 11,
+        "index": 11,
+        "blocker_placed": 0.0
+      },
+      "35": {
+        "source_id": [
+          "gmd_bus",
+          35
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus15",
+        "gmd_vdc": 37.23109753090008,
+        "status": 1,
+        "parent_index": 15,
+        "index": 35,
+        "blocker_placed": 0.0
+      },
+      "13": {
+        "source_id": [
+          "gmd_bus",
+          13
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub13",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 13,
+        "index": 13,
+        "blocker_placed": 0.0
+      },
+      "15": {
+        "source_id": [
+          "gmd_bus",
+          15
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub15",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 15,
+        "index": 15,
+        "blocker_placed": 0.0
+      },
+      "61": {
+        "source_id": [
+          "gmd_bus",
+          61
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus41",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 41,
+        "index": 61,
+        "blocker_placed": 0.0
+      },
+      "67": {
+        "source_id": [
+          "gmd_bus",
+          67
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus47",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 47,
+        "index": 67,
+        "blocker_placed": 0.0
+      },
+      "16": {
+        "source_id": [
+          "gmd_bus",
+          16
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub16",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 16,
+        "index": 16,
+        "blocker_placed": 0.0
+      },
+      "40": {
+        "source_id": [
+          "gmd_bus",
+          40
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus20",
+        "gmd_vdc": 204.6485225404207,
+        "status": 1,
+        "parent_index": 20,
+        "index": 40,
+        "blocker_placed": 0.0
+      },
+      "21": {
+        "source_id": [
+          "gmd_bus",
+          21
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus1",
+        "gmd_vdc": -48.88416340402465,
+        "status": 1,
+        "parent_index": 1,
+        "index": 21,
+        "blocker_placed": 0.0
+      },
+      "38": {
+        "source_id": [
+          "gmd_bus",
+          38
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus18",
+        "gmd_vdc": 628.9593978374487,
+        "status": 1,
+        "parent_index": 18,
+        "index": 38,
+        "blocker_placed": 0.0
+      },
+      "46": {
+        "source_id": [
+          "gmd_bus",
+          46
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus26",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 26,
+        "index": 46,
+        "blocker_placed": 0.0
+      },
+      "72": {
+        "source_id": [
+          "gmd_bus",
+          72
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus52",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 52,
+        "index": 72,
+        "blocker_placed": 0.0
+      },
+      "45": {
+        "source_id": [
+          "gmd_bus",
+          45
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus25",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 25,
+        "index": 45,
+        "blocker_placed": 0.0
+      },
+      "68": {
+        "source_id": [
+          "gmd_bus",
+          68
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus48",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 48,
+        "index": 68,
+        "blocker_placed": 0.0
+      },
+      "56": {
+        "source_id": [
+          "gmd_bus",
+          56
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus36",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 36,
+        "index": 56,
+        "blocker_placed": 0.0
+      },
+      "36": {
+        "source_id": [
+          "gmd_bus",
+          36
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus16",
+        "gmd_vdc": 188.31427927388563,
+        "status": 1,
+        "parent_index": 16,
+        "index": 36,
+        "blocker_placed": 0.0
+      },
+      "66": {
+        "source_id": [
+          "gmd_bus",
+          66
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus46",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 46,
+        "index": 66,
+        "blocker_placed": 0.0
+      },
+      "76": {
+        "source_id": [
+          "gmd_bus",
+          76
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus56",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 56,
+        "index": 76,
+        "blocker_placed": 0.0
+      },
+      "48": {
+        "source_id": [
+          "gmd_bus",
+          48
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus28",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 28,
+        "index": 48,
+        "blocker_placed": 0.0
+      },
+      "18": {
+        "source_id": [
+          "gmd_bus",
+          18
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub18",
+        "gmd_vdc": 0.0,
+        "status": 1,
+        "parent_index": 18,
+        "index": 18,
+        "blocker_placed": 0.0
+      },
+      "30": {
+        "source_id": [
+          "gmd_bus",
+          30
+        ],
+        "g_gnd": 0.0,
+        "name": "dc_bus10",
+        "gmd_vdc": -16.95571628357211,
+        "status": 1,
+        "parent_index": 10,
+        "index": 30,
+        "blocker_placed": 0.0
+      },
+      "3": {
+        "source_id": [
+          "gmd_bus",
+          3
+        ],
+        "g_gnd": 10.0,
+        "name": "dc_sub3",
+        "gmd_vdc": -32.83451026315685,
+        "status": 1,
+        "parent_index": 3,
+        "index": 3,
+        "blocker_placed": 0.0
+      }
+    },
+    "per_unit": true
+  },
+  "objective_lb": null
+}

@@ -27,12 +27,10 @@ HEADERS = {
 }
 
 
-def read_file(fn):
+def read_mpc(fn):
     """ Read the MPC file ".m" into dictionary.
-
     Args:
         fn (str): Filename.
-
     Returns:
         dict: A dictionary with keys of attributes.
     """
@@ -90,7 +88,8 @@ def read_file(fn):
             match = re.search(pattern, string, re.DOTALL)
 
             data = StringIO(match.groupdict()['data'][2:-2])
-            df = pd.read_csv(data, sep="\t", header=None)
+            # REVIEW: with multiple separators
+            df = pd.read_csv(data, sep="\t", header=None, engine="python")
             # drop the nan caused by tab splitter
             df = df.drop(columns=[0])
             df.columns = HEADERS[key]
