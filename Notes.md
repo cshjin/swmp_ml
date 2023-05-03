@@ -77,3 +77,31 @@ TODO:
 - (finished) Make a 1 slide summary of Hongwei's presentation
 - Try out the other datasets like ots_test, UIUC-150, etc.
 - Remove the hard-coded 19 and replace it with the variable for the number of busses
+
+
+Existing bugs
+- dataset.py files have the line "self.name = names[0]." This is to make sure any accesses to self.processed_paths[0] don't crash.
+  This does cause the dataset variable in the demo_train files to be named the first power grid in the argument passed into --names,
+  but otherwise.
+> Solved: bring back MultiGMD
+
+- "pbar = tqdm(range(args['epochs']), desc=args['name'])" has been changed to "pbar = tqdm(range(args['epochs']))"
+> Solved.
+
+- Some lines of code for the GIC code in the training loop have been commented out because they cause errors. For example,
+  the one about MSE loss.
+> Ignore the MSE in the GIC problem.
+
+- hps_mld.py has duplicate code for dataset and data because I'm not sure how to pass data in as an argument for the run() function
+> Solved. It's fine to have duplicate code because the run() function can't access variables outside of it.
+
+- When executing the code for the GIC problem, parts of the code dealing with pbar won't execute.
+> Solved.
+
+
+
+TODO:
+* run hps on epri21 for gic problem
+* generate perturbations of ots_test for gic problem
+* run demo_train.py with multple grids (epri21 and ots_test)
+* hps with multiple grids

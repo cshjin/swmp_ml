@@ -21,11 +21,12 @@ import torch
 import torch.nn.functional as F
 import torch_geometric.transforms as T
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
 from torch.nn import CrossEntropyLoss, MSELoss
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from py_script.dataset import GMD
+from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--names", type=str, default=["epri21"], nargs='+',
                         help="list of names of networks")
-    parser.add_argument("--problem", "-p", type=str, default="reg", choices=["clf", "reg"],
+    parser.add_argument("--problem", "-p", type=str, default="clf", choices=["clf", "reg"],
                         help="Specify the problem, either `clf` or `reg`")
     parser.add_argument("--force", action="store_true",
                         help="Force to reprocess data")
@@ -97,12 +98,22 @@ if __name__ == "__main__":
         print("Unknown processor type: " + args['processor'] + ". Defaulting to \"auto\".")
         DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    dataset = GMD(ROOT,
+    if len(args['names']) == 1:
+        dataset = GMD(ROOT,
+                  name=args['names'][0],
+                  setting=args['setting'],
+                  problem=args['problem'],
+                  force_reprocess=args['force'],
+                  pre_transform=pre_transform)
+    elif len(args['names']) > 1:
+        dataset = MultiGMD(ROOT,
                   names=args['names'],
                   setting=args['setting'],
                   problem=args['problem'],
                   force_reprocess=args['force'],
                   pre_transform=pre_transform)
+    else:
+        raise "Please input at least one grid name"
     data = dataset[0]
 
     # Train and test split for our datasets
@@ -147,7 +158,10 @@ if __name__ == "__main__":
                                  weight_decay=args['weight_decay'])
 
     losses = []
-    pbar = tqdm(range(args['epochs']))
+    if len(args['names']) == 1:
+        pbar = tqdm(range(args['epochs']), desc=args['names'][0])
+    else:
+        pbar = tqdm(range(args['epochs']), desc="Multi Grids")
     model.train()
     for epoch in pbar:
     # for epoch in range(args['epochs']):
@@ -162,7 +176,6 @@ if __name__ == "__main__":
                 loss = F.mse_loss(out, data['y'])
             else:
                 out = model(data, "gmd_bus")
-                # loss = F.mse_loss(out, data['y'])
                 if args['weight']:
                     weight = len(data['y']) / (2 * data['y'].bincount())
                     loss = F.cross_entropy(out, data['y'], weight=weight)
@@ -171,7 +184,7 @@ if __name__ == "__main__":
                 
                 train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
                 dim=1).detach().cpu().numpy()).sum() / len(data['y'])
-                # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
             loss.backward()
             optimizer.step()
 
@@ -181,11 +194,11 @@ if __name__ == "__main__":
         # Choose how to handle the pbar based on the problem setting
         if args['setting'] == "mld":
             pbar.set_postfix({"loss": t_loss})
-        # else:
-        #     # pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
+        else:
+            pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
         losses.append(t_loss)
 
-    exit()
+    # exit()
     # Count the number of files that exist in the Figures directory, so
     # we can give a unique name to the two new figures we're creating
     losses_count = len([file_name for file_name in os.listdir('./Figures/Losses/')])
@@ -230,12 +243,3 @@ if __name__ == "__main__":
                     + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         plt.savefig("GIC-loss.png")
-
-# Existing bugs
-# - dataset.py files have the line "self.name = names[0]." This is to make sure any accesses to self.processed_paths[0] don't crash.
-#   This does cause the dataset variable in the demo_train files to be named the first power grid in the argument passed into --names,
-#   but otherwise.
-# - "pbar = tqdm(range(args['epochs']), desc=args['name'])" has been changed to "pbar = tqdm(range(args['epochs']))"
-# - Some lines of code for the GIC code in the training loop have been commented out because they cause errors. For example,
-#   the one about MSE loss.
-# - hps_mld.py has duplicate code for dataset and data because I'm not sure how to pass data in as an argument for the run() function

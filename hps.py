@@ -24,13 +24,13 @@ torch.manual_seed(12345)
 def run(config):
     pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
-    setting="mld"
-    weight_arg=True
+    setting="gic"
+    weight_arg=False
     dataset = GMD(ROOT,
-                    names=["epri21"],
+                    name="epri21",
                     setting=setting,
-                    problem="reg",
-                    force_reprocess=True,
+                    problem="clf",
+                    force_reprocess=False,
                     pre_transform=pre_transform)
     data = dataset[0]
 
@@ -58,7 +58,7 @@ def run(config):
                 conv_type=conv_type,
                 num_mlp_layers=num_mlp_layers,
                 activation=activation,
-                out_channels=1,
+                out_channels=2,
                 num_heads=num_heads,
                 num_conv_layers=num_layers,
                 dropout=dropout,
@@ -103,7 +103,6 @@ def run(config):
                 loss = F.mse_loss(out, data['y'])
             else:
                 out = model(data, "gmd_bus")
-                # loss = F.mse_loss(out, data['y'])
                 if weight_arg:
                     weight = len(data['y']) / (2 * data['y'].bincount())
                     loss = F.cross_entropy(out, data['y'], weight=weight)
@@ -133,11 +132,11 @@ def run(config):
 
         # Compute between MLD or GIC
         if setting == "mld":
-            pred = model(data)[data.load_bus_mask]
+            pred = model(batch)[batch.load_bus_mask]
             loss = F.mse_loss(pred, batch.y)
         else:
-            pred = model(data, "gmd_bus")
-            # loss = F.mse_loss(out, data['y'])
+            pred = model(batch, "gmd_bus")
+            # loss = F.mse_loss(batch, data['y'])
             if weight_arg:
                 weight = len(batch.y) / (2 * (batch.y).bincount())
                 loss = F.cross_entropy(pred, batch.y, weight=weight)
@@ -156,12 +155,12 @@ DEVICE = torch.device('cpu')
 
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
-setting="mld"
-weight_arg=True
+setting="gic"
+weight_arg=False
 dataset = GMD(ROOT,
-                names=["epri21"],
+                name="epri21",
                 setting=setting,
-                problem="reg",
+                problem="clf",
                 force_reprocess=True,
                 pre_transform=pre_transform)
 data = dataset[0]
