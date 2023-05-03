@@ -44,6 +44,7 @@ def run(config):
     dropout = config.get("dropout", 0.5)
     lr = config.get("lr", 1e-3)
     weight_decay = config.get("weight_decay", 1e-4)
+    epochs = 200
 
     # Create a DataLoader for our datasets
     loader_train = DataLoader(dataset=dataset_train,
@@ -72,24 +73,8 @@ def run(config):
                                  lr=lr,
                                  weight_decay=weight_decay)
 
-    # pbar = tqdm(range(200), desc="epri21")
-    # losses = []
-    # model.train()
-    # # for epoch in range(200):
-    # for epoch in pbar:
-    #     t_loss = 0
-    #     for i, batch in enumerate(loader_train):
-    #         batch = batch.to(DEVICE)
-    #         optimizer.zero_grad()
-    #         out = model(batch)
-    #         loss = F.mse_loss(out, batch.y)
-    #         loss.backward()
-    #         optimizer.step()
-    #         t_loss += loss.item() / batch.num_graphs
-    #     losses.append(t_loss)
-
     losses = []
-    pbar = tqdm(range(200), desc="epri21")
+    pbar = tqdm(range(epochs), desc="epri21")
     model.train()
     for epoch in pbar:
         t_loss = 0
@@ -178,8 +163,9 @@ acts = [
 
 problem = HpProblem()
 # TODO: add hyperparameters
-problem.add_hyperparameter([16, 32, 64, 128, 256],
-                           "hidden_channels", default_value=128)
+# Note: hidden_channels, hidden_size, and batch_size orignally didn't have [1, 2, 4, 8].
+#       I added those only because DeepHyper will error out if 1 isn't one of the
+#       hyperparameter options.
 problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "hidden_size", default_value=128)
 problem.add_hyperparameter([16, 32, 64, 128, 256],
@@ -190,8 +176,6 @@ problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_mlp_layers", default_value=1)
 activation_choices = ["relu", "sigmoid", "tanh", "elu", "leakyrelu"]
 problem.add_hyperparameter(activation_choices, "activation", default_value="relu")
-problem.add_hyperparameter([50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800],
-                           "epochs", default_value=200)
 problem.add_hyperparameter(["hgt", "han"],
                            "conv_type", default_value="hgt")
 problem.add_hyperparameter([1, 2, 4, 8],
@@ -218,7 +202,14 @@ print("Number of workers: ", evaluator.num_workers)
 
 # %%
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
-results = search.search(10)
-print(results)
+# Print all the results
+print("All results:")
+results = search.search(max_evals=10)
+print(results) 
+
+# Print the best result
+best_objective_index=results[:]['objective'].argmin()
+print("Best results:")
+print(results.iloc[best_objective_index][0:-3]) # The last 3 slots don't matter
 
 # %%
