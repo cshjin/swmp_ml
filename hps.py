@@ -44,7 +44,7 @@ def run(config):
     dropout = config.get("dropout", 0.5)
     lr = config.get("lr", 1e-3)
     weight_decay = config.get("weight_decay", 1e-4)
-    epochs = 250
+    epochs = 200
 
     # Create a DataLoader for our datasets
     loader_train = DataLoader(dataset=dataset_train,

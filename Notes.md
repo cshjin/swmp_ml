@@ -101,7 +101,11 @@ Existing bugs
 
 
 TODO:
-* run hps on epri21 for gic problem
+* > run hps on epri21 for gic problem
+* hps with multiple grids
+* Try out normalization in DeepHyper
 * generate perturbations of ots_test for gic problem
 * run demo_train.py with multple grids (epri21 and ots_test)
-* hps with multiple grids
+* Remove the --problem argument from the ArgumentParser
+* Discuss with Hongwei his progress on the constraints
+* Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network
