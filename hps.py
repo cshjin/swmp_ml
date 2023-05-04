@@ -44,7 +44,7 @@ def run(config):
     dropout = config.get("dropout", 0.5)
     lr = config.get("lr", 1e-3)
     weight_decay = config.get("weight_decay", 1e-4)
-    epochs = 200
+    epochs = 250
 
     # Create a DataLoader for our datasets
     loader_train = DataLoader(dataset=dataset_train,
@@ -166,9 +166,9 @@ problem = HpProblem()
 # Note: hidden_channels, hidden_size, and batch_size orignally didn't have [1, 2, 4, 8].
 #       I added those only because DeepHyper will error out if 1 isn't one of the
 #       hyperparameter options.
-problem.add_hyperparameter([16, 32, 64, 128, 256],
+problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
                            "hidden_size", default_value=128)
-problem.add_hyperparameter([16, 32, 64, 128, 256],
+problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
                            "batch_size", default_value=64)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_conv_layers", default_value=1)
@@ -204,7 +204,7 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
-results = search.search(max_evals=10)
+results = search.search(max_evals=50)
 print(results) 
 
 # Print the best result
@@ -213,3 +213,18 @@ print("Best results:")
 print(results.iloc[best_objective_index][0:-3]) # The last 3 slots don't matter
 
 # %%
+
+# Best results:
+# activation           sigmoid
+# batch_size               256
+# conv_type                hgt
+# dropout                  0.1
+# hidden_size              256
+# lr                   0.00206
+# num_conv_layers            8
+# num_heads                  1
+# num_mlp_layers             7
+# weight_decay          0.0001
+# objective            0.008543
+
+# python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 256 --conv_type hgt --dropout 0.1 --hidden_size 256 --lr 1e-3 --num_conv_layers 8 --num_heads 1 --num_mlp_layers 7 --weight_decay 1e-4 --epochs 250

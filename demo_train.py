@@ -223,12 +223,16 @@ if __name__ == "__main__":
             pred = model(data)[data.load_bus_mask]
             plt.plot(data['y'], "r.", label="true")
             loss = F.mse_loss(pred, data['y'])
-            print(loss.item())
+            print("Testing loss: " + str(loss.item()))
             plt.plot(pred.detach().cpu().numpy(), "b.", label="pred")
             plt.legend()
             plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
             exit()
     else:
+        print("Test results")
+        print("Weighted loss: " + str(t_loss))
+        print("Accuracy: " + str(train_acc))
+        print("ROC_AUC score: " + str(roc_auc))
         if args['weight']:
             plt.title(f"weighted loss: {t_loss:.4f}"
                     + "\n"
@@ -242,4 +246,5 @@ if __name__ == "__main__":
                     + "\n"
                     + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
+        # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         plt.savefig("GIC-loss.png")
