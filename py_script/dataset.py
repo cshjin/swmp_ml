@@ -115,17 +115,17 @@ class GMD(InMemoryDataset):
                 for k in map_bus_to_load:
                     # update pd/qd with bus_i
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
+                                   "Pd"] = case_load[map_bus_to_load[k]]['pd'] * 100
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k),
-                                "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
+                                   "Qd"] = case_load[map_bus_to_load[k]]['qd'] * 100
 
                 if self.problem == "clf":
                     y = [res_load[map_bus_to_load[k]]['status']
-                        for k in sorted(list(map_bus_to_load.keys()))]
+                         for k in sorted(list(map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
                 else:
                     y = [res_load[map_bus_to_load[k]]['qd']
-                        for k in sorted(list(map_bus_to_load.keys()))]
+                         for k in sorted(list(map_bus_to_load.keys()))]
                     # y = [res_load[map_bus_to_load[k]]['status']
                     #      for k in sorted(list(map_bus_to_load.keys()))]
                     h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
@@ -191,8 +191,8 @@ class GMD(InMemoryDataset):
             # convert type and config to one-hot encoder
             bg_type = {"'xfmr'": 0, "'line'": 1, "'series_cap'": 2}
             bg_config = {"'none'": 0, "'delta-delta'": 1, "'delta-wye'": 2,
-                        "'wye-delta'": 3, "'wye-wye'": 4, "'delta-gwye'": 5,
-                        "'gwye-delta'": 6, "'gwye-gwye'": 7, "'gwye-gwye-auto'": 8}
+                         "'wye-delta'": 3, "'wye-wye'": 4, "'delta-gwye'": 5,
+                         "'gwye-delta'": 6, "'gwye-gwye'": 7, "'gwye-gwye-auto'": 8}
             mpc['branch_gmd']['type'] = mpc['branch_gmd']['type'].map(lambda x: bg_type[x])
             mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], pd.DataFrame(
                 np.eye(3)[mpc['branch_gmd']['type'].to_numpy(dtype=int)]).add_prefix("t")], axis=1)
@@ -242,7 +242,7 @@ class GMD(InMemoryDataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr}) {self.name}'
-    
+
 
 class MultiGMD(InMemoryDataset):
 

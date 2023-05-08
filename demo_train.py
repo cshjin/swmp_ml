@@ -1,6 +1,5 @@
 """ Process dataset with HeteroData and a demo of HeterGNN network
 
-TODO:
 * HPS:
     * lr: 1e-3
     * weight_decay: 1e-4
