@@ -273,7 +273,11 @@ class MultiGMD(InMemoryDataset):
                           problem=self.problem,
                           pre_transform=self.pre_transform,
                           pre_filter=self.pre_filter)
-
+        if self.force_reprocess:
+            SAVED_PATH = osp.join(osp.abspath(self.root), "processed", "multi_gmd")
+            SAVED_FILE = f"{SAVED_PATH}/processed.pt"
+            if osp.exists(SAVED_FILE):
+                os.remove(SAVED_FILE)
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -287,6 +291,7 @@ class MultiGMD(InMemoryDataset):
     def process(self):
         """ Process multiple grids into single dataset in PyG
         """
+        # DEBUG: build multi_gmd data_list with diff samples from diff grids
         data_list = []
         dir_path = osp.abspath(self.root)
         for name in self.names:

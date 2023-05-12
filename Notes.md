@@ -98,14 +98,39 @@ Existing bugs
 - When executing the code for the GIC problem, parts of the code dealing with pbar won't execute.
 > Solved.
 
-
+Best results:
+p:activation         leakyrelu
+p:batch_size               256
+p:conv_type                hgt
+p:dropout                  0.2
+p:hidden_size               16
+p:lr                  0.000832
+p:num_conv_layers            6
+p:num_heads                  1
+p:num_mlp_layers             8
+p:weight_decay             0.0
+objective             0.008532
 
 TODO:
 * > run hps on epri21 for gic problem
-* hps with multiple grids
-* Try out normalization in DeepHyper
-* generate perturbations of ots_test for gic problem
+* (has issue) hps with multiple grids
+* > Try out normalization in DeepHyper
+* > generate perturbations of ots_test for gic problem
 * run demo_train.py with multple grids (epri21 and ots_test)
 * Remove the --problem argument from the ArgumentParser
-* Discuss with Hongwei his progress on the constraints
-* Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network
+* > Discuss with Hongwei his progress on the constraints. Hongwei is currently thinking about the contraints that Arthur gave him and formulating a way to incorporate them into the model.
+* > Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network. Hongwei will email Russell directly about this.
+* > Make sure that there are actually blockers being placed and if the output of the model is trying to place blockers. Note that epri21 seems to be missing some data about the current. Follow up with Arthur and Adam about their updates to the epri21 power grid dataset.
+* > Take a look at the cross entropy function to see how it handles regression and classification outputs. Specifically, the output of the model (the "out" variable) doesn't seem to have binary values.
+* (contacted) Work on a larger dataset (will need to contact Arthur and Adam).
+
+
+
+<!-- DEBUG -->
+```
+Exception has occurred: ValueError
+With n_samples=1, test_size=0.2 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+  File "/mnt/c/Users/TurtleCamera/Documents/GitHub/swmp_ml/demo_train.py", line 123, in <module>
+    dataset_train, dataset_val = train_test_split(dataset_train,
+ValueError: With n_samples=1, test_size=0.2 and train_size=None, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+```

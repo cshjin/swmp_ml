@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from py_script.dataset import GMD
+from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
@@ -23,15 +23,23 @@ torch.manual_seed(12345)
 
 def run(config):
     pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
+    pre_transform = None
 
-    setting="gic"
+    setting="mld"
+    problem="reg"
     weight_arg=False
     dataset = GMD(ROOT,
                     name="epri21",
                     setting=setting,
-                    problem="clf",
+                    problem=problem,
                     force_reprocess=False,
                     pre_transform=pre_transform)
+    # dataset = MultiGMD(ROOT,
+    #                 names=["epri21", "ots_test"],
+    #                 setting=setting,
+    #                 problem=problem,
+    #                 force_reprocess=True,
+    #                 pre_transform=pre_transform)
     data = dataset[0]
 
     batch_size = config.get("batch_size", 64)
@@ -139,15 +147,23 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DEVICE = torch.device('cpu')
 
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
+pre_transform = None
 
-setting="gic"
+setting="mld"
+problem="reg"
 weight_arg=False
 dataset = GMD(ROOT,
                 name="epri21",
                 setting=setting,
-                problem="clf",
+                problem=problem,
                 force_reprocess=True,
                 pre_transform=pre_transform)
+# dataset = MultiGMD(ROOT,
+#                 names=["epri21", "ots_test"],
+#                 setting=setting,
+#                 problem=problem,
+#                 force_reprocess=True,
+#                 pre_transform=pre_transform)
 data = dataset[0]
 
 # %%

@@ -156,6 +156,10 @@ if __name__ == "__main__":
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
 
+    # Some extra code to check if the optimizer really did place some blockers in the results and if model really is placing some blockers in the grid
+    num_optimizer_blockers=0
+    num_model_blockers=0
+
     losses = []
     if len(args['names']) == 1:
         pbar = tqdm(range(args['epochs']), desc=args['names'][0])
@@ -184,6 +188,19 @@ if __name__ == "__main__":
                 train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
                 dim=1).detach().cpu().numpy()).sum() / len(data['y'])
                 roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+            
+            # Some extra code to check if the optimizer really did place some blockers in the results and if model really is placing some blockers in the grid
+            # print(out)
+            # print(data['y'])
+            # print(list(data['y']).count(1))
+            # print("Out")
+            # for item in list(data['y']):
+            #     print(item)
+            # print("Data")
+            # for item in list(data['y']):
+            #     print(item)
+            # exit()
+
             loss.backward()
             optimizer.step()
 
