@@ -3,13 +3,14 @@
 import json
 import os
 import os.path as osp
+import pickle
 from glob import glob
 from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
 import torch
-from torch_geometric.data import HeteroData, InMemoryDataset
+from torch_geometric.data import Batch, HeteroData, InMemoryDataset
 
 from py_script.utils import create_dir, read_mpc
 
@@ -61,7 +62,7 @@ class GMD(InMemoryDataset):
     def processed_file_names(self):
         SAVED_PATH = osp.join(osp.abspath(self.root), "processed", self.name)
         create_dir(SAVED_PATH)
-        return [f'{SAVED_PATH}/processed.pt']
+        return [f'{SAVED_PATH}/processed.pt', f'{SAVED_PATH}/data_list.pkl']
 
     def process(self):
         """ Process the raw file, and save to processed files. """
@@ -236,6 +237,8 @@ class GMD(InMemoryDataset):
             h_data = h_data if self.pre_transform is None else self.pre_transform(h_data)
             data_list.append(h_data)
 
+        # NEW: save the data_list
+        pickle.dump(data_list, open(self.processed_paths[1], 'wb'))
         # save to the processed path
         torch.save(self.collate(data_list), self.processed_paths[0])
 
@@ -294,10 +297,34 @@ class MultiGMD(InMemoryDataset):
         # DEBUG: build multi_gmd data_list with diff samples from diff grids
         data_list = []
         dir_path = osp.abspath(self.root)
+        # for name in self.names:
+        #     data_path = osp.join(dir_path, "processed", name)
+        #     data = torch.load(f"{data_path}/processed.pt")[0]
+        #     data_list.append(data)
+
         for name in self.names:
             data_path = osp.join(dir_path, "processed", name)
-            data = torch.load(f"{data_path}/processed.pt")[0]
-            data_list.append(data)
+            _data = pickle.load(open(f"{data_path}/data_list.pkl", 'rb'))
+            data_list += _data
 
+        # NOTE: keep the following part, for debug only
+        # data_batch = Batch.from_data_list(data_list)
+        # h_data = HeteroData()
+        # h_data.load_bus_mask = data_batch.load_bus_mask
+        # h_data.y = data_batch.y
+        # h_data['bus'].x = data_batch['gen'].x
+        # h_data.num_network_nodes = data_batch.num_network_nodes
+        # h_data['gen'].x = data_batch['gen'].x
+        # h_data['bus', 'conn', 'gen'].edge_index = data_batch['bus', 'conn', 'gen'].edge_index
+        # h_data['gen', 'conn', 'bus'].edge_index = data_batch['gen', 'conn', 'bus'].edge_index
+        # h_data['bus', 'branch', 'bus'].edge_index = data_batch['bus', 'branch', 'bus'].edge_index
+        # h_data['bus', 'branch', 'bus'].edge_attr = data_batch['bus', 'branch', 'bus'].edge_attr
+        # h_data['bus', 'branch_gmd', 'bus'].edge_index = data_batch['bus', 'branch_gmd', 'bus'].edge_index
+        # h_data['bus', 'branch_gmd', 'bus'].edge_attr = data_batch['bus', 'branch_gmd', 'bus'].edge_attr
+        # h_data['gmd_bus'].x = data_batch['gmd_bus'].x
+        # h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = data_batch['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index
+        # h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = data_batch['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr
+        # h_data['gmd_bus', 'attach', "bus"].edge_index = data_batch['gmd_bus', 'attach', "bus"].edge_index
+        # h_data = h_data if self.pre_transform is None else self.pre_transform(h_data)
         data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
