@@ -193,9 +193,9 @@ if __name__ == "__main__":
             # print(out)
             # print(data['y'])
             # print(list(data['y']).count(1))
-            # print("Out")
-            # for item in list(data['y']):
-            #     print(item)
+            print("Out")
+            for item in list(out):
+                print(item, F.softmax(item))
             # print("Data")
             # for item in list(data['y']):
             #     print(item)

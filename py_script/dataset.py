@@ -73,7 +73,8 @@ class GMD(InMemoryDataset):
         if self.setting == "mld":
             res_files = glob(f"../gic-blockers/results/{self.name}_*.json")
         else:
-            res_files = glob("./gic_blocker_results/*.json")
+            res_files = glob(f"./gic_blocker_results/*_{self.name}_*.json")
+            # res_files = glob("./gic_blocker_results/*.json")
 
         for res_f in res_files:
             # For mld only, read in the mods files
@@ -139,8 +140,12 @@ class GMD(InMemoryDataset):
                     mpc['bus'].loc[mpc['bus']['bus_i'] == int(k), "Qd"] = res_data['bus'][k]['qd']
 
                 if self.problem == "clf":
-                    y = [int(res_data['gmd_bus'][k]['gic_blocker']) for k in sorted(list(res_data['gmd_bus'].keys()))]
-                    h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
+                    try:
+                        y = [int(res_data['gmd_bus'][k]['gic_blocker']) for k in sorted(list(res_data['gmd_bus'].keys()))]
+                        h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
+                    except Exception:
+                        print("Null in result file")
+                        continue
                 else:
                     y = [int(res_data['gmd_bus'][k]['volt_mag']) for k in sorted(list(res_data['gmd_bus'].keys()))]
                     h_data['y'] = torch.tensor(np.array(y).reshape(-1, 1), dtype=torch.float32)
