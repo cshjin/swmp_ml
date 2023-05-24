@@ -99,18 +99,18 @@ if __name__ == "__main__":
 
     if len(args['names']) == 1:
         dataset = GMD(ROOT,
-                  name=args['names'][0],
-                  setting=args['setting'],
-                  problem=args['problem'],
-                  force_reprocess=args['force'],
-                  pre_transform=pre_transform)
+                      name=args['names'][0],
+                      setting=args['setting'],
+                      problem=args['problem'],
+                      force_reprocess=args['force'],
+                      pre_transform=pre_transform)
     elif len(args['names']) > 1:
         dataset = MultiGMD(ROOT,
-                  names=args['names'],
-                  setting=args['setting'],
-                  problem=args['problem'],
-                  force_reprocess=args['force'],
-                  pre_transform=pre_transform)
+                           names=args['names'],
+                           setting=args['setting'],
+                           problem=args['problem'],
+                           force_reprocess=args['force'],
+                           pre_transform=pre_transform)
     else:
         raise "Please input at least one grid name"
     data = dataset[0]
@@ -156,9 +156,10 @@ if __name__ == "__main__":
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
 
-    # Some extra code to check if the optimizer really did place some blockers in the results and if model really is placing some blockers in the grid
-    num_optimizer_blockers=0
-    num_model_blockers=0
+    # Some extra code to check if the optimizer really did place some blockers
+    # in the results and if model really is placing some blockers in the grid
+    num_optimizer_blockers = 0
+    num_model_blockers = 0
 
     losses = []
     if len(args['names']) == 1:
@@ -167,7 +168,7 @@ if __name__ == "__main__":
         pbar = tqdm(range(args['epochs']), desc="Multi Grids")
     model.train()
     for epoch in pbar:
-    # for epoch in range(args['epochs']):
+        # for epoch in range(args['epochs']):
         t_loss = 0
         for i, data in enumerate(data_loader_train, 0):
             data = data.to(DEVICE)
@@ -178,24 +179,25 @@ if __name__ == "__main__":
                 out = model(data)[data.load_bus_mask]
                 loss = F.mse_loss(out, data['y'])
             else:
-                out = model(data, "gmd_bus")
+                out = model(data, "gmd_bus")[data.gic_blocker_bus_mask]
+                train_y = data['y'][data.gic_blocker_bus_mask]
                 if args['weight']:
-                    weight = len(data['y']) / (2 * data['y'].bincount())
-                    loss = F.cross_entropy(out, data['y'], weight=weight)
+                    weight = len(train_y) / (2 * train_y.bincount())
+                    loss = F.cross_entropy(out, train_y, weight=weight)
                 else:
-                    loss = F.cross_entropy(out, data['y'])
-                
-                train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
-                dim=1).detach().cpu().numpy()).sum() / len(data['y'])
-                roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
-            
+                    loss = F.cross_entropy(out, train_y)
+
+                train_acc = (train_y.detach().cpu().numpy() == out.argmax(
+                    1).detach().cpu().numpy()).sum() / len(train_y)
+                roc_auc = roc_auc_score(train_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+
             # Some extra code to check if the optimizer really did place some blockers in the results and if model really is placing some blockers in the grid
             # print(out)
             # print(data['y'])
             # print(list(data['y']).count(1))
-            print("Out")
-            for item in list(out):
-                print(item, F.softmax(item))
+            # print("Out")
+            # for item in list(out):
+            #     print(item, F.softmax(item))
             # print("Data")
             # for item in list(data['y']):
             #     print(item)
@@ -206,7 +208,7 @@ if __name__ == "__main__":
 
             # FIXED: we don't need to devide by num_graphs
             t_loss += loss.item()
-        
+
         # Choose how to handle the pbar based on the problem setting
         if args['setting'] == "mld":
             pbar.set_postfix({"loss": t_loss})
@@ -251,16 +253,16 @@ if __name__ == "__main__":
         print("ROC_AUC score: " + str(roc_auc))
         if args['weight']:
             plt.title(f"weighted loss: {t_loss:.4f}"
-                    + "\n"
-                    + f"accuracy: {train_acc:.4f}"
-                    + "\n"
-                    + f"ROC_AUC score: {roc_auc:.4f}")
+                      + "\n"
+                      + f"accuracy: {train_acc:.4f}"
+                      + "\n"
+                      + f"ROC_AUC score: {roc_auc:.4f}")
         else:
             plt.title(f"loss: {t_loss:.4f}"
-                    + "\n"
-                    + f"accuracy: {train_acc:.4f}"
-                    + "\n"
-                    + f"ROC_AUC score: {roc_auc:.4f}")
+                      + "\n"
+                      + f"accuracy: {train_acc:.4f}"
+                      + "\n"
+                      + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         plt.savefig("GIC-loss.png")

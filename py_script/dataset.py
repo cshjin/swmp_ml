@@ -105,10 +105,12 @@ class GMD(InMemoryDataset):
                 case_load = mods_load['load']
                 res_load = res_data['solution']['load']
 
+                # load bus mask
                 load_bus_idx = [case_load[load_idx]['source_id'][1] for load_idx in case_load]
                 h_data.load_bus_mask = torch.zeros(n_bus).bool()
                 h_data.load_bus_mask[load_bus_idx] = True
 
+                
                 # a dict from bus_i to load_idx
                 map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
 
@@ -223,6 +225,12 @@ class GMD(InMemoryDataset):
             ''' node_type: gmd_bus '''
             # NOTE: only read GMD from conf file
             h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
+
+            # NOTE: gic blocker bus mask, those are candidate gmd buses for gic blockers
+            n_gmd_bus = mpc['gmd_bus'].shape[0]
+            h_data.gic_blocker_bus_mask = torch.zeros(n_gmd_bus).bool()
+            gic_blocker_bus_idx = np.array(mpc['gmd_bus'][mpc['gmd_bus']['g_gnd']> 0].index.tolist())
+            h_data.gic_blocker_bus_mask[gic_blocker_bus_idx] = True
 
             ''' edge_type: gmd_bus--gmd_branch--gmd_bus '''
             gmd_edges = mpc['gmd_branch'].iloc[:, :2].to_numpy()
