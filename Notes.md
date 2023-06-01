@@ -111,23 +111,6 @@ p:num_mlp_layers             8
 p:weight_decay             0.0
 objective             0.008532
 
-TODO:
-* > run hps on epri21 for gic problem
-* > (has issue) hps with multiple grids
-* > Try out normalization in DeepHyper
-* > generate perturbations of ots_test for gic problem
-* > run demo_train.py with multple grids (epri21 and ots_test)
-* > Discuss with Hongwei his progress on the constraints. Hongwei is currently thinking about the contraints that Arthur gave him and formulating a way to incorporate them into the model.
-* > Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network. Hongwei will email Russell directly about this.
-* > Make sure that there are actually blockers being placed and if the output of the model is trying to place blockers. Note that epri21 seems to be missing some data about the current. Follow up with Arthur and Adam about their updates to the epri21 power grid dataset.
-* > Take a look at the cross entropy function to see how it handles regression and classification outputs. Specifically, the output of the model (the "out" variable) doesn't seem to have binary values.
-* (contacted) Work on a larger dataset (will need to contact Arthur and Adam).
-* Contact Arthur and Adam about their progress on modifying the epri21 dataset.
-* Remove the --problem argument from the ArgumentParser
-* ots_test's generated perturbations don't work for the GIC problem (dimension mismatch).
-* Forward function doesn't seem to output binary values for the GIC problem.
-
-
 
 <!-- DEBUG -->
 ```
@@ -145,3 +128,36 @@ double check the multigmd class:
   * `data_list.append(data)` with hetero_data
 
 ['b4gic', 'b6gic_nerc', 'ieee_rts_0', 'epri21', 'ots_test', 'uiuc150_95pct_loading', 'uiuc150']
+
+# Best results:
+# activation           sigmoid
+# batch_size               256
+# conv_type                hgt
+# dropout                  0.1
+# hidden_size              256
+# lr                   0.00206
+# num_conv_layers            8
+# num_heads                  1
+# num_mlp_layers             7
+# weight_decay          0.0001
+# objective            0.008543
+
+# python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 256 --conv_type hgt --dropout 0.1 --hidden_size 256 --lr 1e-3 --num_conv_layers 8 --num_heads 1 --num_mlp_layers 7 --weight_decay 1e-4 --epochs 250
+
+
+TODO:
+* > run hps on epri21 for gic problem
+* > (has issue) hps with multiple grids
+* > Try out normalization in DeepHyper
+* > generate perturbations of ots_test for gic problem
+* > run demo_train.py with multple grids (epri21 and ots_test)
+* > Discuss with Hongwei his progress on the constraints. Hongwei is currently thinking about the contraints that Arthur gave him and formulating a way to incorporate them into the model.
+* > Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network. Hongwei will email Russell directly about this.
+* > Make sure that there are actually blockers being placed and if the output of the model is trying to place blockers. Note that epri21 seems to be missing some data about the current. Follow up with Arthur and Adam about their updates to the epri21 power grid dataset.
+* > Take a look at the cross entropy function to see how it handles regression and classification outputs. Specifically, the output of the model (the "out" variable) doesn't seem to have binary values.
+* > Forward function doesn't seem to output binary values for the GIC problem.image.png
+
+* (contacted) Work on a larger dataset (will need to contact Arthur and Adam).
+* Contact Arthur and Adam about their progress on modifying the epri21 dataset.
+* Remove the --problem argument from the ArgumentParser
+* > ots_test's generated perturbations don't work for the GIC problem (dimension mismatch).

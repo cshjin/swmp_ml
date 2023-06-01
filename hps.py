@@ -16,7 +16,7 @@ from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
-torch.manual_seed(12345)
+torch.manual_seed(123456)
 
 # %% [run]
 
@@ -25,21 +25,21 @@ def run(config):
     pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
     pre_transform = None
 
-    setting="mld"
-    problem="reg"
+    setting="gic"
+    problem="clf"
     weight_arg=False
-    # dataset = GMD(ROOT,
-    #                 name="epri21",
-    #                 setting=setting,
-    #                 problem=problem,
-    #                 force_reprocess=False,
-    #                 pre_transform=pre_transform)
-    dataset = MultiGMD(ROOT,
-                    names=["epri21", "ots_test"],
+    dataset = GMD(ROOT,
+                    name="epri21",
                     setting=setting,
                     problem=problem,
                     force_reprocess=False,
                     pre_transform=pre_transform)
+    # dataset = MultiGMD(ROOT,
+    #                 names=["epri21", "uiuc150"],
+    #                 setting=setting,
+    #                 problem=problem,
+    #                 force_reprocess=False,
+    #                 pre_transform=pre_transform)
     data = dataset[0]
 
     batch_size = config.get("batch_size", 64)
@@ -149,21 +149,21 @@ DEVICE = torch.device('cpu')
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 pre_transform = None
 
-setting="mld"
-problem="reg"
+setting="gic"
+problem="clf"
 weight_arg=False
-# dataset = GMD(ROOT,
-#                 name="epri21",
-#                 setting=setting,
-#                 problem=problem,
-#                 force_reprocess=True,
-#                 pre_transform=pre_transform)
-dataset = MultiGMD(ROOT,
-                names=["epri21", "ots_test"],
+dataset = GMD(ROOT,
+                name="epri21",
                 setting=setting,
                 problem=problem,
                 force_reprocess=True,
                 pre_transform=pre_transform)
+# dataset = MultiGMD(ROOT,
+#                 names=["epri21", "uiuc150"],
+#                 setting=setting,
+#                 problem=problem,
+#                 force_reprocess=True,
+#                 pre_transform=pre_transform)
 data = dataset[0]
 
 # %%
@@ -231,16 +231,16 @@ print(results.iloc[best_objective_index][0:-3]) # The last 3 slots don't matter
 # %%
 
 # Best results:
-# activation           sigmoid
-# batch_size               256
-# conv_type                hgt
-# dropout                  0.1
-# hidden_size              256
-# lr                   0.00206
-# num_conv_layers            8
-# num_heads                  1
-# num_mlp_layers             7
-# weight_decay          0.0001
-# objective            0.008543
+# p:activation             relu
+# p:batch_size               64
+# p:conv_type               hgt
+# p:dropout                 0.5
+# p:hidden_size             128
+# p:lr                    0.001
+# p:num_conv_layers           1
+# p:num_heads                 2
+# p:num_mlp_layers            1
+# p:weight_decay            0.0
+# objective            0.008598
 
-# python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 256 --conv_type hgt --dropout 0.1 --hidden_size 256 --lr 1e-3 --num_conv_layers 8 --num_heads 1 --num_mlp_layers 7 --weight_decay 1e-4 --epochs 250
+# python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 64 --conv_type hgt --dropout 0.5 --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2 --num_mlp_layers 1 --weight_decay 1e-4 --epochs 250 --weight
