@@ -20,20 +20,29 @@ torch.manual_seed(123456)
 
 # %% [run]
 
+"""TODO:
+* fix the issue of the `run` function, return accuracy of validation set
+* update the GMDs with new class init
+* update the model with new class init
+* clean up the code
+* test with multiple objectives, return accuracy and ROC-AUC scoore the validation set
+"""
 
 def run(config):
+    # NOTE: the run function is the function to __maximize__.
+
     pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
     pre_transform = None
 
-    setting="gic"
-    problem="clf"
-    weight_arg=False
+    setting = "gic"
+    problem = "clf"
+    weight_arg = False
     dataset = GMD(ROOT,
-                    name="epri21",
-                    setting=setting,
-                    problem=problem,
-                    force_reprocess=False,
-                    pre_transform=pre_transform)
+                  name="epri21",
+                  setting=setting,
+                  problem=problem,
+                  force_reprocess=False,
+                  pre_transform=pre_transform)
     # dataset = MultiGMD(ROOT,
     #                 names=["epri21", "uiuc150"],
     #                 setting=setting,
@@ -101,16 +110,16 @@ def run(config):
                     loss = F.cross_entropy(out, data['y'], weight=weight)
                 else:
                     loss = F.cross_entropy(out, data['y'])
-                
+
                 train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
-                dim=1).detach().cpu().numpy()).sum() / len(data['y'])
+                    dim=1).detach().cpu().numpy()).sum() / len(data['y'])
                 # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
             loss.backward()
             optimizer.step()
 
             # FIXED: we don't need to devide by num_graphs
             t_loss += loss.item()
-        
+
         # Choose how to handle the pbar based on the problem setting
         if setting == "mld":
             pbar.set_postfix({"loss": t_loss})
@@ -135,9 +144,13 @@ def run(config):
                 loss = F.cross_entropy(pred, batch.y, weight=weight)
             else:
                 loss = F.cross_entropy(pred, batch.y)
-        
+
         test_loss += loss.item() / batch.num_graphs
 
+    # maximize the value, so return the negative value of loss, or positive acc/roc-auc score.
+    # TOFIX: WRONG return value
+    # example:
+    # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
     return test_loss
 
 
@@ -149,15 +162,15 @@ DEVICE = torch.device('cpu')
 pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 pre_transform = None
 
-setting="gic"
-problem="clf"
-weight_arg=False
+setting = "gic"
+problem = "clf"
+weight_arg = False
 dataset = GMD(ROOT,
-                name="epri21",
-                setting=setting,
-                problem=problem,
-                force_reprocess=True,
-                pre_transform=pre_transform)
+              name="epri21",
+              setting=setting,
+              problem=problem,
+              force_reprocess=True,
+              pre_transform=pre_transform)
 # dataset = MultiGMD(ROOT,
 #                 names=["epri21", "uiuc150"],
 #                 setting=setting,
@@ -221,12 +234,12 @@ search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
 results = search.search(max_evals=50)
-print(results) 
+print(results)
 
 # Print the best result
-best_objective_index=results[:]['objective'].argmin()
+best_objective_index = results[:]['objective'].argmin()
 print("Best results:")
-print(results.iloc[best_objective_index][0:-3]) # The last 3 slots don't matter
+print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 
 # %%
 
@@ -243,4 +256,7 @@ print(results.iloc[best_objective_index][0:-3]) # The last 3 slots don't matter
 # p:weight_decay            0.0
 # objective            0.008598
 
-# python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 64 --conv_type hgt --dropout 0.5 --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2 --num_mlp_layers 1 --weight_decay 1e-4 --epochs 250 --weight
+# python demo_train.py --problem clf --force --names epri21 --setting gic
+# --activation relu --batch_size 64 --conv_type hgt --dropout 0.5
+# --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2
+# --num_mlp_layers 1 --weight_decay 1e-4 --epochs 250 --weight
