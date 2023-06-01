@@ -21,7 +21,6 @@ class GMD(InMemoryDataset):
     Args:
         root (Optional[str], optional): The root folder for data to be stored. Defaults to './'.
         name (Optional[str], optional): Name of grid. Defaults to "b4gic".
-        problem (Optional[str], optional): Specify the problem to solve. Defaults to 'clf'.
         setting (Optional[str], optional): Specify the setting to solve in. Defaults to 'gic'.
         force_reprocess (Optional[bool], optional): Force to reprocess data if `True`. Defaults to False.
         transform (Optional[Callable], optional): Transfom modules. Defaults to None.
@@ -32,7 +31,6 @@ class GMD(InMemoryDataset):
     def __init__(self, root: Optional[str] = "./",
                  name: Optional[str] = "epri21",
                  setting: Optional[str] = 'gic',
-                 problem: Optional[str] = 'reg',
                  force_reprocess: Optional[bool] = False,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -43,7 +41,7 @@ class GMD(InMemoryDataset):
         self.setting = setting
         self.transform = transform
         self.force_reprocess = force_reprocess
-        self.problem = problem
+        self.problem = "clf" if self.setting == "gic" else "reg"
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
 
@@ -110,7 +108,6 @@ class GMD(InMemoryDataset):
                 h_data.load_bus_mask = torch.zeros(n_bus).bool()
                 h_data.load_bus_mask[load_bus_idx] = True
 
-                
                 # a dict from bus_i to load_idx
                 map_bus_to_load = {case_load[load_idx]['source_id'][1]: load_idx for load_idx in case_load}
 
@@ -143,7 +140,8 @@ class GMD(InMemoryDataset):
 
                 if self.problem == "clf":
                     try:
-                        y = [int(res_data['gmd_bus'][k]['gic_blocker']) for k in sorted(list(res_data['gmd_bus'].keys()))]
+                        y = [int(res_data['gmd_bus'][k]['gic_blocker'])
+                             for k in sorted(list(res_data['gmd_bus'].keys()))]
                         h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
                     except Exception:
                         print("Null in result file")
@@ -229,7 +227,7 @@ class GMD(InMemoryDataset):
             # NOTE: gic blocker bus mask, those are candidate gmd buses for gic blockers
             n_gmd_bus = mpc['gmd_bus'].shape[0]
             h_data.gic_blocker_bus_mask = torch.zeros(n_gmd_bus).bool()
-            gic_blocker_bus_idx = np.array(mpc['gmd_bus'][mpc['gmd_bus']['g_gnd']> 0].index.tolist())
+            gic_blocker_bus_idx = np.array(mpc['gmd_bus'][mpc['gmd_bus']['g_gnd'] > 0].index.tolist())
             h_data.gic_blocker_bus_mask[gic_blocker_bus_idx] = True
 
             ''' edge_type: gmd_bus--gmd_branch--gmd_bus '''
@@ -265,7 +263,6 @@ class MultiGMD(InMemoryDataset):
     def __init__(self, root: Optional[str] = None,
                  names: Optional[list] = ['epri21'],
                  setting: Optional[str] = 'gic',
-                 problem: Optional[str] = 'reg',
                  transform: Optional[Callable] = None,
                  force_reprocess: Optional[bool] = False,
                  pre_transform: Optional[Callable] = None,
@@ -276,7 +273,7 @@ class MultiGMD(InMemoryDataset):
         self.setting = setting
         self.transform = transform
         self.force_reprocess = force_reprocess
-        self.problem = problem
+        self.problem = "clf" if self.setting == "gic" else "reg"
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
 
@@ -286,7 +283,6 @@ class MultiGMD(InMemoryDataset):
                           setting=self.setting,
                           transform=self.transform,
                           force_reprocess=self.force_reprocess,
-                          problem=self.problem,
                           pre_transform=self.pre_transform,
                           pre_filter=self.pre_filter)
         if self.force_reprocess:

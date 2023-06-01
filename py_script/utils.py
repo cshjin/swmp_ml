@@ -111,3 +111,55 @@ def create_dir(path):
         except Exception as e:
             print("Error: {}".format(e))
             exit(-1)
+
+
+def process_args():
+    """ Process args of inputs
+
+    Returns:
+        dict: Parsed arguments.
+    """
+    import argparse
+    ACTS = ["relu", "rrelu", "hardtanh", "relu6", "sigmoid", "hardsigmoid", "tanh", "silu",
+            "mish", "hardswish", "elu", "celu", "selu", "glu", "gelu", "hardshrink",
+            "leakyrelu", "logsigmoid", "softplus", "tanhshrink"]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--names", type=str, default=["epri21"], nargs='+',
+                        help="list of names of networks, seperated by space")
+    parser.add_argument("--force", action="store_true",
+                        help="Force to reprocess data")
+    parser.add_argument("--lr", type=float, default=1e-3,
+                        help="learning rate")
+    parser.add_argument("--weight_decay", type=float, default=1e-4,
+                        help="weight decay rate for Adam")
+    parser.add_argument("--hidden_size", type=int, default=128,
+                        help="hidden dimension in HGT")
+    parser.add_argument("--num_heads", type=int, default=2,
+                        help="number of heads in HGT")
+    parser.add_argument("--num_conv_layers", type=int, default=1,
+                        help="number of layers in HGT")
+    parser.add_argument("--num_mlp_layers", type=int, default=4,
+                        help="number of layers in MLP")
+    parser.add_argument("--activation", type=str, default="relu", choices=ACTS,
+                        help="specify the activation function used")
+    parser.add_argument("--conv_type", type=str, default="hgt", choices=["hgt", "han"],
+                        help="select the type of convolutional layer (hgt or han)")
+    parser.add_argument("--dropout", type=float, default=0.5,
+                        help="dropout rate")
+    parser.add_argument("--epochs", type=int, default=200,
+                        help="number of epochs in training")
+    parser.add_argument("--batch_size", type=int, default=64,
+                        help="batch size in training")
+    parser.add_argument("--normalize", action="store_true",
+                        help="normalize the data")
+    parser.add_argument("--test_split", type=float, default=0.2,
+                        help="the proportion of datasets to use for testing")
+    parser.add_argument("--gpu", type=int, default=-1,
+                        help="which GPU to use. Set -1 to use CPU.")
+    parser.add_argument("--weight", action="store_true",
+                        help="use weighted loss.")
+    parser.add_argument("--setting", type=str, default="gic", choices=["mld", "gic"],
+                        help="Specify the problem setting, either `mld` or `gic`")
+    args = vars(parser.parse_args())
+
+    return args
