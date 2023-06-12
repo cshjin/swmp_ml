@@ -142,7 +142,7 @@ def run(config):
             # pred = model(batch, "gmd_bus")[batch.gic_blocker_bus_mask]
             # test_y = data['y'][batch.gic_blocker_bus_mask]
 
-            if weight_arg:
+            if weight_arg and (len(data['y'].bincount()) > 1):
                 weight = len(batch.y) / (2 * (batch.y).bincount())
                 loss = F.cross_entropy(pred, batch.y, weight=weight)
             else:
