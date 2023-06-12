@@ -11,6 +11,7 @@ from deephyper.search.hps import CBO, AMBS
 from sklearn.model_selection import train_test_split
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
+from sklearn.metrics import roc_auc_score
 
 from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
@@ -35,12 +36,10 @@ def run(config):
     pre_transform = None
 
     setting = "gic"
-    problem = "clf"
     weight_arg = False
     dataset = GMD(ROOT,
                   name="epri21",
                   setting=setting,
-                  problem=problem,
                   force_reprocess=False,
                   pre_transform=pre_transform)
     # dataset = MultiGMD(ROOT,
@@ -137,13 +136,22 @@ def run(config):
             pred = model(batch)[batch.load_bus_mask]
             loss = F.mse_loss(pred, batch.y)
         else:
+            # Use the mask to prune cases where there are no busses
             pred = model(batch, "gmd_bus")
-            # loss = F.mse_loss(batch, data['y'])
+            test_y = data['y']
+            # pred = model(batch, "gmd_bus")[batch.gic_blocker_bus_mask]
+            # test_y = data['y'][batch.gic_blocker_bus_mask]
+
             if weight_arg:
                 weight = len(batch.y) / (2 * (batch.y).bincount())
                 loss = F.cross_entropy(pred, batch.y, weight=weight)
             else:
                 loss = F.cross_entropy(pred, batch.y)
+
+            # Some more objective functions
+            test_acc = (test_y.detach().cpu().numpy() == out.argmax(
+                    1).detach().cpu().numpy()).sum() / len(test_y)
+            roc_auc = roc_auc_score(test_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
 
         test_loss += loss.item() / batch.num_graphs
 
@@ -151,7 +159,7 @@ def run(config):
     # TOFIX: WRONG return value
     # example:
     # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
-    return test_loss
+    return (-test_loss, test_acc, roc_auc)
 
 
 # %%
@@ -163,18 +171,15 @@ pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 pre_transform = None
 
 setting = "gic"
-problem = "clf"
 weight_arg = False
 dataset = GMD(ROOT,
               name="epri21",
               setting=setting,
-              problem=problem,
               force_reprocess=True,
               pre_transform=pre_transform)
 # dataset = MultiGMD(ROOT,
 #                 names=["epri21", "uiuc150"],
 #                 setting=setting,
-#                 problem=problem,
 #                 force_reprocess=True,
 #                 pre_transform=pre_transform)
 data = dataset[0]
@@ -244,19 +249,48 @@ print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 # %%
 
 # Best results:
-# p:activation             relu
-# p:batch_size               64
+# p:activation             tanh
+# p:batch_size               16
 # p:conv_type               hgt
 # p:dropout                 0.5
-# p:hidden_size             128
-# p:lr                    0.001
-# p:num_conv_layers           1
-# p:num_heads                 2
-# p:num_mlp_layers            1
+# p:hidden_size              16
+# p:lr                 0.000094
+# p:num_conv_layers           2
+# p:num_heads                 1
+# p:num_mlp_layers            8
 # p:weight_decay            0.0
-# objective            0.008598
+# objective           -0.042414
 
-# python demo_train.py --problem clf --force --names epri21 --setting gic
+# python demo_train.py --force --names epri21 --setting gic
+# --activation tanh --batch_size 16 --conv_type hgt --dropout 0.5
+# --hidden_size 16 --lr 0.000094 --num_conv_layers 2 --num_heads 1
+# --num_mlp_layers 8 --weight_decay 1e-4 --epochs 250 --weight
+
+# p:activation               elu
+# p:batch_size                 1
+# p:conv_type                hgt
+# p:dropout                  0.1
+# p:hidden_size                1
+# p:lr                  0.000511
+# p:num_conv_layers            6
+# p:num_heads                  2
+# p:num_mlp_layers             9
+# p:weight_decay             0.0
+# objective           -17.010075
+
+# python demo_train.py --force --names epri21 --setting gic
 # --activation relu --batch_size 64 --conv_type hgt --dropout 0.5
 # --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2
 # --num_mlp_layers 1 --weight_decay 1e-4 --epochs 250 --weight
+
+# p:activation          sigmoid
+# p:batch_size               16
+# p:conv_type               han
+# p:dropout                 0.0
+# p:hidden_size              64
+# p:lr                 0.001811
+# p:num_conv_layers           5
+# p:num_heads                 1
+# p:num_mlp_layers            2
+# p:weight_decay         0.0001
+# objective           -0.216488

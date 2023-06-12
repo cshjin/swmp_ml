@@ -119,6 +119,8 @@ if __name__ == "__main__":
                 out = model(data, "gmd_bus")[data.gic_blocker_bus_mask]
                 train_y = data['y'][data.gic_blocker_bus_mask]
                 if args['weight']:
+                    # print(2 * train_y.bincount(minlength=2))
+                    # weight = len(train_y) / (2 * train_y.bincount(minlength=2))
                     weight = len(train_y) / (2 * train_y.bincount())
                     loss = F.cross_entropy(out, train_y, weight=weight)
                 else:
@@ -126,7 +128,7 @@ if __name__ == "__main__":
 
                 train_acc = (train_y.detach().cpu().numpy() == out.argmax(
                     1).detach().cpu().numpy()).sum() / len(train_y)
-                roc_auc = roc_auc_score(train_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                # roc_auc = roc_auc_score(train_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
 
             loss.backward()
             optimizer.step()
@@ -134,10 +136,10 @@ if __name__ == "__main__":
             t_loss += loss.item()
 
         # Choose how to handle the pbar based on the problem setting
-        if args['setting'] == "mld":
-            pbar.set_postfix({"loss": t_loss})
-        else:
-            pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
+        # if args['setting'] == "mld":
+        #     pbar.set_postfix({"loss": t_loss})
+        # else:
+        #     pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
         losses.append(t_loss)
 
     # Count the number of files that exist in the Figures directory, so
@@ -158,7 +160,7 @@ if __name__ == "__main__":
               f"Loss: {t_loss:.4f}")
     plt.savefig(f"./Figures/{args['setting']}_{ts}.png")
 
-    exit()
+    # exit()
     # Choose how to handle the figure based on the problem setting
     if args['setting'] == "mld":
         plt.title(f"Hete-Graph - {args['setting']}")
@@ -180,19 +182,19 @@ if __name__ == "__main__":
         print("Test results")
         print("Weighted loss: " + str(t_loss))
         print("Accuracy: " + str(train_acc))
-        print("ROC_AUC score: " + str(roc_auc))
-        if args['weight']:
-            plt.title(f"weighted loss: {t_loss:.4f}"
-                      + "\n"
-                      + f"accuracy: {train_acc:.4f}"
-                      + "\n"
-                      + f"ROC_AUC score: {roc_auc:.4f}")
-        else:
-            plt.title(f"loss: {t_loss:.4f}"
-                      + "\n"
-                      + f"accuracy: {train_acc:.4f}"
-                      + "\n"
-                      + f"ROC_AUC score: {roc_auc:.4f}")
+        # print("ROC_AUC score: " + str(roc_auc))
+        # if args['weight']:
+        #     plt.title(f"weighted loss: {t_loss:.4f}"
+        #               + "\n"
+        #               + f"accuracy: {train_acc:.4f}"
+        #               + "\n"
+        #               + f"ROC_AUC score: {roc_auc:.4f}")
+        # else:
+        #     plt.title(f"loss: {t_loss:.4f}"
+        #               + "\n"
+        #               + f"accuracy: {train_acc:.4f}"
+        #               + "\n"
+        #               + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
         plt.savefig("GIC-loss.png")
