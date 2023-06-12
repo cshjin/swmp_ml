@@ -36,7 +36,7 @@ def run(config):
     pre_transform = None
 
     setting = "gic"
-    weight_arg = False
+    weight_arg = True
     dataset = GMD(ROOT,
                   name="epri21",
                   setting=setting,
@@ -104,7 +104,7 @@ def run(config):
                 loss = F.mse_loss(out, data['y'])
             else:
                 out = model(data, "gmd_bus")
-                if weight_arg:
+                if weight_arg and (len(data['y'].bincount()) > 1):
                     weight = len(data['y']) / (2 * data['y'].bincount())
                     loss = F.cross_entropy(out, data['y'], weight=weight)
                 else:
@@ -171,7 +171,7 @@ pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 pre_transform = None
 
 setting = "gic"
-weight_arg = False
+weight_arg = True
 dataset = GMD(ROOT,
               name="epri21",
               setting=setting,
