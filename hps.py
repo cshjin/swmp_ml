@@ -17,7 +17,7 @@ from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
-torch.manual_seed(123456)
+torch.manual_seed(12345)
 
 # %% [run]
 
@@ -38,14 +38,13 @@ def run(config):
     setting = "gic"
     weight_arg = True
     dataset = GMD(ROOT,
-                  name="epri21",
+                  name="uiuc150",
                   setting=setting,
                   force_reprocess=False,
                   pre_transform=pre_transform)
     # dataset = MultiGMD(ROOT,
     #                 names=["epri21", "uiuc150"],
     #                 setting=setting,
-    #                 problem=problem,
     #                 force_reprocess=False,
     #                 pre_transform=pre_transform)
     data = dataset[0]
@@ -142,7 +141,7 @@ def run(config):
             # pred = model(batch, "gmd_bus")[batch.gic_blocker_bus_mask]
             # test_y = data['y'][batch.gic_blocker_bus_mask]
 
-            if weight_arg and (len(data['y'].bincount()) > 1):
+            if weight_arg and (len(batch.y.bincount()) > 1):
                 weight = len(batch.y) / (2 * (batch.y).bincount())
                 loss = F.cross_entropy(pred, batch.y, weight=weight)
             else:
@@ -159,7 +158,10 @@ def run(config):
     # TOFIX: WRONG return value
     # example:
     # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
-    return (-test_loss, test_acc, roc_auc)
+    # return (-test_loss, test_acc, roc_auc)
+    # return -test_loss
+    # return test_acc
+    return roc_auc
 
 
 # %%
@@ -173,7 +175,7 @@ pre_transform = None
 setting = "gic"
 weight_arg = True
 dataset = GMD(ROOT,
-              name="epri21",
+              name="uiuc150",
               setting=setting,
               force_reprocess=True,
               pre_transform=pre_transform)
@@ -200,10 +202,14 @@ problem = HpProblem()
 # Note: hidden_channels, hidden_size, and batch_size orignally didn't have [1, 2, 4, 8].
 #       I added those only because DeepHyper will error out if 1 isn't one of the
 #       hyperparameter options.
-problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "hidden_size", default_value=128)
-problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+problem.add_hyperparameter([16, 32, 64, 128, 256],
                            "batch_size", default_value=64)
+# problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+#                            "hidden_size", default_value=128)
+# problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+#                            "batch_size", default_value=64)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_conv_layers", default_value=1)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -238,7 +244,7 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
-results = search.search(max_evals=50)
+results = search.search(max_evals=10)
 print(results)
 
 # Print the best result
@@ -246,51 +252,21 @@ best_objective_index = results[:]['objective'].argmin()
 print("Best results:")
 print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 
+# best_objective_index = results[:]['objective_0'].argmin()
+# print("Best result for -test_loss:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
+
+# best_objective_index = results[:]['objective_1'].argmin()
+# print("Best results for test_acc:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
+
+# best_objective_index = results[:]['objective_2'].argmin()
+# print("Best results for roc_auc score:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
+
 # %%
-
-# Best results:
-# p:activation             tanh
-# p:batch_size               16
-# p:conv_type               hgt
-# p:dropout                 0.5
-# p:hidden_size              16
-# p:lr                 0.000094
-# p:num_conv_layers           2
-# p:num_heads                 1
-# p:num_mlp_layers            8
-# p:weight_decay            0.0
-# objective           -0.042414
-
-# python demo_train.py --force --names epri21 --setting gic
-# --activation tanh --batch_size 16 --conv_type hgt --dropout 0.5
-# --hidden_size 16 --lr 0.000094 --num_conv_layers 2 --num_heads 1
-# --num_mlp_layers 8 --weight_decay 1e-4 --epochs 250 --weight
-
-# p:activation               elu
-# p:batch_size                 1
-# p:conv_type                hgt
-# p:dropout                  0.1
-# p:hidden_size                1
-# p:lr                  0.000511
-# p:num_conv_layers            6
-# p:num_heads                  2
-# p:num_mlp_layers             9
-# p:weight_decay             0.0
-# objective           -17.010075
 
 # python demo_train.py --force --names epri21 --setting gic
 # --activation relu --batch_size 64 --conv_type hgt --dropout 0.5
 # --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2
 # --num_mlp_layers 1 --weight_decay 1e-4 --epochs 250 --weight
-
-# p:activation          sigmoid
-# p:batch_size               16
-# p:conv_type               han
-# p:dropout                 0.0
-# p:hidden_size              64
-# p:lr                 0.001811
-# p:num_conv_layers           5
-# p:num_heads                 1
-# p:num_mlp_layers            2
-# p:weight_decay         0.0001
-# objective           -0.216488
