@@ -183,7 +183,6 @@ def run(config):
     # return test_acc
     # return roc_auc
 
-
 # %%
 ROOT = osp.join(osp.expanduser("~"), "tmp", "data", "GMD")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -285,8 +284,58 @@ print("Best results for roc_auc score:")
 print(results.iloc[best_objective_index][0:-3], '\n')
 
 
-# %%
 
+
+# Radar (Spider) plot of the 3 objectives
+# Store the labels for the radar plot
+labels = ["-test_loss", "test_acc", "roc_auc"]
+
+# Number of variables we're plotting.
+num_vars = len(labels)
+
+# Spread out the labels evenly
+angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+
+# Since the plot is a circle, finish the loop
+angles += angles[:1]
+
+# Plot the figure
+fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+# Helper function to plot each row of the results.
+def add_row_to_plot(row, color):
+    values = results.loc[row, ["objective_0", "objective_1", "objective_2"]].tolist()
+    values += values[:1]
+    ax.plot(angles, values, color=color, linewidth=1, label=row)
+    ax.fill(angles, values, color=color, alpha=0.25)
+
+# Add each row to the plot
+for row, _ in results.iterrows():
+    add_row_to_plot(row, "blue")
+
+plt.savefig("HPS Test.png")
+
+# Fix axis to go in the right order and start at 12 o'clock.
+ax.set_theta_offset(np.pi / 2)
+ax.set_theta_direction(-1)
+
+# Draw axis lines for each angle and label.
+ax.set_thetagrids(np.degrees(angles[:-1]), labels)
+
+# Go through labels and adjust alignment based on where
+# it is in the circle.
+for label, angle in zip(ax.get_xticklabels(), angles):
+    if angle in (0, np.pi):
+      label.set_horizontalalignment('center')
+    elif 0 < angle < np.pi:
+      label.set_horizontalalignment('left')
+    else:
+      label.set_horizontalalignment('right')
+
+# https://plotly.com/python/radar-chart/
+# https://www.pythoncharts.com/matplotlib/radar-charts/
+
+# %%
 # python demo_train.py --force --names epri21 --setting gic
 # --activation relu --batch_size 64 --conv_type hgt --dropout 0.5
 # --hidden_size 128 --lr 5e-4 --num_conv_layers 1 --num_heads 2
