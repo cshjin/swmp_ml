@@ -128,7 +128,14 @@ if __name__ == "__main__":
 
                 train_acc = (train_y.detach().cpu().numpy() == out.argmax(
                     1).detach().cpu().numpy()).sum() / len(train_y)
-                roc_auc = roc_auc_score(train_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+
+                # ROC_AUC score can't be computed when there's only one class (all zeroes in the true output)
+                if len(train_y.bincount()) > 1:
+                    # There is at least one blocket placed, so we can compute the roc_auc score
+                    roc_auc = roc_auc_score(train_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                else:
+                    # TODO: change the default value of roc_auc. We're supposed to throw an error, though.
+                    roc_auc = 0
 
             loss.backward()
             optimizer.step()

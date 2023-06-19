@@ -1,6 +1,8 @@
 # %%
 import os.path as osp
 
+import numpy as np
+
 import torch
 import torch.nn.functional as F
 import torch_geometric.transforms as T
@@ -16,6 +18,10 @@ from sklearn.metrics import roc_auc_score
 from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
+
+import matplotlib.pyplot as plt
+
+import pandas as pd
 
 torch.manual_seed(12345)
 
@@ -37,16 +43,16 @@ def run(config):
 
     setting = "gic"
     weight_arg = True
-    dataset = GMD(ROOT,
-                  name="uiuc150",
-                  setting=setting,
-                  force_reprocess=False,
-                  pre_transform=pre_transform)
-    # dataset = MultiGMD(ROOT,
-    #                 names=["epri21", "uiuc150"],
-    #                 setting=setting,
-    #                 force_reprocess=False,
-    #                 pre_transform=pre_transform)
+    # dataset = GMD(ROOT,
+    #               name="uiuc150",
+    #               setting=setting,
+    #               force_reprocess=False,
+    #               pre_transform=pre_transform)
+    dataset = MultiGMD(ROOT,
+                    names=["epri21", "uiuc150"],
+                    setting=setting,
+                    force_reprocess=False,
+                    pre_transform=pre_transform)
     data = dataset[0]
 
     batch_size = config.get("batch_size", 64)
@@ -111,7 +117,14 @@ def run(config):
 
                 train_acc = (data['y'].detach().cpu().numpy() == out.argmax(
                     dim=1).detach().cpu().numpy()).sum() / len(data['y'])
-                # roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                # ROC_AUC score can't be computed when there's only one class (all zeroes in the true output)
+                if len(data['y'].bincount()) > 1:
+                    # There is at least one blocket placed, so we can compute the roc_auc score
+                    roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                else:
+                    # TODO: change the default value of roc_auc. We're supposed to throw an error, though.
+                    roc_auc = 0
+                
             loss.backward()
             optimizer.step()
 
@@ -148,9 +161,16 @@ def run(config):
                 loss = F.cross_entropy(pred, batch.y)
 
             # Some more objective functions
-            test_acc = (test_y.detach().cpu().numpy() == out.argmax(
-                    1).detach().cpu().numpy()).sum() / len(test_y)
-            roc_auc = roc_auc_score(test_y.detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+            test_acc = (batch.y.detach().cpu().numpy() == pred.argmax(
+                    1).detach().cpu().numpy()).sum() / len(batch.y)
+            
+            # ROC_AUC score can't be computed when there's only one class (all zeroes in the true output)
+            if len(batch.y.bincount()) > 1:
+                # There is at least one blocket placed, so we can compute the roc_auc score
+                roc_auc = roc_auc_score(batch.y.detach().cpu().numpy(), pred.argmax(1).detach().cpu().numpy())
+            else:
+                # TODO: change the default value of roc_auc. We're supposed to throw an error, though.
+                roc_auc = 0
 
         test_loss += loss.item() / batch.num_graphs
 
@@ -158,10 +178,10 @@ def run(config):
     # TOFIX: WRONG return value
     # example:
     # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
-    # return (-test_loss, test_acc, roc_auc)
+    return (-test_loss, test_acc, roc_auc)
     # return -test_loss
     # return test_acc
-    return roc_auc
+    # return roc_auc
 
 
 # %%
@@ -174,16 +194,16 @@ pre_transform = None
 
 setting = "gic"
 weight_arg = True
-dataset = GMD(ROOT,
-              name="uiuc150",
-              setting=setting,
-              force_reprocess=True,
-              pre_transform=pre_transform)
-# dataset = MultiGMD(ROOT,
-#                 names=["epri21", "uiuc150"],
-#                 setting=setting,
-#                 force_reprocess=True,
-#                 pre_transform=pre_transform)
+# dataset = GMD(ROOT,
+#               name="uiuc150",
+#               setting=setting,
+#               force_reprocess=True,
+#               pre_transform=pre_transform)
+dataset = MultiGMD(ROOT,
+                names=["epri21", "uiuc150"],
+                setting=setting,
+                force_reprocess=True,
+                pre_transform=pre_transform)
 data = dataset[0]
 
 # %%
@@ -202,14 +222,14 @@ problem = HpProblem()
 # Note: hidden_channels, hidden_size, and batch_size orignally didn't have [1, 2, 4, 8].
 #       I added those only because DeepHyper will error out if 1 isn't one of the
 #       hyperparameter options.
-problem.add_hyperparameter([16, 32, 64, 128, 256],
-                           "hidden_size", default_value=128)
-problem.add_hyperparameter([16, 32, 64, 128, 256],
-                           "batch_size", default_value=64)
-# problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+# problem.add_hyperparameter([16, 32, 64, 128, 256],
 #                            "hidden_size", default_value=128)
-# problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+# problem.add_hyperparameter([16, 32, 64, 128, 256],
 #                            "batch_size", default_value=64)
+problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+                           "hidden_size", default_value=128)
+problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
+                           "batch_size", default_value=64)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                            "num_conv_layers", default_value=1)
 problem.add_hyperparameter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -244,25 +264,26 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
-results = search.search(max_evals=10)
+results = search.search(max_evals=2)
 print(results)
 
 # Print the best result
-best_objective_index = results[:]['objective'].argmin()
-print("Best results:")
-print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
+# best_objective_index = results[:]['objective'].argmin()
+# print("Best results:")
+# print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 
-# best_objective_index = results[:]['objective_0'].argmin()
-# print("Best result for -test_loss:")
-# print(results.iloc[best_objective_index][0:-3], '\n')
+best_objective_index = results[:]['objective_0'].argmin()
+print("Best result for -test_loss:")
+print(results.iloc[best_objective_index][0:-3], '\n')
 
-# best_objective_index = results[:]['objective_1'].argmin()
-# print("Best results for test_acc:")
-# print(results.iloc[best_objective_index][0:-3], '\n')
+best_objective_index = results[:]['objective_1'].argmin()
+print("Best results for test_acc:")
+print(results.iloc[best_objective_index][0:-3], '\n')
 
-# best_objective_index = results[:]['objective_2'].argmin()
-# print("Best results for roc_auc score:")
-# print(results.iloc[best_objective_index][0:-3], '\n')
+best_objective_index = results[:]['objective_2'].argmin()
+print("Best results for roc_auc score:")
+print(results.iloc[best_objective_index][0:-3], '\n')
+
 
 # %%
 

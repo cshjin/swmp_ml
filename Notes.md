@@ -145,26 +145,6 @@ double check the multigmd class:
 # python demo_train.py --problem clf --force --names epri21 --setting gic --activation relu --batch_size 256 --conv_type hgt --dropout 0.1 --hidden_size 256 --lr 1e-3 --num_conv_layers 8 --num_heads 1 --num_mlp_layers 7 --weight_decay 1e-4 --epochs 250
 
 
-TODO:
-* > run hps on epri21 for gic problem
-* > (has issue) hps with multiple grids
-* > Try out normalization in DeepHyper
-* > generate perturbations of ots_test for gic problem
-* > run demo_train.py with multple grids (epri21 and ots_test)
-* > Discuss with Hongwei his progress on the constraints. Hongwei is currently thinking about the contraints that Arthur gave him and formulating a way to incorporate them into the model.
-* > Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network. Hongwei will email Russell directly about this.
-* > Make sure that there are actually blockers being placed and if the output of the model is trying to place blockers. Note that epri21 seems to be missing some data about the current. Follow up with Arthur and Adam about their updates to the epri21 power grid dataset.
-* > Take a look at the cross entropy function to see how it handles regression and classification outputs. Specifically, the output of the model (the "out" variable) doesn't seem to have binary values.
-* > Forward function doesn't seem to output binary values for the GIC problem.image.png
-* > Remove the --problem argument from the ArgumentParser
-* > ots_test's generated perturbations don't work for the GIC problem (dimension mismatch).
-
-* (contacted) Work on a larger dataset (will need to contact Arthur and Adam).
-* Contact Arthur and Adam about their progress on modifying the epri21 dataset.
-* > Issue with dimension mismatch in weight tensor
-* > Add the ability to evaluate the run function on multiple objectives
-* > Come up with a plan to run experiments after fixing the two issues above
-
      Single objective (all 3)      Multiple objectives
    |--------------------------|--------------------------|
    |                          |                          |
@@ -188,7 +168,7 @@ TODO:
    |                          |                          |
    |--------------------------|--------------------------|
 
-  In each case above, evaluate the hyperparameters using DeepHyper, then plug those hyperparameters into demo_train.py to generate figures.
+  In each case above, evaluate the hyperparameters using DeepHyper, then plug those hyperparameters into demo_train.py to generate figures (12 total).
 
   New error:
   Traceback (most recent call last):
@@ -759,3 +739,105 @@ Null in result file
 Done!
 uiuc150:   0%|                                                                                                                          | 0/250 [00:00<?, ?it/s]
 Killed
+
+
+
+
+
+Error for bounds:
+
+Traceback (most recent call last):
+  File "/mnt/c/Users/TurtleCamera/Documents/GitHub/swmp_ml/hps.py", line 247, in <module>
+    results = search.search(max_evals=50)
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/search/_search.py", line 131, in search
+    self._search(max_evals, timeout)
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/search/hps/_cbo.py", line 419, in _search
+    new_X = self._opt.ask(
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/skopt/optimizer/optimizer.py", line 521, in ask
+    x = self._ask()
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/skopt/optimizer/optimizer.py", line 834, in _ask
+    [self.space.distance(next_x, xi) for xi in self.Xi]
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/skopt/optimizer/optimizer.py", line 834, in <listcomp>
+    [self.space.distance(next_x, xi) for xi in self.Xi]
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/skopt/space/space.py", line 1472, in distance
+    distance += dim.distance(a, b)
+  File "/root/miniconda3/lib/python3.10/site-packages/deephyper/skopt/space/space.py", line 903, in distance
+    raise RuntimeError(
+RuntimeError: Can only compute distance for values within the space, not 1 and 64.
+
+TODO:
+* > run hps on epri21 for gic problem
+* > (has issue) hps with multiple grids
+* > Try out normalization in DeepHyper
+* > generate perturbations of ots_test for gic problem
+* > run demo_train.py with multple grids (epri21 and ots_test)
+* > Discuss with Hongwei his progress on the constraints. Hongwei is currently thinking about the contraints that Arthur gave him and formulating a way to incorporate them into the model.
+* > Hongwei needs a routine from Russell to evaluate the quality of the blocker placement output from the neural network. Hongwei will email Russell directly about this.
+* > Make sure that there are actually blockers being placed and if the output of the model is trying to place blockers. Note that epri21 seems to be missing some data about the current. Follow up with Arthur and Adam about their updates to the epri21 power grid dataset.
+* > Take a look at the cross entropy function to see how it handles regression and classification outputs. Specifically, the output of the model (the "out" variable) doesn't seem to have binary values.
+* > Forward function doesn't seem to output binary values for the GIC problem.image.png
+* > Remove the --problem argument from the ArgumentParser
+* > ots_test's generated perturbations don't work for the GIC problem (dimension mismatch).
+* > Issue with dimension mismatch in weight tensor
+* > Add the ability to evaluate the run function on multiple objectives
+* > Come up with a plan to run experiments after fixing the two issues above
+
+* (contacted) Work on a larger dataset (will need to contact Arthur and Adam).
+* Contact Arthur and Adam about their progress on modifying the epri21 dataset.
+* Test the code that computes roc_auc to see if it fixes the score at 0 for cases where there are only 0's in the output.
+* Implement a spider plot to compare multiple objective functions.
+* Check the DeepHyper documentation for cross-validation support.
+
+
+
+   p:activation  p:batch_size p:conv_type  p:dropout  p:hidden_size      p:lr  ...  objective_0  objective_1  objective_2  job_id  m:timestamp_submit  m:timestamp_gather
+0          relu            64         hgt        0.5            128  0.001000  ...    -0.050251     0.402730     0.629141       0            0.027108           58.931639
+1       sigmoid            16         han        0.5             32  0.011195  ...    -0.215466     0.498862     0.537635       1           59.005633          376.724852
+2          tanh            16         han        0.1            128  0.057682  ...    -0.216609     0.029010     0.500000       2          376.861066         1118.322644
+3           elu            16         hgt        0.3              1  0.000832  ...    -0.202964     0.389091     0.593325       3         1118.396046         1445.604377
+4           elu           256         hgt        0.0             32  0.024708  ...    -0.042133     0.394989     0.618016       4         1445.663296         1522.365547
+5          relu            32         hgt        0.1              1  0.000250  ...    -0.079715     0.397042     0.641159       5         1522.426760         1594.429025
+6           elu            64         hgt        0.0             16  0.006004  ...    -0.052846     0.374226     0.588405       6         1594.488064         1687.905017
+7          relu           128         han        0.2            128  0.003087  ...    -0.008621     0.501306     0.542543       7         1687.961372         1726.003014
+8     leakyrelu             1         hgt        0.5              1  0.026499  ...   -51.916141     0.740741     0.500000       8         1726.061728         5267.849705
+9          tanh           128         hgt        0.3              1  0.000403  ...    -0.008201     0.390249     0.615581       9         5268.184360         5355.004903
+10         relu             1         han        0.4              1  0.000308  ...   -50.747453     1.000000     0.000000      10         5355.442012         6060.049948
+11    leakyrelu             1         han        0.2              1  0.000019  ...   -51.255060     1.000000     0.000000      11         6060.513236         7124.931322
+12          elu             1         han        0.0              1  0.002299  ...   -50.529465     1.000000     0.000000      12         7125.541873         8799.923832
+13         relu             1         hgt        0.2              1  0.009021  ...   -46.411769     0.925926     0.500000      13         8800.388681        10167.381911
+14    leakyrelu             1         han        0.2              1  0.001457  ...   -50.533540     0.851852     0.500000      14        10168.689726        11595.251328
+15         relu             1         han        0.0              1  0.000133  ...   -50.402499     1.000000     0.000000      15        11595.731140        13167.328510
+16         relu             1         han        0.2              1  0.000061  ...   -50.595054     0.888889     0.500000      16        13168.423155        14673.559703
+17    leakyrelu             1         hgt        0.2              1  0.002342  ...   -46.447021     0.925926     0.500000      17        14674.037545        16534.586619
+18          elu             1         han        0.2              1  0.000531  ...   -50.519887     0.925926     0.500000      18        16535.113660        18242.276937
+19    leakyrelu             1         han        0.3              1  0.000610  ...   -50.662222     0.959677     0.500000      19        18242.781301        19984.222241
+20    leakyrelu             1         han        0.2              1  0.001378  ...   -50.538326     0.740741     0.500000      20        19984.864059        21572.344732
+21         relu             1         han        0.4              1  0.000012  ...   -51.956192     0.740741     0.500000      21        21573.296349        22487.557123
+22          elu             1         han        0.4              1  0.004227  ...   -51.214690     1.000000     0.000000      22        22488.005852        23808.447886
+23          elu             1         han        0.3              1  0.000084  ...   -50.647155     0.851852     0.500000      23        23808.988902        25021.622078
+24    leakyrelu             1         han        0.1              1  0.000058  ...   -50.500246     0.851852     0.500000      24        25022.019140        26384.144659
+25    leakyrelu             1         han        0.0              1  0.001750  ...   -50.500154     0.740741     0.500000      25        26384.524998        27894.111527
+26    leakyrelu             1         han        0.4              1  0.002966  ...   -50.696668     0.851852     0.500000      26        27894.499308        29376.211648
+27    leakyrelu             1         han        0.2              1  0.000070  ...   -50.560021     0.959677     0.500000      27        29376.623184        30570.468673
+28         relu             1         han        0.4              1  0.000039  ...   -50.767966     0.967742     0.500000      28        30570.855214        31568.584764
+29          elu             1         han        0.0              1  0.006138  ...   -50.463410     0.851852     0.500000      29        31568.971574        32507.204241
+30          elu             1         han        0.5              1  0.002344  ...   -50.793513     0.962963     0.500000      30        32507.559464        33859.982004
+31    leakyrelu             1         han        0.2              1  0.000103  ...   -50.554114     1.000000     0.000000      31        33860.408756        35106.252073
+32      sigmoid             1         han        0.5              1  0.000728  ...   -50.767567     0.963710     0.500000      32        35106.695311        36578.548183
+33    leakyrelu             1         han        0.3              1  0.003067  ...   -50.861674     0.925926     0.500000      33        36578.848047        37844.239756
+34         relu             1         han        0.0              1  0.000453  ...   -50.396310     1.000000     0.000000      34        37844.696692        39495.813907
+35         relu             1         han        0.1              1  0.000194  ...   -50.481588     0.888889     0.500000      35        39496.422029        41021.200707
+36          elu             1         han        0.2              1  0.000273  ...   -50.562331     1.000000     0.000000      36        41021.664629        42120.768217
+37    leakyrelu             1         han        0.4              1  0.003708  ...   -50.824198     0.963710     0.500000      37        42121.259719        43183.838295
+38          elu             1         han        0.2              1  0.007984  ...   -50.655427     0.851852     0.500000      38        43184.125332        44064.411018
+39          elu             1         han        0.4              1  0.000018  ...   -51.190616     0.959677     0.500000      39        44064.704931        45041.042624
+40         relu             1         han        0.1              1  0.039568  ...   -51.239077     0.963710     0.500000      40        45041.337323        45670.999961
+41         tanh             1         han        0.2              1  0.005312  ...   -50.682371     0.888889     0.500000      41        45671.288549        46623.177025
+42    leakyrelu             1         han        0.2              1  0.003764  ...   -50.417070     0.925926     0.500000      42        46623.471417        47665.727061
+43          elu             1         han        0.0              1  0.008170  ...   -50.306427     0.963710     0.500000      43        47666.015620        48547.086493
+44    leakyrelu             1         han        0.1              1  0.004567  ...   -50.381295     0.888889     0.500000      44        48547.385266        49497.135866
+45         relu             1         han        0.2              1  0.000105  ...   -50.575100     0.888889     0.500000      45        49497.430084        50446.871501
+46    leakyrelu             1         han        0.1              1  0.000025  ...   -50.765831     1.000000     0.000000      46        50447.224317        51138.686543
+47          elu             1         han        0.4              1  0.006681  ...   -50.732239     0.962963     0.500000      47        51138.980629        52033.946784
+48         relu             1         han        0.5              1  0.005354  ...   -51.619579     0.888889     0.500000      48        52034.298805        52979.427126
+49      sigmoid             1         han        0.0              1  0.003110  ...   -50.291989     0.814815     0.500000      49        52979.717743        54045.582379
