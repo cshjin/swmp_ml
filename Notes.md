@@ -151,22 +151,22 @@ double check the multigmd class:
    |                          |                          |
    |                          |                          |
    |        -test_loss        |                          |
-   |         test_acc         |  Tuple of 3 objectives   | GMD (single network)
-   |         roc_auc          |                          |
+   |                          |  Tuple of 2 objectives   | GMD (single network)
    |                          |                          |
    |                          |                          |
    |                          |                          |
-   |--------------------------|--------------------------|
-   |                          |                          |
-   |                          |                          |
-   |                          |                          |
-   |        -test_loss        |                          |
-   |         test_acc         |  Tuple of 3 objectives   | MultiGMD (multiple networks)
-   |         roc_auc          |                          |
-   |                          |                          |
-   |                          |                          |
-   |                          |                          |
-   |--------------------------|--------------------------|
+   |                            |                            |
+   | -------------------------- | -------------------------- |
+   |                            |                            |
+   |                            |                            |
+   |                            |                            |
+   | -test_loss                 |                            |
+   |                            | Tuple of 2 objectives      | MultiGMD (multiple networks) |
+   |                            |                            |
+   |                            |                            |
+   |                            |                            |
+   |                            |                            |
+   | -------------------------- | -------------------------- |
 
   In each case above, evaluate the hyperparameters using DeepHyper, then plug those hyperparameters into demo_train.py to generate figures (12 total).
 
@@ -841,3 +841,14 @@ TODO:
 47          elu             1         han        0.4              1  0.006681  ...   -50.732239     0.962963     0.500000      47        51138.980629        52033.946784
 48         relu             1         han        0.5              1  0.005354  ...   -51.619579     0.888889     0.500000      48        52034.298805        52979.427126
 49      sigmoid             1         han        0.0              1  0.003110  ...   -50.291989     0.814815     0.500000      49        52979.717743        54045.582379
+
+* split data into train/val/test, return the obj(s) of val
+  1. get the best HPS setting from validation set
+  2. train the model again with best HPS setting
+  3. report the test metrics based on the best HPS
+* MOO: acc, roc-auc; SOO: -loss OR acc OR roc-auc
+  1. try the single GMD first
+  2. try the multi GMD if we have good results on single GMD
+* (optional) cross-validation within the `run` function
+* DEBUG: hidden_size
+* TODO: re-evaluation

@@ -35,6 +35,7 @@ torch.manual_seed(12345)
 * test with multiple objectives, return accuracy and ROC-AUC scoore the validation set
 """
 
+
 def run(config):
     # NOTE: the run function is the function to __maximize__.
 
@@ -49,10 +50,10 @@ def run(config):
     #               force_reprocess=False,
     #               pre_transform=pre_transform)
     dataset = MultiGMD(ROOT,
-                    names=["epri21", "uiuc150"],
-                    setting=setting,
-                    force_reprocess=False,
-                    pre_transform=pre_transform)
+                       names=["epri21", "uiuc150"],
+                       setting=setting,
+                       force_reprocess=False,
+                       pre_transform=pre_transform)
     data = dataset[0]
 
     batch_size = config.get("batch_size", 64)
@@ -65,6 +66,9 @@ def run(config):
     dropout = config.get("dropout", 0.5)
     lr = config.get("lr", 1e-3)
     weight_decay = config.get("weight_decay", 1e-4)
+
+    # NOTE: validate the hps settings
+
     epochs = 200
 
     # Create a DataLoader for our datasets
@@ -72,9 +76,13 @@ def run(config):
                               batch_size=batch_size,
                               shuffle=True)
 
-    loader_test = DataLoader(dataset=dataset_test,
-                             batch_size=batch_size,
-                             shuffle=True)
+    loader_val = DataLoader(dataset=dataset_val,
+                            batch_size=batch_size,
+                            shuffle=True)
+
+    # loader_test = DataLoader(dataset=dataset_test,
+    #                          batch_size=batch_size,
+    #                          shuffle=True)
 
     model = HGT(hidden_channels=hidden_channels,
                 conv_type=conv_type,
@@ -120,11 +128,11 @@ def run(config):
                 # ROC_AUC score can't be computed when there's only one class (all zeroes in the true output)
                 if len(data['y'].bincount()) > 1:
                     # There is at least one blocket placed, so we can compute the roc_auc score
-                    roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
+                    train_roc_auc = roc_auc_score(data['y'].detach().cpu().numpy(), out.argmax(1).detach().cpu().numpy())
                 else:
                     # TODO: change the default value of roc_auc. We're supposed to throw an error, though.
-                    roc_auc = 0
-                
+                    train_roc_auc = 0
+
             loss.backward()
             optimizer.step()
 
@@ -139,8 +147,8 @@ def run(config):
         losses.append(t_loss)
 
     model.eval()
-    test_loss = 0
-    for batch in loader_test:
+    val_loss = 0
+    for batch in loader_val:
         batch = batch.to(DEVICE)
 
         # Compute between MLD or GIC
@@ -161,27 +169,33 @@ def run(config):
                 loss = F.cross_entropy(pred, batch.y)
 
             # Some more objective functions
-            test_acc = (batch.y.detach().cpu().numpy() == pred.argmax(
-                    1).detach().cpu().numpy()).sum() / len(batch.y)
-            
+            val_acc = (batch.y.detach().cpu().numpy() == pred.argmax(
+                1).detach().cpu().numpy()).sum() / len(batch.y)
+
             # ROC_AUC score can't be computed when there's only one class (all zeroes in the true output)
             if len(batch.y.bincount()) > 1:
                 # There is at least one blocket placed, so we can compute the roc_auc score
-                roc_auc = roc_auc_score(batch.y.detach().cpu().numpy(), pred.argmax(1).detach().cpu().numpy())
+                val_roc_auc = roc_auc_score(batch.y.detach().cpu().numpy(), pred.argmax(1).detach().cpu().numpy())
             else:
                 # TODO: change the default value of roc_auc. We're supposed to throw an error, though.
-                roc_auc = 0
+                val_roc_auc = 0
 
-        test_loss += loss.item() / batch.num_graphs
+        val_loss += loss.item() / batch.num_graphs
 
     # maximize the value, so return the negative value of loss, or positive acc/roc-auc score.
     # TOFIX: WRONG return value
     # example:
     # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
-    return (-test_loss, test_acc, roc_auc)
+    # return (-val_loss, val_acc, roc_auc)
+    return (val_acc, val_roc_auc)
+
+    # MOO: (val_acc, val_roc_auc)
+    # SOO: -val_loss OR val_acc OR roc_auc
+
     # return -test_loss
     # return test_acc
     # return roc_auc
+
 
 # %%
 ROOT = osp.join(osp.expanduser("~"), "tmp", "data", "GMD")
@@ -193,20 +207,22 @@ pre_transform = None
 
 setting = "gic"
 weight_arg = True
-# dataset = GMD(ROOT,
-#               name="uiuc150",
-#               setting=setting,
-#               force_reprocess=True,
-#               pre_transform=pre_transform)
-dataset = MultiGMD(ROOT,
-                names=["epri21", "uiuc150"],
-                setting=setting,
-                force_reprocess=True,
-                pre_transform=pre_transform)
+dataset = GMD(ROOT,
+              name="epri21",
+              setting=setting,
+              force_reprocess=False,
+              pre_transform=pre_transform)
+# dataset = MultiGMD(ROOT,
+#                    names=["epri21", "uiuc150"],
+#                    setting=setting,
+#                    force_reprocess=True,
+#                    pre_transform=pre_transform)
 data = dataset[0]
 
 # %%
+# train/val/test: 0.8/0.1/0.1
 dataset_train, dataset_test = train_test_split(dataset, test_size=0.2, random_state=41)
+dataset_val, dataset_test = train_test_split(dataset_test, test_size=0.5, random_state=41)
 
 import torch
 base_cls = torch.nn.Module
@@ -225,6 +241,8 @@ problem = HpProblem()
 #                            "hidden_size", default_value=128)
 # problem.add_hyperparameter([16, 32, 64, 128, 256],
 #                            "batch_size", default_value=64)
+
+# DEBUG: must include hidden_size=1
 problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
                            "hidden_size", default_value=128)
 problem.add_hyperparameter([1, 16, 32, 64, 128, 256],
@@ -248,14 +266,15 @@ problem.add_hyperparameter([0., 1e-5, 5e-5, 1e-4],
 
 evaluator = Evaluator.create(run,
                              method="thread",
-                             #  method_kwargs={
+                              method_kwargs={
                              #      "address": None,
                              #      "num_gpus": 1,
                              #      "num_gpus_per_task": 1,
                              #      "num_cpus": 32,
                              #      "num_cpus_per_task": 4,
-                             #      "callbacks": [TqdmCallback()]
-                             #  }
+                             "num_workers": 32, 
+                                  "callbacks": [TqdmCallback()]
+                              }
                              )
 print("Number of workers: ", evaluator.num_workers)
 
@@ -263,27 +282,29 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
-results = search.search(max_evals=2)
+results = search.search(max_evals=200)
 print(results)
+
+# 1. get the best HPS setting from validation set
+# 2. train the model again with best HPS setting
+# 3. report the test metrics based on the best HPS
 
 # Print the best result
 # best_objective_index = results[:]['objective'].argmin()
 # print("Best results:")
 # print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 
-best_objective_index = results[:]['objective_0'].argmin()
+best_objective_index = results[:]['objective_0'].argmax()
 print("Best result for -test_loss:")
 print(results.iloc[best_objective_index][0:-3], '\n')
 
-best_objective_index = results[:]['objective_1'].argmin()
+best_objective_index = results[:]['objective_1'].argmax()
 print("Best results for test_acc:")
 print(results.iloc[best_objective_index][0:-3], '\n')
 
-best_objective_index = results[:]['objective_2'].argmin()
+best_objective_index = results[:]['objective_2'].argmax()
 print("Best results for roc_auc score:")
 print(results.iloc[best_objective_index][0:-3], '\n')
-
-
 
 
 # Radar (Spider) plot of the 3 objectives
@@ -303,11 +324,14 @@ angles += angles[:1]
 fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
 
 # Helper function to plot each row of the results.
+
+
 def add_row_to_plot(row, color):
     values = results.loc[row, ["objective_0", "objective_1", "objective_2"]].tolist()
     values += values[:1]
     ax.plot(angles, values, color=color, linewidth=1, label=row)
     ax.fill(angles, values, color=color, alpha=0.25)
+
 
 # Add each row to the plot
 for row, _ in results.iterrows():
@@ -326,11 +350,11 @@ ax.set_thetagrids(np.degrees(angles[:-1]), labels)
 # it is in the circle.
 for label, angle in zip(ax.get_xticklabels(), angles):
     if angle in (0, np.pi):
-      label.set_horizontalalignment('center')
+        label.set_horizontalalignment('center')
     elif 0 < angle < np.pi:
-      label.set_horizontalalignment('left')
+        label.set_horizontalalignment('left')
     else:
-      label.set_horizontalalignment('right')
+        label.set_horizontalalignment('right')
 
 # https://plotly.com/python/radar-chart/
 # https://www.pythoncharts.com/matplotlib/radar-charts/
