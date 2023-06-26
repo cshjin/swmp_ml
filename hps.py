@@ -187,7 +187,8 @@ def run(config):
     # example:
     # https://deephyper.readthedocs.io/en/latest/tutorials/tutorials/colab/HPS_basic_classification_with_tabular_data/notebook.html#Define-the-run-function
     # return (-val_loss, val_acc, roc_auc)
-    return (val_acc, val_roc_auc)
+    # return (val_acc, val_roc_auc)
+    return val_acc
 
     # MOO: (val_acc, val_roc_auc)
     # SOO: -val_loss OR val_acc OR roc_auc
@@ -282,7 +283,7 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration])
 # Print all the results
 print("All results:")
-results = search.search(max_evals=200)
+results = search.search(max_evals=100)
 print(results)
 
 # 1. get the best HPS setting from validation set
@@ -294,67 +295,70 @@ print(results)
 # print("Best results:")
 # print(results.iloc[best_objective_index][0:-3])  # The last 3 slots don't matter
 
-best_objective_index = results[:]['objective_0'].argmax()
-print("Best result for -test_loss:")
-print(results.iloc[best_objective_index][0:-3], '\n')
+# best_objective_index = results[:]['objective_0'].argmax()
+# print("Best result for -test_loss:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
 
-best_objective_index = results[:]['objective_1'].argmax()
-print("Best results for test_acc:")
-print(results.iloc[best_objective_index][0:-3], '\n')
+# best_objective_index = results[:]['objective_1'].argmax()
+# print("Best results for test_acc:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
 
-best_objective_index = results[:]['objective_2'].argmax()
-print("Best results for roc_auc score:")
-print(results.iloc[best_objective_index][0:-3], '\n')
-
-
-# Radar (Spider) plot of the 3 objectives
-# Store the labels for the radar plot
-labels = ["-test_loss", "test_acc", "roc_auc"]
-
-# Number of variables we're plotting.
-num_vars = len(labels)
-
-# Spread out the labels evenly
-angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-
-# Since the plot is a circle, finish the loop
-angles += angles[:1]
-
-# Plot the figure
-fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-
-# Helper function to plot each row of the results.
+# best_objective_index = results[:]['objective_2'].argmax()
+# print("Best results for roc_auc score:")
+# print(results.iloc[best_objective_index][0:-3], '\n')
 
 
-def add_row_to_plot(row, color):
-    values = results.loc[row, ["objective_0", "objective_1", "objective_2"]].tolist()
-    values += values[:1]
-    ax.plot(angles, values, color=color, linewidth=1, label=row)
-    ax.fill(angles, values, color=color, alpha=0.25)
+# # Radar (Spider) plot of the 3 objectives
+# # Store the labels for the radar plot
+# labels = ["-test_loss", "test_acc", "roc_auc"]
+
+# # Number of variables we're plotting.
+# num_vars = len(labels)
+
+# # Spread out the labels evenly
+# angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+
+# # Since the plot is a circle, finish the loop
+# angles += angles[:1]
+
+# # Plot the figure
+# fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+# # Helper function to plot each row of the results.
 
 
-# Add each row to the plot
-for row, _ in results.iterrows():
-    add_row_to_plot(row, "blue")
+# def add_row_to_plot(row, color):
+#     values = results.loc[row, ["objective_0", "objective_1", "objective_2"]].tolist()
+#     values += values[:1]
+#     ax.plot(angles, values, color=color, linewidth=1, label=row)
+#     ax.fill(angles, values, color=color, alpha=0.25)
 
-plt.savefig("HPS Test.png")
 
-# Fix axis to go in the right order and start at 12 o'clock.
-ax.set_theta_offset(np.pi / 2)
-ax.set_theta_direction(-1)
+# # Add each row to the plot
+# for row, _ in results.iterrows():
+#     add_row_to_plot(row, "blue")
 
-# Draw axis lines for each angle and label.
-ax.set_thetagrids(np.degrees(angles[:-1]), labels)
+# plt.savefig("HPS Test.png")
 
-# Go through labels and adjust alignment based on where
-# it is in the circle.
-for label, angle in zip(ax.get_xticklabels(), angles):
-    if angle in (0, np.pi):
-        label.set_horizontalalignment('center')
-    elif 0 < angle < np.pi:
-        label.set_horizontalalignment('left')
-    else:
-        label.set_horizontalalignment('right')
+# # Fix axis to go in the right order and start at 12 o'clock.
+# ax.set_theta_offset(np.pi / 2)
+# ax.set_theta_direction(-1)
+
+# # Draw axis lines for each angle and label.
+# ax.set_thetagrids(np.degrees(angles[:-1]), labels)
+
+# # Go through labels and adjust alignment based on where
+# # it is in the circle.
+# for label, angle in zip(ax.get_xticklabels(), angles):
+#     if angle in (0, np.pi):
+#         label.set_horizontalalignment('center')
+#     elif 0 < angle < np.pi:
+#         label.set_horizontalalignment('left')
+#     else:
+#         label.set_horizontalalignment('right')
+
+# Save the results to a CSV file
+results.to_csv("results.csv")
 
 # https://plotly.com/python/radar-chart/
 # https://www.pythoncharts.com/matplotlib/radar-charts/
