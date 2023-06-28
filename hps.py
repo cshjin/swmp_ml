@@ -44,16 +44,16 @@ def run(config):
 
     setting = "gic"
     weight_arg = True
-    # dataset = GMD(ROOT,
-    #               name="uiuc150",
-    #               setting=setting,
-    #               force_reprocess=False,
-    #               pre_transform=pre_transform)
-    dataset = MultiGMD(ROOT,
-                       names=["epri21", "uiuc150"],
-                       setting=setting,
-                       force_reprocess=False,
-                       pre_transform=pre_transform)
+    dataset = GMD(ROOT,
+                  name="epri21",
+                  setting=setting,
+                  force_reprocess=False,
+                  pre_transform=pre_transform)
+    # dataset = MultiGMD(ROOT,
+    #                    names=["epri21", "uiuc150"],
+    #                    setting=setting,
+    #                    force_reprocess=False,
+    #                    pre_transform=pre_transform)
     data = dataset[0]
 
     batch_size = config.get("batch_size", 64)
