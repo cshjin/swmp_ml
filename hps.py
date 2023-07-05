@@ -208,11 +208,10 @@ def run(config):
 
     acc, roc_auc, loss = evaluate(model, loader_val)
 
-    return acc
+    return roc_auc
 
     # MOO: (acc, roc_auc)
     # SOO: -loss OR acc OR roc_auc
-
 
 # %%
 ROOT = osp.join(osp.expanduser("~"), "tmp", "data", "GMD")
