@@ -854,3 +854,5 @@ TODO:
 * (optional) cross-validation within the `run` function
 * DEBUG: hidden_size
 * TODO: re-evaluation
+
+pytorch_total_params = sum(p.numel() for p in model.parameters())

@@ -24,6 +24,8 @@ from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
+import operator
+
 torch.manual_seed(12345)
 
 
@@ -204,11 +206,53 @@ def run(config):
                                  lr=lr,
                                  weight_decay=weight_decay)
 
+    # training
     train_accs, train_roc_aucs, train_losses = train(model, optimizer, loader_train, verbose=False)
-
+    # evaluate on validation set
     acc, roc_auc, loss = evaluate(model, loader_val)
 
-    return roc_auc
+    # TODO:
+    # train the model with loader_train, and evaluate on loader_val
+    # option 1: early stopping
+    # best, threshold = 1e4, 5
+    # for _ in range(epochs):
+        # _, _, _  = train(model, optimizer, loader_train, epochs=1, verbose=False)
+        # _, _, loss_val = evaluate(model, loader_val)
+        # if loss_val < best:
+        #   best = loss_val
+        #   threshold = 5
+        # else:
+        #   threshold -= 1 
+        # if threshold < 0:
+        #  return metrics on val
+    # return metrics
+
+    # option 2: save the best metrics from loader_val
+    # for _ in range(epochs):
+        #  _, _, _  = train(model, optimizer, loader_train, epochs=1, verbose=False)
+        # _, _, loss_val = evaluate(model, loader_val)
+        # hps = {}
+        # hps[epoch] = [acc, roc, loss] # based on validation
+    # return max metric from hps
+
+    # Early stopping
+    epochs = 200
+    hps = {}
+    for epoch in range(epochs):
+        _, _, _ = train(model, optimizer, loader_train, epochs=1, verbose=False)
+        val_acc, roc_auc, loss_val = evaluate(model, loader_val)
+        hps[epoch] = [val_acc, roc_auc, loss_val]
+    
+    # Return the max val_acc from hps
+    return max(hps[k][0] for k in hps)
+
+    # stats = {}
+    # stats['a'] = [3000, 100, 100]
+    # stats['b'] = [5000, 5000, 3000]
+    # stats['c'] = [100, 3000, 5000]
+    # print(max(stats.items(), key=operator.itemgetter(1))[0])
+
+    # return roc_auc
 
     # MOO: (acc, roc_auc)
     # SOO: -loss OR acc OR roc_auc
@@ -327,8 +371,14 @@ loader_test = DataLoader(dataset=dataset_test,
                          batch_size=best_hp['p:batch_size'],
                          shuffle=True)
 
-
+# TODO: update training with best HPS, stop on t
 train_metrics = train(best_model, best_optimizer, loader_train)
+# for _ in range(epochs):
+        #  _, _, _  = train(model, optimizer, loader_train, epochs=1, verbose=False)
+        # _, _, loss_val = evaluate(model, loader_val)
+        # hps = {}
+        # hps[epoch] = [acc, roc, loss, model.parameters()] # based on validation
+# load the model parameters based on best metric on validation
 test_metrics = evaluate(best_model, dataset_test)
 print(f"Test accuracy: {test_metrics[0]:.4f}",
       f"Test ROC-AUC {test_metrics[1]:.4f}")
