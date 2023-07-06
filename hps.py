@@ -246,14 +246,6 @@ def run(config):
     # Return the max val_acc from hps
     return max(hps[k][0] for k in hps)
 
-    # stats = {}
-    # stats['a'] = [3000, 100, 100]
-    # stats['b'] = [5000, 5000, 3000]
-    # stats['c'] = [100, 3000, 5000]
-    # print(max(stats.items(), key=operator.itemgetter(1))[0])
-
-    # return roc_auc
-
     # MOO: (acc, roc_auc)
     # SOO: -loss OR acc OR roc_auc
 
