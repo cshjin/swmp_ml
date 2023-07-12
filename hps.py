@@ -364,12 +364,19 @@ loader_test = DataLoader(dataset=dataset_test,
                          shuffle=True)
 
 # TODO: update training with best HPS, stop on t
-train_metrics = train(best_model, best_optimizer, loader_train)
-# for _ in range(epochs):
-        #  _, _, _  = train(model, optimizer, loader_train, epochs=1, verbose=False)
-        # _, _, loss_val = evaluate(model, loader_val)
-        # hps = {}
-        # hps[epoch] = [acc, roc, loss, model.parameters()] # based on validation
+# train_metrics = train(best_model, best_optimizer, loader_train)
+
+# TODO: update evaluation with best HPS, save the best model based on validation
+hps = {}
+best_acc = 0
+for epoch in range(200):
+        _, _, _ = train(best_model, best_optimizer, loader_train, epochs=1, verbose=False)
+        acc_val, roc_val, loss_val = evaluate(best_model, loader_val)
+        # hps[epoch] = [acc_val, roc_val, loss_val] # based on validation
+        if acc_val > best_acc:
+            torch.save(best_model, f"best_model.pt")
+
+best_model.load_state_dict(torch.load("best_model.pt"))
 # load the model parameters based on best metric on validation
 test_metrics = evaluate(best_model, dataset_test)
 print(f"Test accuracy: {test_metrics[0]:.4f}",
