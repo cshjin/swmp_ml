@@ -1,9 +1,11 @@
-""" Demo training script for HGT on GMD datasets """
+r""" Demo training script for HGT on GMD datasets 
+"""
 
 import os.path as osp
 from datetime import datetime
 
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn.functional as F
 import torch_geometric.transforms as T
@@ -15,9 +17,11 @@ from tqdm import tqdm
 from py_script.dataset import GMD, MultiGMD
 from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
-from py_script.utils import create_dir, process_args
+from py_script.utils import create_dir, get_device, process_args
 
-torch.manual_seed(12345)
+SEED = 12345
+torch.manual_seed(SEED)
+np.random.seed(SEED)
 
 if __name__ == "__main__":
     args = process_args()
@@ -28,13 +32,9 @@ if __name__ == "__main__":
         pre_transform = None
 
     ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
-    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Select the processor to use
-    if args['gpu'] < 0 or (not torch.cuda.is_available()) or (args['gpu'] >= torch.cuda.device_count()):
-        DEVICE = torch.device("cpu")
-    else:
-        DEVICE = torch.device(f"cuda:{args['gpu']}")
+    DEVICE = get_device(args['gpu'])
 
     if len(args['names']) == 1:
         dataset = GMD(ROOT,
@@ -52,14 +52,14 @@ if __name__ == "__main__":
         raise "Please input at least one grid name"
     data = dataset[0]
 
-    # Train and test split for our datasets
+    # Train and test split for our datasets with ratio: 0.8/0.1/0.1
     dataset_train, dataset_test = train_test_split(dataset,
-                                                   test_size=args['test_split'],
-                                                   random_state=12345,
+                                                   test_size=0.2,
+                                                   random_state=SEED,
                                                    shuffle=True)
-    dataset_train, dataset_val = train_test_split(dataset_train,
-                                                  test_size=args['test_split'],
-                                                  random_state=12345,
+    dataset_train, dataset_val = train_test_split(dataset_test,
+                                                  test_size=0.5,
+                                                  random_state=SEED,
                                                   shuffle=True)
 
     # Create a DataLoader for our datasets

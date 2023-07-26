@@ -26,3 +26,5 @@ test/data/processed/*
 
 context.yaml
 results.csv
+
+./Figures/**

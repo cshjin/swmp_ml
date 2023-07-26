@@ -13,17 +13,19 @@ then
   echo "Install packages with CPU only"
   conda install pytorch torchvision torchaudio cpuonly pyg tensorboard \
     matplotlib seaborn joblib networkx numba \
-    ipykernel flake8 autopep8 graphviz jupyter ipywidgets pytest\
+    ipykernel flake8 autopep8 graphviz jupyter ipywidgets pytest \
+    torchtext torchdata \
     -c pytorch -c pyg -y
 elif [ "$device" == "gpu" ]
   echo "Install packages with CUDA available"
   conda install pytorch torchvision torchaudio cudatoolkit=11.7 pyg tensorboard \
     matplotlib seaborn joblib networkx numba \
     ipykernel flake8 autopep8 graphviz jupyter ipywidgets pytest \
+    torchtext torchdata \
     -c pytorch -c nvidia -c pyg 
 else
   echo "Please choose from 'cpu' oro 'gpu'."
 fi
 
-pip install pandapower pygraphviz deephyper
+pip install pandapower pygraphviz deephyper ray
 
