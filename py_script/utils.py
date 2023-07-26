@@ -163,3 +163,20 @@ def process_args():
     args = vars(parser.parse_args())
 
     return args
+
+
+def get_device(gpu_id=-1):
+    r""" Get the device where the model is running on.
+
+    Args:
+        gpu_id (int): GPU ID to use. Set -1 to use CPU.
+
+    Returns:
+        torch.device: Device where the model is running on.
+    """
+    import torch
+    if gpu_id < 0 or (not torch.cuda.is_available()) or (gpu_id >= torch.cuda.device_count()):
+        device = torch.device("cpu")
+    else:
+        device = torch.device(f"cuda:{gpu_id}")
+    return device
