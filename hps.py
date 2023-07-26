@@ -25,6 +25,7 @@ from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 
 import operator
+import sys
 
 torch.manual_seed(12345)
 
@@ -234,14 +235,34 @@ def run(config):
         # hps = {}
         # hps[epoch] = [acc, roc, loss] # based on validation
     # return max metric from hps
+    
+    epochs = 200
 
     # Early stopping
-    epochs = 200
-    hps = {}
+    best_hps, threshold = [0, 0, 1e4], 5
     for epoch in range(epochs):
+        # Train the model
         _, _, _ = train(model, optimizer, loader_train, epochs=1, verbose=False)
         val_acc, roc_auc, loss_val = evaluate(model, loader_val)
-        hps[epoch] = [val_acc, roc_auc, loss_val]
+
+        # Do we have a new best loss?
+        if loss_val < best_hps[2]:
+            best_hps = [val_acc, roc_auc, loss_val]
+            threshold = 5
+        else:
+            threshold -= 1
+        
+        # Stop early if we hit the threshold
+        if threshold < 0:
+            return best_hps[0]
+    return best_hps[0]
+
+    # # Early stopping (alternate solution that's similar to "early stopping")
+    # hps = {}
+    # for epoch in range(epochs):
+    #     _, _, _ = train(model, optimizer, loader_train, epochs=1, verbose=False)
+    #     val_acc, roc_auc, loss_val = evaluate(model, loader_val)
+    #     hps[epoch] = [val_acc, roc_auc, loss_val]
     
     # Return the max val_acc from hps
     return max(hps[k][0] for k in hps)
@@ -266,18 +287,17 @@ dataset = GMD(ROOT,
               setting=setting,
               force_reprocess=False,
               pre_transform=pre_transform)
-# # dataset = MultiGMD(ROOT,
-# #                    names=["epri21", "uiuc150"],
-# #                    setting=setting,
-# #                    force_reprocess=True,
-# #                    pre_transform=pre_transform)
+# dataset = MultiGMD(ROOT,
+#                    names=["epri21", "uiuc150"],
+#                    setting=setting,
+#                    force_reprocess=True,
+#                    pre_transform=pre_transform)
 
 data = dataset[0]
 
 # # train/val/test: 0.8/0.1/0.1
 dataset_train, dataset_test = train_test_split(dataset, test_size=0.2, random_state=41)
 dataset_val, dataset_test = train_test_split(dataset_test, test_size=0.5, random_state=41)
-
 
 problem = HpProblem()
 
@@ -332,23 +352,136 @@ print(results)
 results.to_csv("results.csv")
 
 i_max = results['objective'].argmax()
-# DEBUG:
-best_hp = results.iloc[i_max][0:-3].to_dict()
-print("Best HPS: ", best_hp)
+idx_candidate = results.loc[results['objective'] == results['objective'].max()].index
 
-# retrain the model with best HPS setting
-best_model = HGT(hidden_channels=best_hp['p:hidden_size'],
-                 conv_type=best_hp['p:conv_type'],
-                 num_mlp_layers=best_hp['p:num_mlp_layers'],
-                 activation=best_hp['p:activation'],
-                 out_channels=2,
-                 num_heads=best_hp['p:num_heads'],
-                 num_conv_layers=best_hp['p:num_conv_layers'],
-                 dropout=best_hp['p:dropout'],
-                 node_types=data.node_types,
-                 metadata=data.metadata(),
-                 ).to(DEVICE)
-best_optimizer = torch.optim.Adam(best_model.parameters(), lr=best_hp['p:lr'], weight_decay=best_hp['p:weight_decay'])
+best_model = None
+best_optimizer = None
+best_hp = None
+lowest_parameter_count = 999999999999999
+
+num_params_list = []
+test_acc_list = []
+test_roc_auc_list = []
+
+# DEBUG:
+
+# for idx in idx_candidate:
+#     # 1. create model based on hps[idx]
+#     # 2. count the # of parameters
+#     # 3. update the best_idx based on # of parameters
+
+# # 4. build the best model based on best_idx
+# # 5. retrain the best model again 
+# # 6. eval the best model
+
+for idx in idx_candidate:
+    # Is this our first iteration?
+    if best_model is None:
+        best_hp = results.iloc[idx]
+
+    # TODO: Is this the correct logic? I thought we should be computing the current model and not
+    #       the best one.
+    # retrain the model with best HPS setting
+    model = HGT(hidden_channels=best_hp['p:hidden_size'],
+                conv_type=best_hp['p:conv_type'],
+                num_mlp_layers=best_hp['p:num_mlp_layers'],
+                activation=best_hp['p:activation'],
+                out_channels=2,
+                num_heads=best_hp['p:num_heads'],
+                num_conv_layers=best_hp['p:num_conv_layers'],
+                dropout=best_hp['p:dropout'],
+                node_types=data.node_types,
+                metadata=data.metadata(),
+                ).to(DEVICE)
+    # TODO: calcualte the # of hp
+    optimizer = torch.optim.Adam(model.parameters(), lr=best_hp['p:lr'], weight_decay=best_hp['p:weight_decay'])
+
+    # Store the new best model if this is the lowest number of parameters
+    # lazy fix
+    model(dataset_train[0])
+    total_paramenter_count = sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)
+    # print(total_paramenter_count)
+    # print(lowest_parameter_count)
+
+    # Is this the new lowest number of parameters?
+    if total_paramenter_count < lowest_parameter_count:
+        best_model = model
+        best_optimizer = optimizer
+        lowest_parameter_count = total_paramenter_count
+        best_hp = results.iloc[idx][0:-3].to_dict()
+        # print("New best HPS: ", best_hp)
+        # print("New lowest: ", total_paramenter_count)
+
+    # This code will store information for the scatterplot to show the relationship between
+    # the total number of trainable parameters in the model and the test accuracy and
+    # roc_auc score.
+    # Create a DataLoader for our datasets
+    loader_train = DataLoader(dataset=dataset_train,
+                            batch_size=best_hp['p:batch_size'],
+                            shuffle=True)
+
+    loader_val = DataLoader(dataset=dataset_val,
+                            batch_size=best_hp['p:batch_size'],
+                            shuffle=True)
+
+    loader_test = DataLoader(dataset=dataset_test,
+                            batch_size=best_hp['p:batch_size'],
+                            shuffle=True)
+    
+    # Create a model o
+    current_hp = results.iloc[idx]
+
+    # retrain the model with best HPS setting
+    current_model = HGT(hidden_channels=current_hp['p:hidden_size'],
+                        conv_type=current_hp['p:conv_type'],
+                        num_mlp_layers=current_hp['p:num_mlp_layers'],
+                        activation=current_hp['p:activation'],
+                        out_channels=2,
+                        num_heads=current_hp['p:num_heads'],
+                        num_conv_layers=current_hp['p:num_conv_layers'],
+                        dropout=current_hp['p:dropout'],
+                        node_types=data.node_types,
+                        metadata=data.metadata(),
+                        ).to(DEVICE)
+    current_optimizer = torch.optim.Adam(current_model.parameters(), lr=current_hp['p:lr'], weight_decay=current_hp['p:weight_decay'])
+
+    # For the currently-selected model in this iteration, pick the best version of the model
+    # after 200 epochs. We'll save information about this model.
+    hps = {}
+    best_acc = 0
+    for epoch in range(200):
+        _, _, _ = train(current_model, current_optimizer, loader_train, epochs=1, verbose=False)
+        acc_val, roc_val, loss_val = evaluate(current_model, loader_val)
+
+        # Save best accuracy
+        if acc_val > best_acc:
+            best_acc = acc_val
+            torch.save(current_model.state_dict(), f"best_current_model.pt")
+
+    # Load our best current model and evaluate test accuracy
+    current_model.load_state_dict(torch.load("best_current_model.pt"))
+    current_test_metrics = evaluate(current_model, dataset_test)
+    
+    # Lazy fix for getting total number of parameters
+    current_model(dataset_train[0])
+    total_current_paramenter_count = sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)
+
+    # Save information about the current model
+    num_params_list.append(total_current_paramenter_count)
+    test_acc_list.append(current_test_metrics[0])
+    test_roc_auc_list.append(current_test_metrics[1])
+
+# Make a scatterplot to show the relationship between the number of total trainable
+# parameters and the test accuracy
+plt.scatter(num_params_list, test_acc_list, color='b', marker='X', label='test accuracy')
+plt.scatter(num_params_list, test_roc_auc_list, color='g', label='test ROC_AUC score')
+plt.xlabel('Total number of trainable parameters')
+plt.ylabel('Test accuracy and ROC_AUC score')
+plt.savefig("Figures/Test accuracy and ROC_AUC score VS number of trainable parameters.png")
+
+# TODO: pick the index with min # of hp
+# idx_best = None
+# hp_best = results.iloc[idx_best][0:-3].to_dict()
 
 # Create a DataLoader for our datasets
 loader_train = DataLoader(dataset=dataset_train,
@@ -370,11 +503,12 @@ loader_test = DataLoader(dataset=dataset_test,
 hps = {}
 best_acc = 0
 for epoch in range(200):
-        _, _, _ = train(best_model, best_optimizer, loader_train, epochs=1, verbose=False)
-        acc_val, roc_val, loss_val = evaluate(best_model, loader_val)
-        # hps[epoch] = [acc_val, roc_val, loss_val] # based on validation
-        if acc_val > best_acc:
-            torch.save(best_model, f"best_model.pt")
+    _, _, _ = train(best_model, best_optimizer, loader_train, epochs=1, verbose=False)
+    acc_val, roc_val, loss_val = evaluate(best_model, loader_val)
+    # hps[epoch] = [acc_val, roc_val, loss_val] # based on validation
+    if acc_val > best_acc:
+        best_acc = acc_val
+        torch.save(best_model.state_dict(), f"best_model.pt")
 
 best_model.load_state_dict(torch.load("best_model.pt"))
 # load the model parameters based on best metric on validation
