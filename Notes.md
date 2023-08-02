@@ -49,6 +49,7 @@ sudo rm -rf /usr/local/cuda*
 pip uninstall torch torchvision torchaudio
 pip uninstall pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric
 
+~/miniconda3/envs/myenv/bin/pip
 
 Reinstall commands
 CPU
