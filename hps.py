@@ -282,16 +282,16 @@ pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
 setting = "gic"
 weight_arg = True
-dataset = GMD(ROOT,
-              name="uiuc150",
-              setting=setting,
-              force_reprocess=False,
-              pre_transform=pre_transform)
-# dataset = MultiGMD(ROOT,
-#                    names=["epri21", "uiuc150"],
-#                    setting=setting,
-#                    force_reprocess=True,
-#                    pre_transform=pre_transform)
+# dataset = GMD(ROOT,
+#               name="uiuc150",
+#               setting=setting,
+#               force_reprocess=False,
+#               pre_transform=pre_transform)
+dataset = MultiGMD(ROOT,
+                   names=["epri21", "uiuc150"],
+                   setting=setting,
+                   force_reprocess=True,
+                   pre_transform=pre_transform)
 
 data = dataset[0]
 
@@ -347,7 +347,7 @@ print("Number of workers: ", evaluator.num_workers)
 search = CBO(problem, evaluator, initial_points=[problem.default_configuration], random_state=42)
 # Print all the results
 print("All results:")
-results = search.search(max_evals=100, )
+results = search.search(max_evals=200, )
 print(results)
 results.to_csv("results.csv")
 
