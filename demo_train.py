@@ -99,6 +99,8 @@ if __name__ == "__main__":
     num_optimizer_blockers = 0
     num_model_blockers = 0
 
+    # Store lists of accuracies, ROC_AUC scores, and losses
+    all_acc, all_roc_auc, all_loss = [], [], []
     losses = []
     if len(args['names']) == 1:
         pbar = tqdm(range(args['epochs']), desc=args['names'][0])
@@ -142,6 +144,11 @@ if __name__ == "__main__":
 
             t_loss += loss.item()
 
+            # Store information about this iteration
+            all_loss.append(loss.item())
+            all_acc.append(train_acc)
+            all_roc_auc.append(roc_auc)
+
         # Choose how to handle the pbar based on the problem setting
         if args['setting'] == "mld":
             pbar.set_postfix({"loss": t_loss})
@@ -157,10 +164,14 @@ if __name__ == "__main__":
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     create_dir("./Figures")
 
-    ''' plot the loss function '''
-    fig = plt.figure(figsize=(4, 3), tight_layout=True)
-    plt.plot(losses)
-    plt.ylabel("training loss")
+    ''' plot the functions '''
+    fig = plt.figure(figsize=(10, 6), tight_layout=True)
+    # plt.plot(losses)
+    plt.plot(all_loss, color='r', label='Training Loss')
+    plt.plot(all_roc_auc, color='g', label='ROC_AUC Score')
+    plt.plot(all_acc, color='b', label='Training Accuracy')
+    plt.legend()
+    plt.ylabel("Functions")
     plt.xlabel("epoch")
     plt.title(f"Problem: {args['setting'].upper()}\n" +
               f"Grid: {''.join(args['names'])}\n" +
@@ -204,4 +215,4 @@ if __name__ == "__main__":
                       + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
-        plt.savefig("Figures/GMD (uiuc150) with single objective (test_acc).png")
+        plt.savefig("Figures/Test.png")
