@@ -857,3 +857,7 @@ TODO:
 * TODO: re-evaluation
 
 pytorch_total_params = sum(p.numel() for p in model.parameters())
+
+Hongwei's request
+- don't run the HPS code, but preselect two sets of hyperparameters, and run the model, compare the the performance on the validation set (correction from test set)
+- record training process means storing the loss, ACC, roc-auc score of training set per each epoch, to see if two different hps result same curves from three metrics. 
