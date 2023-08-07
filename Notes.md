@@ -861,3 +861,47 @@ pytorch_total_params = sum(p.numel() for p in model.parameters())
 Hongwei's request
 - don't run the HPS code, but preselect two sets of hyperparameters, and run the model, compare the the performance on the validation set (correction from test set)
 - record training process means storing the loss, ACC, roc-auc score of training set per each epoch, to see if two different hps result same curves from three metrics. 
+
+
+
+
+
+
+
+
+## DEBUG on HPS - HJ
+
+* Changes:
+  * fixed acc and roc-auc score for training and evaluation
+  * fixed `data refer before assignment` error in `run` function
+  * enabled pre_transform
+  * fixed issue of `hidden_size=1 / batch_size=1`
+    * reinstall the DeepHyper from `develop` branch: 
+      * `pip install -e "git+https://github.com/deephyper/deephyper.git@develop#egg=deephyper"`
+
+* results:
+  * test metrics: `Test accuracy: 0.8315 Test ROC-AUC 0.7201`
+  
+## TODO:
+* Run HPS on SOO with single GMD
+* Run HPS on SOO with multi GMD
+* Run HPS on MOO with single GMD
+* Run HPS on MOO with multi GMD
+* plot the results as needed
+* introduce early stopping in `run` function, and pick the best model on validation set
+
+## best HP
+Best HPS:  {'p:activation': 'sigmoid', 
+'p:batch_size': 128, 
+'p:conv_type': 'han', 
+'p:dropout': 0.5, 
+'p:hidden_size': 32, 
+'p:lr': 0.0138399891155407, 
+'p:num_conv_layers': 8, 
+'p:num_heads': 2, 
+'p:num_mlp_layers': 6, 
+'p:weight_decay': 0.0001, 
+'objective': 0.8925925925925926}
+
+Train accuracy: 0.8925925925925926
+Test accuracy: 0.8315 Test ROC-AUC 0.7201

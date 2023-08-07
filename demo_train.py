@@ -1,4 +1,4 @@
-r""" Demo training script for HGT on GMD datasets 
+r""" Demo training script for HGT on GMD datasets
 """
 
 import os.path as osp
@@ -15,7 +15,7 @@ from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
 from py_script.dataset import GMD, MultiGMD
-from py_script.model import HGT
+from py_script.model_v2 import HGT
 from py_script.transforms import NormalizeColumnFeatures
 from py_script.utils import create_dir, get_device, process_args
 
@@ -63,8 +63,9 @@ if __name__ == "__main__":
                                                   shuffle=True)
 
     # Create a DataLoader for our datasets
+    # NOTE: update the batch size to 1 for now
     data_loader_train = DataLoader(dataset=dataset_train,
-                                   batch_size=args['batch_size'],
+                                   batch_size=1,
                                    shuffle=True)
     data_loader_val = DataLoader(dataset=dataset_val,
                                  batch_size=1,
@@ -84,7 +85,8 @@ if __name__ == "__main__":
                 num_heads=args['num_heads'],
                 dropout=args['dropout'],
                 node_types=data.node_types,
-                metadata=data.metadata()
+                metadata=data.metadata(),
+                device=DEVICE,
                 ).to(DEVICE)
 
     # adjust the loss function accordingly
@@ -94,6 +96,18 @@ if __name__ == "__main__":
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
 
+    res = model.fit(optimizer,
+                    data_loader_train,
+                    epochs=args['epochs'],
+                    verbose=True,
+                    device=DEVICE)
+
+    fig = plt.figure(figsize=(4, 3), tight_layout=True)
+    plt.plot(np.arange(len(res[0])), res[0])
+    plt.savefig("train.png", dpi=600)
+    res = model.evaluate(data_loader_test, device=DEVICE)
+    print(res)
+    exit()
     # Some extra code to check if the optimizer really did place some blockers
     # in the results and if model really is placing some blockers in the grid
     num_optimizer_blockers = 0
