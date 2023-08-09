@@ -28,27 +28,34 @@ HEADERS = {
 
 
 def read_mpc(fn):
-    """ Read the MPC file ".m" into dictionary.
+    r""" Read the MPC MATPOWER file ".m" into dictionary.
     Args:
         fn (str): Filename.
+
     Returns:
         dict: A dictionary with keys of attributes.
+
+    References:
+        [1]: MATPOWER manual (https://matpower.org/docs/MATPOWER-manual.pdf), Appendix B.
     """
     mpc = {}
     with open(fn, "r") as f:
         string = f.read()
 
+    # find match with `mpc.***`
     matches = re.findall(r"mpc\.\w+", string)
     for attr in matches:
         key = attr.split(".")[1]
-        # process with different patterns
 
+        # process with different patterns
         if key in ['version', 'baseMVA', 'time_elapsed']:
             # the key with only one value
             pattern = rf'mpc\.{key}\s*=\s*(?P<data>.*?);'
             match = re.search(pattern, string, re.DOTALL)
-
-            mpc[key] = match.groupdict()['data'].strip("'").strip('"')
+            value = match.groupdict()['data'].strip("'").strip('"')
+            # if key == 'baseMVA' or key == 'time_elapsed':
+            #     value = float(value)
+            mpc[key] = value
 
         elif key in ['gen', 'gencost', 'bus', 'branch']:
             # the keys with standard MATPOWER data
