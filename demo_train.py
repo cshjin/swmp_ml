@@ -100,7 +100,7 @@ if __name__ == "__main__":
     num_model_blockers = 0
 
     # Store lists of accuracies, ROC_AUC scores, and losses
-    all_acc, all_roc_auc, all_loss = [], [], []
+    all_train_acc, all_roc_auc, all_loss, all_val_acc = [], [], [], []
     losses = []
     if len(args['names']) == 1:
         pbar = tqdm(range(args['epochs']), desc=args['names'][0])
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
             # Store information about this iteration
             all_loss.append(loss.item())
-            all_acc.append(train_acc)
+            all_train_acc.append(train_acc)
             all_roc_auc.append(roc_auc)
 
         # Choose how to handle the pbar based on the problem setting
@@ -155,6 +155,10 @@ if __name__ == "__main__":
         else:
             pbar.set_postfix({"loss": t_loss, "train_acc": train_acc, "roc_auc": roc_auc})
         losses.append(t_loss)
+
+        # Compute the validation accuracy
+        # acc_val, roc_val, loss_val = 
+        # all_val_acc.append(acc_val)
 
     # Count the number of files that exist in the Figures directory, so
     # we can give a unique name to the two new figures we're creating
@@ -169,7 +173,7 @@ if __name__ == "__main__":
     # plt.plot(losses)
     plt.plot(all_loss, color='r', label='Training Loss')
     plt.plot(all_roc_auc, color='g', label='ROC_AUC Score')
-    plt.plot(all_acc, color='b', label='Training Accuracy')
+    plt.plot(all_train_acc, color='b', label='Training Accuracy')
     plt.legend()
     plt.ylabel("Functions")
     plt.xlabel("epoch")
@@ -215,4 +219,4 @@ if __name__ == "__main__":
                       + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
-        plt.savefig("Figures/Test.png")
+        plt.savefig("Figures/Test HPS .png")

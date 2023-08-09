@@ -255,7 +255,7 @@ def run(config):
         # Stop early if we hit the threshold
         if threshold < 0:
             return best_hps[0]
-    return best_hps[0]
+    return (best_hps[0], best_hps[1])
 
     # # Early stopping (alternate solution that's similar to "early stopping")
     # hps = {}
@@ -282,16 +282,16 @@ pre_transform = T.Compose([NormalizeColumnFeatures(["x", "edge_attr"])])
 
 setting = "gic"
 weight_arg = True
-# dataset = GMD(ROOT,
-#               name="uiuc150",
-#               setting=setting,
-#               force_reprocess=False,
-#               pre_transform=pre_transform)
-dataset = MultiGMD(ROOT,
-                   names=["epri21", "uiuc150"],
-                   setting=setting,
-                   force_reprocess=True,
-                   pre_transform=pre_transform)
+dataset = GMD(ROOT,
+              name="epri21",
+              setting=setting,
+              force_reprocess=False,
+              pre_transform=pre_transform)
+# dataset = MultiGMD(ROOT,
+#                    names=["epri21", "uiuc150"],
+#                    setting=setting,
+#                    force_reprocess=True,
+#                    pre_transform=pre_transform)
 
 data = dataset[0]
 
