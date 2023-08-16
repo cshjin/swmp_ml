@@ -1,4 +1,4 @@
-r""" Demo training script for HGT on GMD datasets
+""" Demo training script for HGT on GMD datasets
 """
 
 import os.path as osp
@@ -15,7 +15,7 @@ from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
 from py_script.dataset import GMD, MultiGMD
-from py_script.model_v2 import HGT
+from py_script.model import HGT
 from py_script.transforms import NormalizeColumnFeatures
 from py_script.utils import create_dir, get_device, process_args
 
@@ -65,13 +65,13 @@ if __name__ == "__main__":
                                                    test_size=0.2,
                                                    random_state=SEED,
                                                    shuffle=True)
-    dataset_test, dataset_val = train_test_split(dataset_test,
-                                                  test_size=0.5,
-                                                  random_state=SEED,
-                                                  shuffle=True)
+    dataset_val, dataset_test = train_test_split(dataset_test,
+                                                 test_size=0.5,
+                                                 random_state=SEED,
+                                                 shuffle=True)
 
     # Create a DataLoader for our datasets
-    # NOTE: update the batch size to 1 for now
+    # NOTE: update the batch size to `1` for reevaluation
     data_loader_train = DataLoader(dataset=dataset_train,
                                    batch_size=1,
                                    shuffle=True)
@@ -87,12 +87,11 @@ if __name__ == "__main__":
     model = HGT(hidden_channels=args['hidden_size'],
                 num_mlp_layers=args['num_mlp_layers'],
                 conv_type=args['conv_type'],
-                activation=args['activation'],
+                act=args['act'],
                 out_channels=out_channels,
                 num_conv_layers=args['num_conv_layers'],
                 num_heads=args['num_heads'],
                 dropout=args['dropout'],
-                node_types=data.node_types,
                 metadata=data.metadata(),
                 device=DEVICE,
                 ).to(DEVICE)

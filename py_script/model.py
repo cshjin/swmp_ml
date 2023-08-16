@@ -1,7 +1,10 @@
+""" Heterogeneous graph neural networks for electric grid. """
+
+import numpy as np
 from torch.nn import Module, ModuleDict, ModuleList
 from torch_geometric.nn import HANConv, HGTConv, Linear
 from torch_geometric.nn.models import MLP
-import numpy as np
+from torch_geometric.nn.resolver import activation_resolver
 
 
 class HGT(Module):
@@ -12,6 +15,7 @@ class HGT(Module):
         out_channels (int, optional): Number of output channels. Defaults to 1.
         num_conv_layers (int, optional): Number of layers for Conv. Defaults to 2.
         conv_type (str, optional): The type of convolutional layer to use. Defaults to "hgt".
+        act (str, optional): Activation function. Defaults to "relu".
         num_heads (str, optional): Number of heads in HGTConv. Defaults to "2".
         num_mlp_layers (int, optional): Number of layers for MLP. Defaults to 3.
         dropout (float, optional): Dropout rate. Defaults to 0.0.
@@ -23,48 +27,67 @@ class HGT(Module):
             self,
             hidden_channels=64,
             out_channels=1,
-            num_conv_layers=2,
             conv_type="hgt",
-            activation="relu",
+            act="relu",
             num_heads=2,
+            num_conv_layers=2,
             num_mlp_layers=3,
             dropout=0.0,
-            node_types=None,
             metadata=None,
             device="cpu", **kwargs):
 
         super().__init__()
 
-        self.num_heads = num_heads
         self.hidden_channels = hidden_channels
+        self.out_channels = out_channels
+        self.conv_type = conv_type
+        self.act = activation_resolver(act)
+        self.num_heads = num_heads
         self.num_conv_layers = num_conv_layers
         self.num_mlp_layers = num_mlp_layers
-        self.conv_type = conv_type
-        self.activation = activation
         self.dropout = dropout
-        self.node_types = node_types
+        # self.node_types = node_types
         self.metadata = metadata
         self.device = device
         self.group = kwargs.get('group', 'min')
 
+        self.node_types = self.metadata[0]
+        self.edge_types = self.metadata[1]
+
         self.lin_dict = ModuleDict()
         for node_type in self.node_types:
-            self.lin_dict[node_type] = Linear(-1, hidden_channels)
+            self.lin_dict[node_type] = Linear(-1, self.hidden_channels)
+
+        # self.lin_dict_edge = ModuleDict()
+        # for edge_type in self.edge_types:
+        #     self.lin_dict_edge["+".join(edge_type)] = Linear(-1, self.hidden_channels)
 
         self.convs = ModuleList()
         for _ in range(self.num_conv_layers):
             # Chose between HGT or HAN conv
             if self.conv_type == "hgt":
-                conv = HGTConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, group=self.group)
+                conv = HGTConv(
+                    self.hidden_channels,
+                    self.hidden_channels,
+                    self.metadata,
+                    self.num_heads,
+                    group=self.group)
             else:
-                conv = HANConv(hidden_channels, hidden_channels, self.metadata, self.num_heads, dropout=self.dropout)
+                conv = HANConv(
+                    self.hidden_channels,
+                    self.hidden_channels,
+                    self.metadata,
+                    self.num_heads,
+                    dropout=self.dropout)
             self.convs.append(conv)
 
-        self.flatten = MLP(in_channels=hidden_channels,
+        self.flatten = MLP(in_channels=self.hidden_channels,
                            out_channels=out_channels,
-                           hidden_channels=hidden_channels,
+                           hidden_channels=self.hidden_channels,
                            num_layers=self.num_mlp_layers,
-                           dropout=self.dropout, **kwargs)
+                           dropout=self.dropout,
+                           act=self.act,
+                           **kwargs)
 
     def forward(self, data, type="bus"):
         r""" Forward pass of the model.
@@ -81,10 +104,16 @@ class HGT(Module):
         edge_index_dict = data.edge_index_dict
 
         for node_type, x in x_dict.items():
-            x_dict[node_type] = self.lin_dict[node_type](x).relu_()
+            x_dict[node_type] = self.act(self.lin_dict[node_type](x))
+
+        # for edge_type, x in edge_index_dict.items():
+        #     edge_index_dict[edge_type] = self.act(self.lin_dict_edge["+".join(edge_type)](x))
 
         for conv in self.convs:
             x_dict = conv(x_dict, edge_index_dict)
+            # activation for each node type
+            for node_type, x in x_dict.items():
+                x_dict[node_type] = self.act(x)
 
         output = x_dict[type]
         return self.flatten(output)
@@ -108,10 +137,10 @@ class HGT(Module):
             tuple: (list of accuracies, list of rocs, list of losses)
         """
         try:
-            from tqdm import tqdm
-            import torch.nn.functional as F
             import numpy as np
-            from sklearn.metrics import roc_auc_score, accuracy_score
+            import torch.nn.functional as F
+            from sklearn.metrics import accuracy_score, roc_auc_score
+            from tqdm import tqdm
         except ImportError:
             raise ImportError("Package(s) not installed.")
 
@@ -142,16 +171,17 @@ class HGT(Module):
                     loss = F.mse_loss(out, data['y'])
                 else:
                     out = self.forward(data, "gmd_bus")
-
+                    true_y = data['y']
                     # Apply weighted cross entropy loss
-                    if _weight_arg and (len(data['y'].bincount()) > 1):
-                        weight = len(data['y']) / (2 * data['y'].bincount())
-                        loss = F.cross_entropy(out, data['y'], weight=weight)
+                    if _weight_arg and (len(true_y.bincount()) > 1):
+                        weight = len(true_y) / (2 * true_y.bincount())
+                        loss = F.cross_entropy(out, true_y, weight=weight)
                     else:
-                        loss = F.cross_entropy(out, data['y'])
+                        loss = F.cross_entropy(out, true_y)
 
-                    y_true_batch = data['y'].detach().cpu().numpy()
+                    y_true_batch = true_y.detach().cpu().numpy()
                     y_pred_batch = out.argmax(dim=1).detach().cpu().numpy()
+                    # y_pred_batch = (out.argmax(dim=1) * data.gic_blocker_bus_mask).detach().cpu().numpy()
                     all_true_labels.extend(y_true_batch)
                     all_pred_labels.extend(y_pred_batch)
 
@@ -161,6 +191,7 @@ class HGT(Module):
                 loss.backward()
                 optimizer.step()
 
+            t_loss = t_loss / len(loader)
             all_true_labels = np.array(all_true_labels)
             all_pred_labels = np.array(all_pred_labels)
 
@@ -187,7 +218,7 @@ class HGT(Module):
         """
         try:
             import torch.nn.functional as F
-            from sklearn.metrics import roc_auc_score, accuracy_score
+            from sklearn.metrics import accuracy_score, roc_auc_score
         except ImportError:
             raise ImportError("Package(s) not installed.")
 
