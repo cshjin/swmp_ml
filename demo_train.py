@@ -56,7 +56,7 @@ if __name__ == "__main__":
                            pre_transform=pre_transform)
     else:
         raise "Please input at least one grid name"
-    
+
     # simple data
     data = dataset[0]
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
                                                    test_size=0.2,
                                                    random_state=SEED,
                                                    shuffle=True)
-    dataset_train, dataset_val = train_test_split(dataset_test,
+    dataset_test, dataset_val = train_test_split(dataset_test,
                                                   test_size=0.5,
                                                   random_state=SEED,
                                                   shuffle=True)
