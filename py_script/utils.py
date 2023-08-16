@@ -28,27 +28,34 @@ HEADERS = {
 
 
 def read_mpc(fn):
-    """ Read the MPC file ".m" into dictionary.
+    r""" Read the MPC MATPOWER file ".m" into dictionary.
     Args:
         fn (str): Filename.
+
     Returns:
         dict: A dictionary with keys of attributes.
+
+    References:
+        [1]: MATPOWER manual (https://matpower.org/docs/MATPOWER-manual.pdf), Appendix B.
     """
     mpc = {}
     with open(fn, "r") as f:
         string = f.read()
 
+    # find match with `mpc.***`
     matches = re.findall(r"mpc\.\w+", string)
     for attr in matches:
         key = attr.split(".")[1]
-        # process with different patterns
 
+        # process with different patterns
         if key in ['version', 'baseMVA', 'time_elapsed']:
             # the key with only one value
             pattern = rf'mpc\.{key}\s*=\s*(?P<data>.*?);'
             match = re.search(pattern, string, re.DOTALL)
-
-            mpc[key] = match.groupdict()['data'].strip("'").strip('"')
+            value = match.groupdict()['data'].strip("'").strip('"')
+            # if key == 'baseMVA' or key == 'time_elapsed':
+            #     value = float(value)
+            mpc[key] = value
 
         elif key in ['gen', 'gencost', 'bus', 'branch']:
             # the keys with standard MATPOWER data
@@ -111,3 +118,74 @@ def create_dir(path):
         except Exception as e:
             print("Error: {}".format(e))
             exit(-1)
+
+
+def process_args():
+    """ Process args of inputs
+
+    Returns:
+        dict: Parsed arguments.
+    """
+    import argparse
+    ACTS = ["relu", "rrelu", "hardtanh", "relu6", "sigmoid", "hardsigmoid", "tanh", "silu",
+            "mish", "hardswish", "elu", "celu", "selu", "glu", "gelu", "hardshrink",
+            "leakyrelu", "logsigmoid", "softplus", "tanhshrink"]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--names", type=str, default=["epri21"], nargs='+',
+                        help="list of names of networks, seperated by space")
+    parser.add_argument("--force", action="store_true",
+                        help="Force to reprocess data")
+    parser.add_argument("--lr", type=float, default=1e-3,
+                        help="learning rate")
+    parser.add_argument("--weight_decay", type=float, default=1e-4,
+                        help="weight decay rate for Adam")
+    parser.add_argument("--hidden_size", type=int, default=128,
+                        help="hidden dimension in HGT")
+    parser.add_argument("--num_heads", type=int, default=2,
+                        help="number of heads in HGT")
+    parser.add_argument("--num_conv_layers", type=int, default=1,
+                        help="number of layers in HGT")
+    parser.add_argument("--num_mlp_layers", type=int, default=4,
+                        help="number of layers in MLP")
+    parser.add_argument("--activation", type=str, default="relu", choices=ACTS,
+                        help="specify the activation function used")
+    parser.add_argument("--conv_type", type=str, default="hgt", choices=["hgt", "han"],
+                        help="select the type of convolutional layer (hgt or han)")
+    parser.add_argument("--dropout", type=float, default=0.5,
+                        help="dropout rate")
+    parser.add_argument("--epochs", type=int, default=200,
+                        help="number of epochs in training")
+    parser.add_argument("--batch_size", type=int, default=64,
+                        help="batch size in training")
+    parser.add_argument("--seed", type=int, default=-1,
+                        help="Random seed. Set `-1` to ignore random seed")
+    parser.add_argument("--no_norm", action="store_true",
+                        help="No normalization of the data")
+    parser.add_argument("--test_split", type=float, default=0.2,
+                        help="the proportion of datasets to use for testing")
+    parser.add_argument("--gpu", type=int, default=-1,
+                        help="which GPU to use. Set -1 to use CPU.")
+    parser.add_argument("--weight", action="store_true",
+                        help="use weighted loss.")
+    parser.add_argument("--setting", type=str, default="gic", choices=["mld", "gic"],
+                        help="Specify the problem setting, either `mld` or `gic`")
+    args = vars(parser.parse_args())
+
+    return args
+
+
+def get_device(gpu_id=-1):
+    r""" Get the device where the model is running on.
+
+    Args:
+        gpu_id (int): GPU ID to use. Set -1 to use CPU.
+
+    Returns:
+        torch.device: Device where the model is running on.
+    """
+    import torch
+    if gpu_id < 0 or (not torch.cuda.is_available()) or (gpu_id >= torch.cuda.device_count()):
+        device = torch.device("cpu")
+    else:
+        device = torch.device(f"cuda:{gpu_id}")
+    return device
