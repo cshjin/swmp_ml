@@ -19,23 +19,29 @@ from py_script.model_v2 import HGT
 from py_script.transforms import NormalizeColumnFeatures
 from py_script.utils import create_dir, get_device, process_args
 
-SEED = 12345
-torch.manual_seed(SEED)
-np.random.seed(SEED)
 
 if __name__ == "__main__":
     args = process_args()
 
-    if args['normalize']:
-        pre_transform = T.Compose([NormalizeColumnFeatures(['x', 'edge_attr'])])
-    else:
+    if args['no_norm']:
         pre_transform = None
+    else:
+        pre_transform = T.Compose([NormalizeColumnFeatures(['x', 'edge_attr'])])
 
-    ROOT = osp.join(osp.expanduser('~'), 'tmp', 'data', 'GMD')
+    if args['seed'] != -1:
+        SEED = args['seed']
+        torch.manual_seed(SEED)
+        np.random.seed(SEED)
+    else:
+        SEED = np.random.randint(0, 10000)
+
+    # ROOT folder for the GMD datasets to be stored
+    ROOT = osp.join('/tmp', 'data', 'GMD')
 
     # Select the processor to use
     DEVICE = get_device(args['gpu'])
 
+    # Create the dataset
     if len(args['names']) == 1:
         dataset = GMD(ROOT,
                       name=args['names'][0],
@@ -50,6 +56,8 @@ if __name__ == "__main__":
                            pre_transform=pre_transform)
     else:
         raise "Please input at least one grid name"
+    
+    # simple data
     data = dataset[0]
 
     # Train and test split for our datasets with ratio: 0.8/0.1/0.1

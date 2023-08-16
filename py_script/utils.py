@@ -157,8 +157,10 @@ def process_args():
                         help="number of epochs in training")
     parser.add_argument("--batch_size", type=int, default=64,
                         help="batch size in training")
-    parser.add_argument("--normalize", action="store_true",
-                        help="normalize the data")
+    parser.add_argument("--seed", type=int, default=-1,
+                        help="Random seed. Set `-1` to ignore random seed")
+    parser.add_argument("--no_norm", action="store_true",
+                        help="No normalization of the data")
     parser.add_argument("--test_split", type=float, default=0.2,
                         help="the proportion of datasets to use for testing")
     parser.add_argument("--gpu", type=int, default=-1,
