@@ -11,8 +11,7 @@ function read_data(args, pd)
     pd.mu_N = args["efield_mag"] * sin(args["efield_dir"] * pi / 180)
 
     ## read
-    Inputfilename = "./data/excel/$(args["network"]).xlsx"
-
+    Inputfilename = "../excel/$(args["network"]).xlsx"
     xf = XLSX.readxlsx(Inputfilename)
     Bus_input = xf["Bus"]
     Gen_input = xf["Generator"]
@@ -210,7 +209,4 @@ function read_data(args, pd)
             pd.Immax = tmp
         end
     end
-
-
-
 end

@@ -7,37 +7,37 @@ using .gic
 
 function parse_commandline()
     s = ArgParseSettings()
-    @add_arg_table s begin        
-    "--network"            
+    @add_arg_table s begin
+        "--network"
         arg_type = String
         default = "epri21"  ## epri21, uiuc150        
-    "--model"            
+        "--model"
         arg_type = String
         default = "ac_polar"  ## ac_polar, ac_rect, soc_polar, soc_rect        
-    "--optimizer"            
+        "--optimizer"
         arg_type = String
         default = "juniper"  ## juniper, scip 
-    "--time_limit"            
+        "--time_limit"
         arg_type = Float64
-        default = 3600.0 
-    "--efield_mag"            
+        default = 3600.0
+        "--efield_mag"
         arg_type = Float64
         default = 10.0  ##  [5.0, 10.0, 15.0, 20.0]    
-    "--efield_dir"            
+        "--efield_dir"
         arg_type = Float64
         default = 45.0 ##  [45.0, 90.0, 135.0]
-    "--tot_num_blockers"            
+        "--tot_num_blockers"
         arg_type = Int64
         default = 10 ##   
-    "--output_dir_name"            
+        "--output_dir_name"
         arg_type = String
-        default = "./outputs/"
-    "--run_id"
+        default = "./results/"
+        "--run_id"
         arg_type = Int64
         default = 1
     end
     return parse_args(s)
-end            
+end
 
 args = parse_commandline()
 
@@ -67,15 +67,15 @@ end
 if args["optimizer"] == "juniper"
     optimizer = Juniper.Optimizer
     nl_solver = optimizer_with_attributes(Ipopt.Optimizer, "print_level" => 0)
-    m = Model(optimizer_with_attributes(optimizer, "nl_solver"=>nl_solver))   
+    m = Model(optimizer_with_attributes(optimizer, "nl_solver" => nl_solver))
 elseif args["optimizer"] == "scip"
-    optimizer = SCIP.Optimizer 
+    optimizer = SCIP.Optimizer
     m = Model(optimizer_with_attributes(optimizer))
 end
 
 set_time_limit_sec(m, args["time_limit"])
 
-var = gic.Variables()  
+var = gic.Variables()
 if args["model"] == "ac_polar"
     m = gic.construct_gic_blockers_ac_polar_model(m, var, pd)
 end
