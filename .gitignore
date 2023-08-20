@@ -30,3 +30,8 @@ results.csv
 ./Figures/**
 
 **/*.pt
+
+./src/**
+./docs/**
+./logs/**
+./swmp_ml.wiki/**
