@@ -20,7 +20,7 @@ draft/**
 Figures/**
 logs/**
 Manifest.toml
-results.csv
+*.csv
 src/**
 src/scratch
 swmp_ml.wiki/**
