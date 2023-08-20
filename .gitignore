@@ -24,5 +24,4 @@ results.csv
 src/**
 src/scratch
 swmp_ml.wiki/**
-test/**
-gmd-tut/**
+# test/**
