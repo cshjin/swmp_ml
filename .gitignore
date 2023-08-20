@@ -31,7 +31,8 @@ results.csv
 
 **/*.pt
 
-./src/**
-./docs/**
-./logs/**
-./swmp_ml.wiki/**
+src/**
+docs/**
+logs/**
+swmp_ml.wiki/**
+draft/**
