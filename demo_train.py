@@ -178,7 +178,7 @@ if __name__ == "__main__":
         losses.append(t_loss)
 
         # Compute the validation accuracy
-        # acc_val, roc_val, loss_val = 
+        # acc_val, roc_val, loss_val =
         # all_val_acc.append(acc_val)
 
     # Count the number of files that exist in the Figures directory, so
@@ -240,4 +240,4 @@ if __name__ == "__main__":
                       + f"ROC_AUC score: {roc_auc:.4f}")
         # plt.savefig(f"Figures/Losses/losses - {args['problem']}_{losses_count}_final-t_loss={t_loss}_.png")
         # plt.savefig(f"Figures/Predictions/result_{args['problem']}_{predictions_count}.png")
-        plt.savefig("Figures/Test HPS .png")
+        plt.savefig("Figures/Test.png")
