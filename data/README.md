@@ -64,3 +64,21 @@ optional arguments:
   --run_id RUN_ID       (type: Int64, default: 1)
   -h, --help            show this help message and exit
 ```
+
+* generate multiple perturbations by running the following command under the `data/gic` folder:
+
+```bash
+# generate 200 perturbations
+python gen_gic_data.py --nums 200
+
+usage: gen_gic_data.py [-h] [--nums NUMS] [--network NETWORK] [--model MODEL] [--optimizer OPTIMIZER]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --nums NUMS           Number of samples to generate
+  --network NETWORK     Network name
+  --model MODEL         Model type, options=[ac_polar, ac_rect, soc_polar, soc_rect]
+  --optimizer OPTIMIZER
+                        Optimizer type, options=[juniper, scip]
+```
+
