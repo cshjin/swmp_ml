@@ -200,7 +200,8 @@ search = CBO(problem, evaluator, initial_points=[problem.default_configuration],
 
 # Print all the results
 results = search.search(max_evals=200, timeout=3600)
-print(results)
+# print(results)
+results.to_csv(osp.join(LOG_DIR, "hps_results.csv"))
 
 # %%
 ''' Find the best HPS setting based on the best objective (SOO) '''
