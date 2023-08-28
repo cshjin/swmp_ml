@@ -277,7 +277,7 @@ function write_json(args, var, pd)
         dict_bus[i] = bus_i
     end
 
-    open(args["output_dir_name"] * args["output_file_name"] * ".json", "w") do f
+    open(args["output_dir_name"] * args["network"] * "/" * args["output_file_name"] * ".json", "w") do f
         JSON.print(f, Dict("bus" => dict_bus, "gmd_bus" => dict_gmdbus), 4)
     end
 end
