@@ -1,5 +1,4 @@
-""" Create a dataset with HeteroData format.
-"""
+""" Create a dataset with HeteroData format. """
 import json
 import os
 import os.path as osp

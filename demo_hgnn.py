@@ -15,10 +15,11 @@ from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
 from py_script.dataset import GMD, MultiGMD
-from py_script.model import HGT
+from py_script.model import HeteroGNN
 from py_script.transforms import NormalizeColumnFeatures
 from py_script.utils import create_dir, get_device, process_args
 
+from datetime import datetime
 
 if __name__ == "__main__":
     args = process_args()
@@ -37,7 +38,10 @@ if __name__ == "__main__":
 
     # ROOT folder for the GMD datasets to be stored
     ROOT = osp.join('/tmp', 'data', 'GMD')
-
+    if args['log']:
+        DT_FORMAT = datetime.now().strftime("%Y%m%d_%H%M%S")
+        LOG_DIR = osp.join('logs', 'demo_train', DT_FORMAT)
+        create_dir(LOG_DIR)
     # Select the processor to use
     DEVICE = get_device(args['gpu'])
 
@@ -84,17 +88,17 @@ if __name__ == "__main__":
 
     # adjust the output dimension accordingly
     out_channels = 2 if args['setting'] == "gic" else 1
-    model = HGT(hidden_channels=args['hidden_size'],
-                num_mlp_layers=args['num_mlp_layers'],
-                conv_type=args['conv_type'],
-                act=args['act'],
-                out_channels=out_channels,
-                num_conv_layers=args['num_conv_layers'],
-                num_heads=args['num_heads'],
-                dropout=args['dropout'],
-                metadata=data.metadata(),
-                device=DEVICE,
-                ).to(DEVICE)
+    model = HeteroGNN(hidden_channels=args['hidden_size'],
+                      num_mlp_layers=args['num_mlp_layers'],
+                      conv_type=args['conv_type'],
+                      act=args['act'],
+                      out_channels=out_channels,
+                      num_conv_layers=args['num_conv_layers'],
+                      num_heads=args['num_heads'],
+                      dropout=args['dropout'],
+                      metadata=data.metadata(),
+                      device=DEVICE,
+                      ).to(DEVICE)
 
     # adjust the loss function accordingly
     # loss_fn = CrossEntropyLoss() if args['setting'] == "gic" else MSELoss()

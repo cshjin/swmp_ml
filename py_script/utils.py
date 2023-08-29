@@ -257,6 +257,8 @@ def process_args():
                         help="which GPU to use. Set -1 to use CPU.")
     parser.add_argument("--weight", action="store_true",
                         help="use weighted loss.")
+    parser.add_argument("--log", action="store_true",
+                        help="logging the training process")
     parser.add_argument("--setting", type=str, default="gic", choices=["mld", "gic"],
                         help="Specify the problem setting, either `mld` or `gic`")
     args = vars(parser.parse_args())
