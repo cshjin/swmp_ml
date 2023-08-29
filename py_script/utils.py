@@ -104,6 +104,96 @@ def read_mpc(fn):
     return mpc
 
 
+def preprocess_mpc(mpc):
+    r""" Preprocess the MPC data.
+    The standard data format is defined in [1].
+    The extended data format is defined in [2].
+
+    Args:
+        mpc (dict): MPC data.
+
+    Returns:
+        dict: Preprocessed MPC data.
+
+    References:
+        [1]: [MATPOWER manual](https://matpower.org/docs/MATPOWER-manual.pdf), Appendix B.
+        [2]: [PowerModelsGMD.jl](https://github.com/lanl-ansi/PowerModelsGMD.jl/blob/master/README.md)
+    """
+
+    # convert to float
+    for key in ['baseMVA', 'time_elapsed']:
+        mpc[key] = float(mpc[key])
+
+    ''' process mpc['bus'] '''
+    # convert `type` to one-hot encoder
+    _series = mpc['bus'].type.astype("category").cat.set_categories(range(1, 5))
+    bus_type_encoder = pd.get_dummies(_series).add_prefix('type_')
+    mpc['bus'] = pd.concat([mpc['bus'], bus_type_encoder], axis=1)
+    # drop type column
+    mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
+    # build a dict to map bus_i to index: (key: bus_i, value: index)
+    bus_id_idx = {bus_i: idx for idx, bus_i in enumerate(mpc['bus'].bus_i)}
+
+    ''' process mpc['gen'] '''
+    # replace `bus` with `bus_idx`
+    mpc['gen'].bus = mpc['gen'].bus.replace(bus_id_idx)
+
+    ''' process mpc['branch'] '''
+    # replace `fbus` and `tbus` with `bus_idx`
+    mpc['branch'].fbus = mpc['branch'].fbus.replace(bus_id_idx)
+    mpc['branch'].tbus = mpc['branch'].tbus.replace(bus_id_idx)
+    # build a dict to map `branch_i` (not in the table) to index: (key: branch_i, value: index)
+    branch_id_idx = {idx + 1: idx for idx, branch_i in enumerate(mpc['branch'].index)}
+
+    ''' process mpc['gmd_bus'] '''
+    # replace `parent_index` with `bus_idx`
+    mpc['gmd_bus'].parent_index = mpc['gmd_bus'].parent_index.replace(bus_id_idx)
+    # build a dict to map `gmd_bus_i` (not in the table) to index: (key: gmd_bus_i, value: index)
+    gmd_bus_id_idx = {idx + 1: idx for idx, v in enumerate(mpc['gmd_bus'].index)}
+
+    ''' process mpc['gmd_branch'] '''
+    # replace `f_bus` and `t_bus` with `gmd_bus_idx`
+    mpc['gmd_branch'].f_bus = mpc['gmd_branch'].f_bus.replace(gmd_bus_id_idx)
+    mpc['gmd_branch'].t_bus = mpc['gmd_branch'].t_bus.replace(gmd_bus_id_idx)
+    # replace `parent_index` with `branch_idx`
+    mpc['gmd_branch'].parent_index = mpc['gmd_branch'].parent_index.replace(branch_id_idx)
+
+    ''' process mpc['branch_gmd'] '''
+    # replace `hi_bus` and `lo_bus` with `bus_idx`
+    mpc['branch_gmd'].hi_bus = mpc['branch_gmd'].hi_bus.replace(bus_id_idx)
+    mpc['branch_gmd'].lo_bus = mpc['branch_gmd'].lo_bus.replace(bus_id_idx)
+    # convert `type` to one-hot encoder
+    branch_gmd_type = {"'xfmr'": 0,
+                       "'transformer'": 0,
+                       "'line'": 1,
+                       "'series_cap'": 2}
+
+    mpc['branch_gmd'].type = mpc['branch_gmd'].type.replace(branch_gmd_type)
+    _series = mpc['branch_gmd'].type.astype("category").cat.set_categories(range(3))
+    branch_gmd_type_encoder = pd.get_dummies(_series).add_prefix('type_')
+    mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_type_encoder], axis=1)
+    # drop `type` column
+    mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type'], axis=1)
+    # convert `config` to one-hot encoder
+    branch_gmd_config = {"'none'": 0,
+                         "'delta-delta'": 1,
+                         "'delta-wye'": 2,
+                         "'wye-delta'": 3,
+                         "'wye-wye'": 4,
+                         "'delta-gwye'": 5,
+                         "'gwye-delta'": 6,
+                         "'gwye-gwye'": 7,
+                         "'gwye-gwye-auto'": 8}
+    mpc['branch_gmd'].config = mpc['branch_gmd'].config.replace(branch_gmd_config)
+    _series = mpc['branch_gmd'].config.astype("category").cat.set_categories(range(9))
+    branch_gmd_config_encoder = pd.get_dummies(_series).add_prefix('config_')
+    mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_config_encoder], axis=1)
+    # drop `config` column
+    mpc['branch_gmd'] = mpc['branch_gmd'].drop(['config'], axis=1)
+
+    return mpc
+
+
 def create_dir(path):
     """ Create a dir where the processed data will be stored
     Args:
@@ -147,7 +237,7 @@ def process_args():
                         help="number of layers in HGT")
     parser.add_argument("--num_mlp_layers", type=int, default=4,
                         help="number of layers in MLP")
-    parser.add_argument("--activation", type=str, default="relu", choices=ACTS,
+    parser.add_argument("--act", type=str, default="relu", choices=ACTS,
                         help="specify the activation function used")
     parser.add_argument("--conv_type", type=str, default="hgt", choices=["hgt", "han"],
                         help="select the type of convolutional layer (hgt or han)")
@@ -167,6 +257,8 @@ def process_args():
                         help="which GPU to use. Set -1 to use CPU.")
     parser.add_argument("--weight", action="store_true",
                         help="use weighted loss.")
+    parser.add_argument("--log", action="store_true",
+                        help="logging the training process")
     parser.add_argument("--setting", type=str, default="gic", choices=["mld", "gic"],
                         help="Specify the problem setting, either `mld` or `gic`")
     args = vars(parser.parse_args())
@@ -189,3 +281,21 @@ def get_device(gpu_id=-1):
     else:
         device = torch.device(f"cuda:{gpu_id}")
     return device
+
+
+def export_gmd_blocker_matpower(labels, in_fn, out_fn):
+    """ Export the GMD_BLOCKER labels to the matpower file.
+
+    Args:
+        labels (np.array): Labels of the gmd_blocker.
+        in_fn (str): Input matpower file.
+        out_fn (str): Output matpower file.
+    """
+    gic_str = """\n%% gmd_blocker data\n%column_names% gmd_bus status\nmpc.gmd_blocker = {\n"""
+    for idx, v in enumerate(labels):
+        gic_str += f"\t{idx+1}\t{v.item()}\n"
+    gic_str += "};"
+
+    with open(out_fn, "w") as f1:
+        with open(in_fn, "r") as f2:
+            f1.write(f2.read() + gic_str)

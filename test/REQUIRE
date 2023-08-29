@@ -1,6 +1,0 @@
-julia 1.6.1
-
-Ipopt 0.7.0
-Cbc 0.8.0
-Juniper 0.7.0
-PowerModelsRestoration 0.6.1

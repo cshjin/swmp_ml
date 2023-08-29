@@ -27,5 +27,5 @@ else
   echo "Please choose from 'cpu' oro 'gpu'."
 fi
 
-pip install pandapower pygraphviz deephyper ray
+pip install pandapower pygraphviz deephyper ray folium julia pyjulia
 
