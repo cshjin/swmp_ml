@@ -92,6 +92,7 @@ model = HPIGNN(hidden_channels=args['hidden_size'],
                node_types=data.node_types,
                metadata=data.metadata(),
                device=DEVICE,
+               name="epri21",
                ).to(DEVICE)
 
 optimizer = torch.optim.Adam(model.parameters(),
@@ -101,6 +102,7 @@ optimizer = torch.optim.Adam(model.parameters(),
 res = model.fit(optimizer,
                 data_loader_train,
                 epochs=args['epochs'],
+                eval_freq=10,
                 verbose=True,
                 device=DEVICE)
 # res = model.evaluate(data_loader_test, device=DEVICE)
