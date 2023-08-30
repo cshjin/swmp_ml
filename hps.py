@@ -278,8 +278,8 @@ for epoch in range(200):
     train_metrics = best_model.fit(current_optimizer, loader_train, epochs=1, verbose=False)
     val_acc, val_roc, val_loss = best_model.evaluate(loader_val)
     # print(f"Epoch {epoch + 1:03d}, Val Loss: {val_loss:.4f}")
-    # Save best accuracy
-    if val_loss > best_val_loss:
+    # Save best loss
+    if val_loss < best_val_loss:
         best_val_loss = val_loss
         torch.save(best_model.state_dict(), osp.join(LOG_DIR, "best_model.pt"))
 

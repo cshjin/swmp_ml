@@ -27,5 +27,5 @@ def func(iter):
     os.system(cmd)
 
 
-# TODO: add perturbations to efield_mag and efield_dir
+# TODO: add perturbations to efield_mag and efield_dir  -- add efiled_mag and efield_dir to the command line
 Parallel(n_jobs=-1, prefer="threads")(delayed(func)(iter) for iter in range(1, args["nums"] + 1))

@@ -248,7 +248,7 @@ class HeteroGNN(Module):
         return acc, roc_auc, t_loss / len(loader.dataset)
 
     def eval_single(self, data):
-        r""" Evaluate a signle test data.
+        r""" Evaluate a single test data.
 
         Args:
             data (pyg.HeteroData): Single test data.
@@ -278,6 +278,7 @@ class HPIGNN(HeteroGNN):
         node_types (tuple, optional):       List of string for node types. Defaults to None.
         metadata (list, optional):          List of metadata. Defaults to None.
         eta (float, optional):              Weight for the physics loss. Defaults to 1e-1.
+        name (str, optional):               Name of the grid. Defaults to "epri21".
     """
 
     def __init__(self, hidden_channels=64,
@@ -290,7 +291,8 @@ class HPIGNN(HeteroGNN):
                  dropout=0,
                  metadata=None,
                  device="cpu",
-                 eta=1e-1, **kwargs):
+                 eta=1e-1,
+                 name="epri21", **kwargs):
         try:
             import julia
             jl = julia.Julia(compiled_modules=False)
@@ -300,6 +302,7 @@ class HPIGNN(HeteroGNN):
             raise ImportError("Julia is not installed. Please install Julia first. 'pip install julia pyjulia'")
 
         self.eta = eta
+        self.name = name
 
         super().__init__(
             hidden_channels,
@@ -339,6 +342,7 @@ class HPIGNN(HeteroGNN):
         _verbose = kwargs.get("verbose", False)
         _weight_arg = kwargs.get("weight_arg", True)
         _device = kwargs.get("device", "cpu")
+        _eval_freq = kwargs.get("eval_freq", 10)
 
         # return a set of lists
         all_acc, all_roc_auc, all_loss = [], [], []
@@ -377,7 +381,7 @@ class HPIGNN(HeteroGNN):
                     all_true_labels.extend(y_true_batch)
                     all_pred_labels.extend(y_pred_batch)
 
-                    if epoch % 10 == 0:
+                    if epoch % _eval_freq == 0:
                         # pi_loss_data = self.eval_loss(y_true_batch, y_pred_batch)
                         # loss_data = ce_loss_data + self.eta * self.eval_loss(y_true_batch, y_pred_batch)
                         loss += self.eta / (epoch + 1)**0.5 * self.eval_loss(y_true_batch, y_pred_batch)
@@ -442,8 +446,8 @@ class HPIGNN(HeteroGNN):
         gic_str += "};"
 
         # write to file
-        with open("epri21_train_true.m", "w") as f1:
-            with open("./data/matpower/epri21.m", "r") as f2:
+        with open(f"{self.name}_train_true.m", "w") as f1:
+            with open(f"./data/matpower/{self.name}.m", "r") as f2:
                 f1.write(f2.read() + gic_str)
 
         gic_str = """\n%% gmd_blocker data\n%column_names% gmd_bus status\nmpc.gmd_blocker = {\n"""
@@ -451,12 +455,12 @@ class HPIGNN(HeteroGNN):
             gic_str += f"\t{idx+1}\t{v.item()}\n"
         gic_str += "};"
 
-        with open("epri21_train_pred.m", "w") as f1:
-            with open("./data/matpower/epri21.m", "r") as f2:
+        with open(f"{self.name}_train_pred.m", "w") as f1:
+            with open(f"./data/matpower/{self.name}.m", "r") as f2:
                 f1.write(f2.read() + gic_str)
 
-        true_res = self.julia_api.re_eval("epri21_train_true.m")
-        pred_res = self.julia_api.re_eval("epri21_train_pred.m")
+        true_res = self.julia_api.re_eval(f"{self.name}_train_true.m")
+        pred_res = self.julia_api.re_eval(f"{self.name}_train_pred.m")
 
         feasible = (pred_res[0] == 1)
         if not feasible:
