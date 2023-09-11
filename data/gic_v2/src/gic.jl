@@ -5,6 +5,7 @@ using Ipopt ## solve nonlinear programs
 using SCIP
 using DataFrames ## write solution
 using Printf
+using JSON
 
 include("read.jl")
 include("log.jl")

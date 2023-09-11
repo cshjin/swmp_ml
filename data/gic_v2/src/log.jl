@@ -291,3 +291,42 @@ function write_line_dc(args, var, pd)
 
   close(res_io)
 end
+
+function write_json(args, var, pd)
+  #= NOTE: just a simple extract of pd/qd perturbations with label 'gic_blocker' to json format =#
+  dir = args["output_dir_name"]
+  if isdir(dir) == false
+    mkpath(dir)
+  end
+
+  dict_gmdbus = Dict()
+  for gmdbus in pd.GMDBus
+    i = gmdbus.GMDbus_i
+    gmdbus_i = Dict()
+    if gmdbus.g_gnd > 0.0
+      if isempty(pd.z) == true
+        gmdbus_i["gic_blocker"] = value(var.z[i])
+      else
+        gmdbus_i["gic_blocker"] = pd.z[i]
+      end
+    else
+      gmdbus_i["gic_blocker"] = -1.0
+    end
+    gmdbus_i["volt_mag"] = value(var.vd[i])
+
+    dict_gmdbus[i] = gmdbus_i
+  end
+
+  dict_bus = Dict()
+  for bus in pd.Bus
+    i = bus.bus_i
+    bus_i = Dict()
+    bus_i["pd"] = bus.pd
+    bus_i["qd"] = bus.qd
+    dict_bus[i] = bus_i
+  end
+
+  open(dir * args["output_file_name"] * ".json", "w") do f
+    JSON.print(f, Dict("bus" => dict_bus, "gmd_bus" => dict_gmdbus), 4)
+  end
+end

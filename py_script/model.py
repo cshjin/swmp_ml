@@ -150,7 +150,7 @@ class HeteroGNN(Module):
         all_acc, all_roc_auc, all_loss = [], [], []
 
         if _verbose:
-            pbar = tqdm(range(epochs), desc="Training", leave=False)
+            pbar = tqdm(range(epochs), desc="Training", leave=True)
         else:
             pbar = range(epochs)
 
@@ -167,8 +167,8 @@ class HeteroGNN(Module):
                     out = self.forward(data)[data.load_bus_mask]
                     loss = F.mse_loss(out, data['y'])
                 else:
-                    out = self.forward(data, "gmd_bus")
-                    true_y = data['y']
+                    out = self.forward(data, "gmd_bus")[data.substation_mask]
+                    true_y = data['y'][data.substation_mask]
                     # Apply weighted cross entropy loss
                     if _weight_arg and (len(true_y.bincount()) > 1):
                         weight = len(true_y) / (2 * true_y.bincount())
@@ -348,7 +348,7 @@ class HPIGNN(HeteroGNN):
         all_acc, all_roc_auc, all_loss = [], [], []
         all_ce, all_pi = [], []
         if _verbose:
-            pbar = tqdm(range(epochs), desc="Training", leave=False)
+            pbar = tqdm(range(epochs), desc="Training", leave=True)
         else:
             pbar = range(epochs)
 
@@ -367,16 +367,16 @@ class HPIGNN(HeteroGNN):
                     out = self.forward(data)[data.load_bus_mask]
                     loss = F.mse_loss(out, data['y'])
                 else:
-                    out = self.forward(data, "gmd_bus")
-
+                    out = self.forward(data, "gmd_bus")[data.substation_mask]
+                    true_y = data['y'][data.substation_mask]
                     # Apply weighted cross entropy loss
-                    if _weight_arg and (len(data['y'].bincount()) > 1):
-                        weight = len(data['y']) / (2 * data['y'].bincount())
-                        loss = F.cross_entropy(out, data['y'], weight=weight)
+                    if _weight_arg and (len(true_y.bincount()) > 1):
+                        weight = len(true_y) / (2 * true_y.bincount())
+                        loss = F.cross_entropy(out, true_y, weight=weight)
                     else:
-                        loss = F.cross_entropy(out, data['y'])
+                        loss = F.cross_entropy(out, true_y)
 
-                    y_true_batch = data['y'].detach().cpu().numpy()
+                    y_true_batch = true_y.detach().cpu().numpy()
                     y_pred_batch = out.argmax(dim=1).detach().cpu().numpy()
                     all_true_labels.extend(y_true_batch)
                     all_pred_labels.extend(y_pred_batch)
@@ -386,7 +386,7 @@ class HPIGNN(HeteroGNN):
                         # loss_data = ce_loss_data + self.eta * self.eval_loss(y_true_batch, y_pred_batch)
                         loss += self.eta / (epoch + 1)**0.5 * self.eval_loss(y_true_batch, y_pred_batch)
                         pi_loss_data = self.eval_loss(y_true_batch, y_pred_batch) * self.eta / (epoch + 1)**0.5
-                    ce_loss_data = F.cross_entropy(out, data['y'])
+                    ce_loss_data = F.cross_entropy(out, true_y)
                 # update loss
                 t_loss += loss.item()
                 ce_loss += ce_loss_data.item()

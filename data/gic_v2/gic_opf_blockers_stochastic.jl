@@ -60,7 +60,7 @@ end
 # args["output_dir_name"] = "./outputs/$(args["network"])_$(args["model"])/$(args["optimizer"])_budget_$(args["budget"])_lr_$(args["lr"])/mag_$(args["efield_mag"])_dir_$(args["efield_dir"])_budget_$(args["budget"])/"
 # args["output_file_name"] = "$(args["network"])_$(args["model"])_$(args["optimizer"])_$(args["lr"])_$(args["n_samples"])_$(args["n_iter"])_$(args["efield_mag"])_$(args["efield_dir"])"
 
-args["output_dir_name"] = args["output_dir_name"]
+args["output_dir_name"] = "$(args["output_dir_name"])$(args["network"])/"
 
 args["output_file_name"] = @sprintf("%03d_%s_%s_%s_%s_%s_%s_%.1f_%.1f", args["run_id"],
     args["network"],
@@ -123,7 +123,8 @@ JuMP.optimize!(m)
 # gic.write_gen(args, var, pd)
 # gic.write_bus(args, var, pd)
 # gic.write_line(args, var, pd)
-gic.write_bus_dc(args, var, pd)
+# gic.write_bus_dc(args, var, pd)
 # gic.write_line_dc(args, var, pd)
+gic.write_json(args, var, pd)
 
 
