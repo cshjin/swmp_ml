@@ -444,7 +444,9 @@ def process_gic_files(files, mpc, pre_transform=None, pre_filter=None, **kwargs)
             _h_data['bus'].x[idx, 1] = res_data['bus'][k]['qd'] * mpc['baseMVA']
 
         try:
-            y = [int(res_data['gmd_bus'][k]['gic_blocker']) for k in sorted(list(res_data['gmd_bus'].keys()))]
+            # NOTE: keys in res_data are string
+            sorted_keys = sorted(list(map(int, res_data['gmd_bus'].keys())))
+            y = [int(res_data['gmd_bus'][str(k)]['gic_blocker']) for k in sorted_keys]
             _h_data['y'] = torch.tensor(np.array(y).round(), dtype=torch.long)
         except Exception:
             print("Null in result file. infeasible solution.")

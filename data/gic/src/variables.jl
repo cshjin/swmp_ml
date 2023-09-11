@@ -1,3 +1,25 @@
+function variables_blockers_binary(m, var, pd)
+    var.z = Dict()
+    for gmdbus in pd.GMDBus
+        i = gmdbus.GMDbus_i
+        if gmdbus.g_gnd > 0.0 ## positive for substations
+            var.z[i] = @variable(m, base_name = "z[$(i)]", binary = true)
+        end
+    end
+end
+
+function variables_blockers_relax(m, var, pd)
+    var.z = Dict()
+    for gmdbus in pd.GMDBus
+        i = gmdbus.GMDbus_i
+        if gmdbus.g_gnd > 0.0 ## positive for substations
+            var.z[i] = @variable(m, base_name = "z[$(i)]", lower_bound = 0.0, upper_bound = 1.0)
+        end
+    end
+end
+
+
+
 function variables_generators(m, var, pd)
     ## generators in AC network
     var.fp = Dict()
@@ -9,7 +31,7 @@ function variables_generators(m, var, pd)
     end
 end
 
-function variables_buses_polar(m, var, pd)
+function variables_buses(m, var, pd)
     ## buses in AC network
     var.v = Dict()
     var.w = Dict()
@@ -32,44 +54,12 @@ function variables_buses_polar(m, var, pd)
     end
 end
 
-function variables_buses_rect(m, var, pd)
-    ## buses in AC network
-    var.wrr = Dict()
-    var.wii = Dict()
-    var.w = Dict()
-    var.vr = Dict()
-    var.vi = Dict()
-    var.lpp = Dict()
-    var.lpm = Dict()
-    var.lqp = Dict()
-    var.lqm = Dict()
-    var.dqloss = Dict()
-    for bus_1 in pd.Bus
-        i = bus_1.bus_i
-        var.wrr[i, i] = @variable(m, lower_bound = -bus_1.Vmax * bus_1.Vmax, upper_bound = bus_1.Vmax * bus_1.Vmax, base_name = "wrr[$(i), $(i)]")
-        var.wii[i, i] = @variable(m, lower_bound = -bus_1.Vmax * bus_1.Vmax, upper_bound = bus_1.Vmax * bus_1.Vmax, base_name = "wii[$(i), $(i)]")
-        var.w[i] = @variable(m, lower_bound = bus_1.wmin, upper_bound = bus_1.wmax, base_name = "w[$(i)]")
-
-        var.vr[i] = @variable(m, lower_bound = -bus_1.Vmax + 0.000000000000001, upper_bound = bus_1.Vmax, base_name = "vr[$(i)]")
-        var.vi[i] = @variable(m, lower_bound = -bus_1.Vmax, upper_bound = bus_1.Vmax, base_name = "vi[$(i)]")
-        var.lpp[i] = @variable(m, lower_bound = 0.0, base_name = "lpp[$(i)]")
-        var.lpm[i] = @variable(m, lower_bound = 0.0, base_name = "lpm[$(i)]")
-        var.lqp[i] = @variable(m, lower_bound = 0.0, base_name = "lqp[$(i)]")
-        var.lqm[i] = @variable(m, lower_bound = 0.0, base_name = "lqm[$(i)]")
-        var.dqloss[i] = @variable(m, lower_bound = 0.0, base_name = "dqloss[$(i)]")
-    end
-end
-
-function variables_lines_rect(m, var, pd)
+function variables_lines(m, var, pd)
     ## lines in AC network
-    var.wri = Dict()
     var.p = Dict()
     var.q = Dict()
     var.wc = Dict()
     var.ws = Dict()
-    var.Ieff = Dict()
-    var.Ieff_plus = Dict()
-    var.Ieff_minus = Dict()
     for line in pd.Line
         e = line.line_i
         i = line.fbus
@@ -83,47 +73,20 @@ function variables_lines_rect(m, var, pd)
 
         var.wc[e] = @variable(m, lower_bound = line.wcmin, upper_bound = line.wcmax, base_name = "wc[$(e)]")
         var.ws[e] = @variable(m, lower_bound = line.wsmin, upper_bound = line.wsmax, base_name = "ws[$(e)]")
-
-        var.Ieff[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
-        var.Ieff_plus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
-        var.Ieff_minus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
-
-        vmax_i = pd.Bus[pd.Bus_index2id[i]].Vmax
-        vmax_j = pd.Bus[pd.Bus_index2id[j]].Vmax
-
-        var.wrr[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wrr[$(i), $(j)]")
-        var.wii[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wii[$(i), $(j)]")
-        var.wri[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wri[$(i), $(j)]")
-        var.wri[j, i] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wri[$(j), $(i)]")
     end
 end
 
-function variables_lines_polar(m, var, pd)
-    ## lines in AC network
-    var.p = Dict()
-    var.q = Dict()
-    var.wc = Dict()
-    var.ws = Dict()
+function variables_effective_gic(m, var, pd)
     var.Ieff = Dict()
     var.Ieff_plus = Dict()
     var.Ieff_minus = Dict()
     for line in pd.Line
         e = line.line_i
-        i = line.fbus
-        j = line.tbus
-
-        var.p[e, i] = @variable(m, base_name = "p[$(e),$(i)]")
-        var.p[e, j] = @variable(m, base_name = "p[$(e),$(j)]")
-
-        var.q[e, i] = @variable(m, base_name = "q[$(e),$(i)]")
-        var.q[e, j] = @variable(m, base_name = "q[$(e),$(j)]")
-
-        var.wc[e] = @variable(m, lower_bound = line.wcmin, upper_bound = line.wcmax, base_name = "wc[$(e)]")
-        var.ws[e] = @variable(m, lower_bound = line.wsmin, upper_bound = line.wsmax, base_name = "ws[$(e)]")
-
-        var.Ieff[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
-        var.Ieff_plus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
-        var.Ieff_minus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
+        if line.config == "gwye-delta" || line.config == "gwye-gwye-auto" || line.config == "gwye-gwye"
+            var.Ieff[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff[$(e)]")
+            var.Ieff_plus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff_p[$(e)]")
+            var.Ieff_minus[e] = @variable(m, lower_bound = 0.0, upper_bound = pd.Immax, base_name = "Ieff_m[$(e)]")
+        end
     end
 end
 
@@ -131,18 +94,8 @@ function variables_buses_dc(m, var, pd)
     var.vd = Dict()
     for gmdbus in pd.GMDBus
         i = gmdbus.GMDbus_i
-        var.vd[i] = @variable(m, base_name = "vd[$(i)]")
+        var.vd[i] = @variable(m, base_name = "vd[$(i)]", upper_bound = pd.vdmax)
     end
-
-    if isempty(pd.z) == true
-        var.z = Dict()
-        for gmdbus in pd.GMDBus
-            i = gmdbus.GMDbus_i
-            var.z[i] = @variable(m, base_name = "z[$(i)]", binary = true)
-        end
-    end
-
-
 end
 
 function variables_lines_dc(m, var, pd)
@@ -153,22 +106,30 @@ function variables_lines_dc(m, var, pd)
     end
 end
 
-function variables_mccormick(m, var, pd)
-    var.u_mc = Dict()
+
+function variables_rect(m, var, pd)
+    var.wrr = Dict()
+    var.wii = Dict()
+    var.vr = Dict()
+    var.vi = Dict()
     for bus in pd.Bus
         i = bus.bus_i
-        for line in pd.Line
-            e = line.line_i
-            if line.type == "xf"
-                if i == line.fbus || i == line.tbus
-                    var.u_mc[i, e] = @variable(m, base_name = "u_mc[$(i),$(e)]")
-                end
-            end
-        end
+        var.wrr[i, i] = @variable(m, lower_bound = -bus.Vmax * bus.Vmax, upper_bound = bus.Vmax * bus.Vmax, base_name = "wrr[$(i), $(i)]")
+        var.wii[i, i] = @variable(m, lower_bound = -bus.Vmax * bus.Vmax, upper_bound = bus.Vmax * bus.Vmax, base_name = "wii[$(i), $(i)]")
+        var.vr[i] = @variable(m, lower_bound = -bus.Vmax + 1e-10, upper_bound = bus.Vmax, base_name = "vr[$(i)]")
+        var.vi[i] = @variable(m, lower_bound = -bus.Vmax, upper_bound = bus.Vmax, base_name = "vi[$(i)]")
     end
-    var.v_mc = Dict()
-    for gmdbus in pd.GMDBus
-        i = gmdbus.GMDbus_i
-        var.v_mc[i] = @variable(m, base_name = "v_mc[$(i)]")
+    var.wri = Dict()
+    for line in pd.Line
+        i = line.fbus
+        j = line.tbus
+
+        vmax_i = pd.Bus[pd.Bus_index2id[i]].Vmax
+        vmax_j = pd.Bus[pd.Bus_index2id[j]].Vmax
+
+        var.wrr[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wrr[$(i), $(j)]")
+        var.wii[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wii[$(i), $(j)]")
+        var.wri[i, j] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wri[$(i), $(j)]")
+        var.wri[j, i] = @variable(m, lower_bound = -vmax_i * vmax_j, upper_bound = vmax_i * vmax_j, base_name = "wri[$(j), $(i)]")
     end
 end

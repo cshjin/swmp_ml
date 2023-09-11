@@ -27,3 +27,6 @@ swmp_ml.wiki/**
 # test/**
 gmd-tut/**
 _backup/**
+data/**/*.json
+data/**/*.txt
+data/gic_bak/**
