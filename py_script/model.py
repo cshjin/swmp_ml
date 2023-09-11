@@ -226,14 +226,15 @@ class HeteroGNN(Module):
                 out = self.forward(data)[data.load_bus_mask]
                 loss = F.mse_loss(out, data['y'])
             else:
-                out = self.forward(data, "gmd_bus")
-                if _weight_arg and (len(data['y'].bincount()) > 1):
-                    weight = len(data['y']) / (2 * data['y'].bincount())
-                    loss = F.cross_entropy(out, data['y'], weight=weight)
+                out = self.forward(data, "gmd_bus")[data.substation_mask]
+                true_y = data['y'][data.substation_mask]
+                if _weight_arg and (len(true_y.bincount()) > 1):
+                    weight = len(true_y) / (2 * true_y.bincount())
+                    loss = F.cross_entropy(out, true_y, weight=weight)
                 else:
-                    loss = F.cross_entropy(out, data['y'])
+                    loss = F.cross_entropy(out, true_y)
 
-                y_true_batch = data['y'].detach().cpu().numpy()
+                y_true_batch = true_y.detach().cpu().numpy()
                 y_pred_batch = out.argmax(dim=1).detach().cpu().numpy()
                 all_true_labels.extend(y_true_batch)
                 all_pred_labels.extend(y_pred_batch)
