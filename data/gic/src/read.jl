@@ -2,16 +2,17 @@ function read_data(args, pd)
     ## initial
     pd.z = Dict()
 
-    ## parameter settings
-    pd.tot_num_blockers = args["tot_num_blockers"]
-    pd.penalty1 = 50
-    pd.baseMVA = 100
-    pd.vdmax = 7e5 ## 7e5        
+    ## parameter settings    
+    pd.penalty1 = 1e4
+    pd.penalty2 = 1e2
+    pd.baseMVA = 1e2
+    pd.vdmax = 5e3
     pd.mu_E = args["efield_mag"] * cos(args["efield_dir"] * pi / 180)
     pd.mu_N = args["efield_mag"] * sin(args["efield_dir"] * pi / 180)
 
     ## read
     Inputfilename = "../excel/$(args["network"]).xlsx"
+
     xf = XLSX.readxlsx(Inputfilename)
     Bus_input = xf["Bus"]
     Gen_input = xf["Generator"]
@@ -209,4 +210,65 @@ function read_data(args, pd)
             pd.Immax = tmp
         end
     end
+
+    ## an index set of substations
+    pd.substations = []
+
+    for gmdbus in pd.GMDBus
+        i = gmdbus.GMDbus_i
+        if gmdbus.g_gnd > 0.0 ## positive for substations
+            push!(pd.substations, i)
+        end
+    end
+    ## 
+    gmd_line_f = Dict()
+    gmd_line_t = Dict()
+    for gmdline in pd.GMDLine
+        e = gmdline.GMDline_i
+        f = gmdline.fbusd
+        t = gmdline.tbusd
+        gmd_line_f[e] = f
+        gmd_line_t[e] = t
+    end
+
+    ##
+    pd.gmd_line_substation = Dict()
+    for line in pd.Line
+        if line.type == "xf"
+            if line.config == "gwye-gwye"
+                e_h = line.gmd_br_hi
+                e_l = line.gmd_br_lo
+                if gmd_line_f[e_h] in pd.substations
+                    pd.gmd_line_substation[(e_h, e_l)] = gmd_line_f[e_h]
+                end
+                if gmd_line_t[e_h] in pd.substations
+                    pd.gmd_line_substation[(e_h, e_l)] = gmd_line_t[e_h]
+                end
+                if gmd_line_f[e_l] in pd.substations
+                    pd.gmd_line_substation[(e_h, e_l)] = gmd_line_f[e_l]
+                end
+                if gmd_line_t[e_l] in pd.substations
+                    pd.gmd_line_substation[(e_h, e_l)] = gmd_line_t[e_l]
+                end
+            end
+            if line.config == "gwye-gwye-auto"
+                e_s = line.gmd_br_series
+                e_c = line.gmd_br_common
+                if gmd_line_f[e_s] in pd.substations
+                    pd.gmd_line_substation[(e_s, e_c)] = gmd_line_f[e_s]
+                end
+                if gmd_line_t[e_s] in pd.substations
+                    pd.gmd_line_substation[(e_s, e_c)] = gmd_line_t[e_s]
+                end
+                if gmd_line_f[e_c] in pd.substations
+                    pd.gmd_line_substation[(e_s, e_c)] = gmd_line_f[e_c]
+                end
+                if gmd_line_t[e_c] in pd.substations
+                    pd.gmd_line_substation[(e_s, e_c)] = gmd_line_t[e_c]
+                end
+            end
+        end
+    end
+
+
 end

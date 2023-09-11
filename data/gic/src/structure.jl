@@ -113,6 +113,9 @@ mutable struct PowerData
     Angle_Test::Vector{}
     tot_num_blockers::Int64
     z::Dict{}
+    trust_consensus::Dict{}
+    gmd_line_substation::Dict{}
+    substations::Vector{}
     PowerData() = new()
 end
 
@@ -133,13 +136,14 @@ mutable struct Variables
     wc::Dict{}
     ws::Dict{}
     s::Dict{}
-    Ieff::Dict{}
+    Ieff_ac::Dict{}
     vd::Dict{}
     Id::Dict{}
     ud::Dict{}
     z::Dict{}
     u_mc::Dict{}
     v_mc::Dict{}
+    Ieff::Dict{}
     Ieff_plus::Dict{}
     Ieff_minus::Dict{}
     vr::Dict{}
@@ -147,6 +151,7 @@ mutable struct Variables
     wrr::Dict{}
     wri::Dict{}
     wii::Dict{}
+    x::Dict{}
     Variables() = new()
 end
 

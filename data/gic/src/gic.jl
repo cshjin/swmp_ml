@@ -1,16 +1,17 @@
 module gic
-    using XLSX ## read data
-    using JuMP  ## construct mathematical models
-    using Ipopt ## solve nonlinear programs
+using XLSX ## read data
+using JuMP  ## construct mathematical models
+using Ipopt ## solve nonlinear programs
+using SCIP
+using DataFrames ## write solution
+using Printf
+using JSON
 
-    using DataFrames ## write solution
-    using Printf
-    using JSON
-
-    include("read.jl")
-    include("log.jl")
-    include("structure.jl")
-    include("models.jl")
-    include("heuristics.jl")
-
+include("read.jl")
+include("log.jl")
+include("structure.jl")
+include("models.jl")
+include("stochastic.jl")
+include("admm.jl")
+include("trust.jl")
 end

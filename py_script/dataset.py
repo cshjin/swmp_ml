@@ -88,7 +88,7 @@ class GMD(InMemoryDataset):
         else:
             # classification problem
             curdir = osp.dirname(osp.realpath(__file__))
-            raw_path = osp.join(curdir, "..", "data", "gic_v2", "results", self.name)
+            raw_path = osp.join(curdir, "..", "data", "gic", "results", self.name)
             raw_files = glob(f"{raw_path}/*_{self.name}_*.json")
         return raw_files
 

@@ -2,124 +2,87 @@ include("variables.jl")
 include("objective.jl")
 include("constraints.jl")
 
-
-function construct_gic_blockers_ac_polar_model(m, var, pd)
+function get_invariant_model(args, m, var, pd)
 
     variables_generators(m, var, pd)
-    variables_buses_polar(m, var, pd) ##
-    variables_lines_polar(m, var, pd) ##
+    variables_buses(m, var, pd)
+    variables_lines(m, var, pd)
+    variables_effective_gic(m, var, pd)
     variables_buses_dc(m, var, pd)
     variables_lines_dc(m, var, pd)
 
-    construct_objective(m, var, pd)
+    if args["model"] == "ac_rect" || args["model"] == "soc_rect"
+        variables_rect(m, var, pd)
+    end
 
     constraints_power_balance(m, var, pd)
     constraints_power_flow(m, var, pd)
-    constraints_angle_difference_polar(m, var, pd) ##
+    constraints_angle_difference(m, var, pd)
     constraints_thermal_limit(m, var, pd)
-
-    constraints_nonlinear_polar(m, var, pd) ##
-
+    constraints_dqloss(m, var, pd)
     constraints_gic(m, var, pd)
+    constraints_effective_gic_complementarity(m, var, pd)
 
-    constraints_gic_balance_with_blockers_nonlinear(m, var, pd)
-    constraints_dqloss_nonlinear_polar(m, var, pd) ##
-    constraints_effective_gic_absolute_reform(m, var, pd)
+    if args["model"] == "ac_polar"
+        constraints_ac_polar(m, var, pd)
+    end
+    if args["model"] == "soc_polar"
+        constraints_soc_polar(m, var, pd)
+    end
+    if args["model"] == "ac_rect"
+        constraints_ac_rect(m, var, pd)
+    end
+    if args["model"] == "soc_rect"
+        constraints_soc_rect(m, var, pd)
+    end
 
     return m
 end
 
-function construct_gic_blockers_ac_rect_model(m, var, pd)
+function add_blockers_objective_model_minlp(args, m, var, pd)
+    variables_blockers_binary(m, var, pd)
+    constraints_gic_balance_with_blockers_var(m, var, pd)
+    constraints_blockers(args, m, var, pd)
+    construct_objective(m, var, pd)
+    return m
+end
 
-    variables_generators(m, var, pd)
-    variables_buses_rect(m, var, pd) ##
-    variables_lines_rect(m, var, pd) ##
-    variables_buses_dc(m, var, pd)
-    variables_lines_dc(m, var, pd)
 
+function add_blockers_model_nlp(m, var, pd)
+
+    m, c1 = constraints_gic_balance_with_blockers_fix(m, var, pd)
     construct_objective(m, var, pd)
 
-    constraints_power_balance(m, var, pd)
-    constraints_power_flow(m, var, pd)
-    constraints_angle_difference_rect(m, var, pd) ##
-    constraints_thermal_limit(m, var, pd)
+    return m, c1
+end
 
-    constraints_nonlinear_rect(m, var, pd) ##
+function remove_blockers_model_nlp(m, c1)
 
-
-    constraints_gic(m, var, pd)
-    constraints_gic_balance_with_blockers_nonlinear(m, var, pd)
-    constraints_dqloss_nonlinear_rect(m, var, pd) ##
-    constraints_effective_gic_absolute_reform(m, var, pd)
+    for (i, _) in c1
+        delete(m, c1[i])
+    end
 
     return m
 end
 
-function construct_gic_blockers_soc_polar_model(m, var, pd)
-
-    variables_generators(m, var, pd)
-    variables_buses_polar(m, var, pd) ##
-    variables_lines_polar(m, var, pd) ##
-    variables_buses_dc(m, var, pd)
-    variables_lines_dc(m, var, pd)
-
+function add_blockers_model_trust(m, var, pd)
+    variables_blockers_relax(m, var, pd)
+    m, c1 = constraints_gic_balance_with_blockers_trust(m, var, pd)
     construct_objective(m, var, pd)
 
-    constraints_power_balance(m, var, pd)
-    constraints_power_flow(m, var, pd)
-    # constraints_angle_difference_polar(m, var, pd) ## included in constraints_soc_polar
-    constraints_thermal_limit(m, var, pd)
+    return m, c1
+end
 
-    constraints_soc_polar(m, var, pd) ##
+function remove_blockers_model_trust(m, c1, pd)
 
-    variables_mccormick(m, var, pd)
+    for (i, _) in c1
+        delete(m, c1[i])
+    end
 
-    constraints_gic(m, var, pd)
-
-    ## nonlinear GIC model
-    constraints_gic_balance_with_blockers_nonlinear(m, var, pd)
-    constraints_dqloss_nonlinear_polar(m, var, pd) ##
-    constraints_effective_gic_absolute_reform(m, var, pd)
-
-    ## convex relaxation of the GIC model
-    # constraints_gic_balance_with_blockers_mccorkmick(m, var, pd)
-    # constraints_dqloss_mccormick_polar(m, var, pd) ##
-    # constraints_effective_gic_relaxation(m, var, pd) 
+    for (i, _) in pd.trust_consensus
+        delete(m, pd.trust_consensus[i])
+    end
 
     return m
 end
 
-function construct_gic_blockers_soc_rect_model(m, var, pd)
-
-    variables_generators(m, var, pd)
-    variables_buses_rect(m, var, pd) ##
-    variables_lines_rect(m, var, pd) ##
-    variables_buses_dc(m, var, pd)
-    variables_lines_dc(m, var, pd)
-
-    construct_objective(m, var, pd)
-
-    constraints_power_balance(m, var, pd)
-    constraints_power_flow(m, var, pd)
-    constraints_angle_difference_rect(m, var, pd) ##
-    constraints_thermal_limit(m, var, pd)
-
-    constraints_soc_rect(m, var, pd) ##
-
-    # variables_mccormick(m, var, pd)
-
-    constraints_gic(m, var, pd)
-
-
-    ## nonlinear GIC model
-    constraints_gic_balance_with_blockers_nonlinear(m, var, pd)
-    constraints_dqloss_nonlinear_rect(m, var, pd) ##
-    constraints_effective_gic_absolute_reform(m, var, pd)
-
-    ## convex relaxation of the GIC model
-    # constraints_gic_balance_with_blockers_mccorkmick(m, var, pd)
-    # constraints_dqloss_nonlinear_rect(m, var, pd) ##
-    # constraints_effective_gic_relaxation(m, var, pd) 
-
-    return m
-end
