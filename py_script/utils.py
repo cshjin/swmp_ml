@@ -233,7 +233,7 @@ def process_args():
                         help="hidden dimension in HGT")
     parser.add_argument("--num_heads", type=int, default=2,
                         help="number of heads in HGT")
-    parser.add_argument("--num_conv_layers", type=int, default=1,
+    parser.add_argument("--num_conv_layers", type=int, default=4,
                         help="number of layers in HGT")
     parser.add_argument("--num_mlp_layers", type=int, default=4,
                         help="number of layers in MLP")
@@ -259,6 +259,8 @@ def process_args():
                         help="use weighted loss.")
     parser.add_argument("--log", action="store_true",
                         help="logging the training process")
+    parser.add_argument("--verbose", action="store_true",
+                        help="print the training process")
     parser.add_argument("--setting", type=str, default="gic", choices=["mld", "gic"],
                         help="Specify the problem setting, either `mld` or `gic`")
     args = vars(parser.parse_args())
