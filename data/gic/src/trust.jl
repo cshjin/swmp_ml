@@ -140,6 +140,7 @@ function write_output_trust(args)
     return res_io
 
 end
+
 function log_title_trust(res_io)
     @printf(res_io,
         "%10s  %10s  %10s  %10s  %10s  %10s  %10s  %10s   \n",
@@ -167,6 +168,7 @@ function log_title_trust(res_io)
     )
 
 end
+
 function log_iteration_trust(res_io, args)
 
     @printf(res_io,

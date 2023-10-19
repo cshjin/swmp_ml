@@ -137,7 +137,6 @@ function first_block_closed_form_no_budget(zc, λ, ρ, nz)
     return z
 end
 
-
 function second_block_gic(pd, m_dc, var, λ, μ, zb, Iac, ρ, nz, nc)
 
     obj_curr = JuMP.objective_function(m_dc)
@@ -294,7 +293,6 @@ function construct_third_block_opf_model(args, var, pd)
     return m
 end
 
-
 function write_output_admm(args)
 
     dir = args["output_dir_name"]
@@ -309,6 +307,7 @@ function write_output_admm(args)
     return res_io
 
 end
+
 function log_title_admm(res_io)
     @printf(res_io,
         "%10s  %10s  %10s  %10s  %10s  %10s  %10s  %10s \n",

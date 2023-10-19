@@ -119,7 +119,6 @@ mutable struct PowerData
     PowerData() = new()
 end
 
-
 mutable struct Variables
     fp::Dict{}
     fq::Dict{}
