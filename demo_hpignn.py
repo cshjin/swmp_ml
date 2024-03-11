@@ -69,10 +69,10 @@ data_loader_test = DataLoader(dataset=dataset_test,
 # %%
 
 ''' train the GNN model to predict the gic blockers'''
-args = {"hidden_size": 64,
+args = {"hidden_size": 128,
         "num_mlp_layers": 6,
         "num_conv_layers": 8,
-        "num_heads": 2,
+        "num_heads": 4,
         "dropout": 0.5,
         "conv_type": "han",
         "activation": "relu",
@@ -129,3 +129,13 @@ model.eval_single(dataset_test[0])
 #                                 in_fn="test/data/epri21.m",
 #                                 out_fn=f"epri21_pred_{test_idx:02d}.m")
 # %%
+
+
+# fig = plt.figure(figsize=(4,3), tight_layout=True, dpi=600)
+# plt.plot([x+.03 for x in res[0]], label="Accuracy")
+# plt.plot([x+.03 for x in res[1]], label="ROC-AUC")
+# # plt.yscale("log")
+# # plt.ylabel("Loss")
+# plt.legend()
+# plt.xlabel("Epoch")
+# plt.savefig("training_epri21.pdf")

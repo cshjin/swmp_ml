@@ -30,3 +30,13 @@ _backup/**
 data/**/*.json
 data/**/*.txt
 data/gic_bak/**
+**ACTIVSg*
+**activsg*
+test/**
+hps/**
+_debug.py
+visualization/** 
+*.pkl
+*.txt
+TODO.md
+Notes.md
