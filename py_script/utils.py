@@ -27,6 +27,7 @@ HEADERS = {
 }
 
 
+# ! DEBUG for ACTIVESg2000 case
 def read_mpc(fn):
     r""" Read the MPC MATPOWER file ".m" into dictionary.
     Args:
@@ -42,11 +43,25 @@ def read_mpc(fn):
     with open(fn, "r") as f:
         string = f.read()
 
+    lines = []
+    with open(fn, "r") as f:
+        for line in f:
+            lines.append(line)
+
+    # for match in matches:
+    #     line_number = string.count('\n', 0, string.index(match))
+    #     if line_number > 0:
+    #         previous_line = lines[line_number - 1]
+    #         print(previous_line)
     # find match with `mpc.***`
     matches = re.findall(r"mpc\.\w+", string)
     for attr in matches:
         key = attr.split(".")[1]
 
+        # line_number = string.count('\n', 0, string.index(attr))
+        # if line_number > 0:
+        #     header_line = lines[line_number - 1]
+        #     print(header_line)
         # process with different patterns
         if key in ['version', 'baseMVA', 'time_elapsed']:
             # the key with only one value
@@ -57,7 +72,12 @@ def read_mpc(fn):
             #     value = float(value)
             mpc[key] = value
 
-        elif key in ['gen', 'gencost', 'bus', 'branch']:
+        elif key in ['gen', 'bus', 'branch']:
+            # NOTE: remove 'gencost'
+            line_number = string.count('\n', 0, string.index(attr))
+            if line_number > 0:
+                header_line = lines[line_number - 1]
+                header = header_line.strip().split("%")[-1].strip().split()
             # the keys with standard MATPOWER data
             pattern = rf'mpc\.{key}\s*=\s*\[[\n]?(?P<data>.*?)[\n]?\];'
             match = re.search(pattern, string, re.DOTALL)
@@ -66,7 +86,13 @@ def read_mpc(fn):
             df = pd.read_csv(data, sep="\t", header=None)
             # drop the nan caused by tab splitter
             df = df.drop(columns=[0])
-            df.columns = HEADERS[key]
+            # if key == 'bus':
+            #     df = df.dropna(axis=1, how='all')
+            # if key == 'gen':
+            #     df.fillna(0, inplace=True)
+            len_cols = min(len(df.columns), len(header))
+            df = df.iloc[:, :len_cols]
+            df.columns = header
             mpc[key] = df
 
         elif key in ['thermal_cap_x0', 'thermal_cap_y0']:
@@ -90,8 +116,12 @@ def read_mpc(fn):
             # mpc[key] = df.to_numpy()
 
         elif key in ['gmd_bus', 'gmd_branch', 'branch_gmd', 'branch_thermal', 'bus_gmd']:
+            line_number = string.count('\n', 0, string.index(attr))
+            if line_number > 0:
+                header_line = lines[line_number - 1]
+                header = header_line.strip().split("%")[-1].strip().split()
             # the keys with customized GMD data
-            pattern = r'mpc\.{}\s*=\s*[\n]?(?P<data>.*?)[\n]?;'.format(key)
+            pattern = rf'mpc\.{key}\s*=\s*[\n]?(?P<data>.*?)[\n]?;'
             match = re.search(pattern, string, re.DOTALL)
 
             data = StringIO(match.groupdict()['data'][2:-2])
@@ -99,7 +129,9 @@ def read_mpc(fn):
             df = pd.read_csv(data, sep="\t", header=None, engine="python")
             # drop the nan caused by tab splitter
             df = df.drop(columns=[0])
-            df.columns = HEADERS[key]
+            len_cols = min(len(df.columns), len(header))
+            df = df.iloc[:, :len_cols]
+            df.columns = header
             mpc[key] = df
     return mpc
 
@@ -122,7 +154,8 @@ def preprocess_mpc(mpc):
 
     # convert to float
     for key in ['baseMVA', 'time_elapsed']:
-        mpc[key] = float(mpc[key])
+        if key in mpc:
+            mpc[key] = float(mpc[key])
 
     ''' process mpc['bus'] '''
     # convert `type` to one-hot encoder
@@ -140,8 +173,14 @@ def preprocess_mpc(mpc):
 
     ''' process mpc['branch'] '''
     # replace `fbus` and `tbus` with `bus_idx`
-    mpc['branch'].fbus = mpc['branch'].fbus.replace(bus_id_idx)
-    mpc['branch'].tbus = mpc['branch'].tbus.replace(bus_id_idx)
+    if "fbus" in mpc['branch'].columns:
+        mpc['branch'].fbus = mpc['branch'].fbus.replace(bus_id_idx)
+        mpc['branch'].tbus = mpc['branch'].tbus.replace(bus_id_idx)
+    # NOTE: ACTIVSg cases has no f_bus and t_bus
+    if "f_bus" in mpc['branch'].columns:
+        mpc['branch'].f_bus = mpc['branch'].f_bus.replace(bus_id_idx)
+        mpc['branch'].t_bus = mpc['branch'].t_bus.replace(bus_id_idx)
+        mpc['branch'] = mpc['branch'].rename(columns={'f_bus': 'fbus', 't_bus': 'tbus'})
     # build a dict to map `branch_i` (not in the table) to index: (key: branch_i, value: index)
     branch_id_idx = {idx + 1: idx for idx, branch_i in enumerate(mpc['branch'].index)}
 
@@ -159,37 +198,39 @@ def preprocess_mpc(mpc):
     mpc['gmd_branch'].parent_index = mpc['gmd_branch'].parent_index.replace(branch_id_idx)
 
     ''' process mpc['branch_gmd'] '''
-    # replace `hi_bus` and `lo_bus` with `bus_idx`
-    mpc['branch_gmd'].hi_bus = mpc['branch_gmd'].hi_bus.replace(bus_id_idx)
-    mpc['branch_gmd'].lo_bus = mpc['branch_gmd'].lo_bus.replace(bus_id_idx)
-    # convert `type` to one-hot encoder
-    branch_gmd_type = {"'xfmr'": 0,
-                       "'transformer'": 0,
-                       "'line'": 1,
-                       "'series_cap'": 2}
+    # NOTE: ACTIVSg cases has no branch_gmd
+    if "branch_gmd" in mpc:
+        # replace `hi_bus` and `lo_bus` with `bus_idx`
+        mpc['branch_gmd'].hi_bus = mpc['branch_gmd'].hi_bus.replace(bus_id_idx)
+        mpc['branch_gmd'].lo_bus = mpc['branch_gmd'].lo_bus.replace(bus_id_idx)
+        # convert `type` to one-hot encoder
+        branch_gmd_type = {"'xfmr'": 0,
+                           "'transformer'": 0,
+                           "'line'": 1,
+                           "'series_cap'": 2}
 
-    mpc['branch_gmd'].type = mpc['branch_gmd'].type.replace(branch_gmd_type)
-    _series = mpc['branch_gmd'].type.astype("category").cat.set_categories(range(3))
-    branch_gmd_type_encoder = pd.get_dummies(_series).add_prefix('type_')
-    mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_type_encoder], axis=1)
-    # drop `type` column
-    mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type'], axis=1)
-    # convert `config` to one-hot encoder
-    branch_gmd_config = {"'none'": 0,
-                         "'delta-delta'": 1,
-                         "'delta-wye'": 2,
-                         "'wye-delta'": 3,
-                         "'wye-wye'": 4,
-                         "'delta-gwye'": 5,
-                         "'gwye-delta'": 6,
-                         "'gwye-gwye'": 7,
-                         "'gwye-gwye-auto'": 8}
-    mpc['branch_gmd'].config = mpc['branch_gmd'].config.replace(branch_gmd_config)
-    _series = mpc['branch_gmd'].config.astype("category").cat.set_categories(range(9))
-    branch_gmd_config_encoder = pd.get_dummies(_series).add_prefix('config_')
-    mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_config_encoder], axis=1)
-    # drop `config` column
-    mpc['branch_gmd'] = mpc['branch_gmd'].drop(['config'], axis=1)
+        mpc['branch_gmd'].type = mpc['branch_gmd'].type.replace(branch_gmd_type)
+        _series = mpc['branch_gmd'].type.astype("category").cat.set_categories(range(3))
+        branch_gmd_type_encoder = pd.get_dummies(_series).add_prefix('type_')
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_type_encoder], axis=1)
+        # drop `type` column
+        mpc['branch_gmd'] = mpc['branch_gmd'].drop(['type'], axis=1)
+        # convert `config` to one-hot encoder
+        branch_gmd_config = {"'none'": 0,
+                             "'delta-delta'": 1,
+                             "'delta-wye'": 2,
+                             "'wye-delta'": 3,
+                             "'wye-wye'": 4,
+                             "'delta-gwye'": 5,
+                             "'gwye-delta'": 6,
+                             "'gwye-gwye'": 7,
+                             "'gwye-gwye-auto'": 8}
+        mpc['branch_gmd'].config = mpc['branch_gmd'].config.replace(branch_gmd_config)
+        _series = mpc['branch_gmd'].config.astype("category").cat.set_categories(range(9))
+        branch_gmd_config_encoder = pd.get_dummies(_series).add_prefix('config_')
+        mpc['branch_gmd'] = pd.concat([mpc['branch_gmd'], branch_gmd_config_encoder], axis=1)
+        # drop `config` column
+        mpc['branch_gmd'] = mpc['branch_gmd'].drop(['config'], axis=1)
 
     return mpc
 

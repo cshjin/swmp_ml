@@ -172,7 +172,6 @@ class MultiGMD(InMemoryDataset):
     def process(self):
         """ Process multiple grids into single dataset in PyG
         """
-        # DEBUG: build multi_gmd data_list with diff samples from diff grids
         data_list = []
         dir_path = osp.abspath(self.root)
         # for name in self.names:
@@ -265,7 +264,7 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
         mpc['bus'] = pd.concat([mpc['bus'], pd.DataFrame(
             np.eye(4)[mpc['bus'].type.to_numpy(dtype=int)]).add_prefix("t")], axis=1)
         mpc['bus'] = mpc['bus'].drop(['type'], axis=1)
-        h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+        h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
 
         # Store the number of nodes to use as the input into the forward function. Don't use num_nodes because
         # it's a PyTorch variable that stores the total number of nodes, regardless of the type.
@@ -276,7 +275,7 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
 
         ''' node_type: gen '''
         # creating new virtual link between bus and gen to handle multiple generators
-        h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+        h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
 
         ''' edge_type (virtual): gen--conn--bus '''
         n_gen = mpc['gen'].shape[0]
@@ -301,7 +300,7 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
             edges[i] = [bus_id_idx[mpc['branch'].fbus[i]], bus_id_idx[mpc['branch'].tbus[i]]]
         h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
         h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
-            mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+            mpc['branch'].iloc[:, 2:].to_numpy().astype('float32'), dtype=torch.float32)
 
         ''' edge_type: bus--branch_gmd--bus '''
 
@@ -320,7 +319,7 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
             edges[i] = [bus_id_idx[mpc['branch_gmd'].hi_bus[i]], bus_id_idx[mpc['branch_gmd'].lo_bus[i]]]
         h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(edges.T, dtype=torch.long)
         h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
-            mpc['branch_gmd'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+            mpc['branch_gmd'].iloc[:, 2:].to_numpy().astype('float32'), dtype=torch.float32)
 
         pos = mpc['bus_gmd'].to_numpy()
         pos = torch.tensor(pos, dtype=torch.float32)
@@ -328,7 +327,8 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
         ''' DC network with GMD data '''
         ''' node_type: gmd_bus '''
         # NOTE: only read GMD from conf file
-        h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
+        h_data['gmd_bus'].x = torch.tensor(
+            mpc['gmd_bus'].iloc[:, 1:3].to_numpy().astype('float32'), dtype=torch.float32)
 
         # NOTE: gic blocker bus mask, those are candidate gmd buses for gic blockers
         n_gmd_bus = mpc['gmd_bus'].shape[0]
@@ -341,7 +341,7 @@ def process_mld_files(files, name, ori_mpc, problem="reg", pre_transform=None, p
         # gmd edge index
         h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_edges.T - 1, dtype=torch.long)
         h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
-            mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
+            mpc['gmd_branch'].iloc[:, 3:-1].to_numpy().astype('float32'), dtype=torch.float32)
 
         ''' edge_type (virtual): gmd_bus--attach--bus '''
         n_gmd_bus = mpc['gmd_bus'].shape[0]
@@ -364,12 +364,12 @@ def process_gic_files(files, mpc, pre_transform=None, pre_filter=None, **kwargs)
 
     """ AC Network """
     ''' node_type: bus '''
-    h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+    h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
     # store the column names
     h_data['bus'].x_names = mpc['bus'].columns[1:].tolist()
 
     ''' node_type: gen '''
-    h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+    h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
 
     ''' edge_type (virtual): gen--conn--bus '''
     n_gen = mpc['gen'].shape[0]
@@ -387,29 +387,43 @@ def process_gic_files(files, mpc, pre_transform=None, pre_filter=None, **kwargs)
     ''' edge_type: bus--branch--bus '''
     n_branch = mpc['branch'].shape[0]
     branch_edges = np.zeros((n_branch, 2))
-    for i, row in mpc['branch'].iterrows():
-        branch_edges[i] = [row['fbus'], row['tbus']]
+    if 'fbus' in mpc['branch'].columns and 'tbus' in mpc['branch'].columns:
+        for i, row in mpc['branch'].iterrows():
+            branch_edges[i] = [row['fbus'], row['tbus']]
+    else:
+        # NOTE: for ACTIVSg cases
+        for i, row in mpc['branch'].iterrows():
+            branch_edges[i] = [row['f_bus'], row['t_bus']]
+    # for i, row in mpc['branch'].iterrows():
+    #     branch_edges[i] = [row['fbus'], row['tbus']]
     h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(branch_edges.T, dtype=torch.long)
-    h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+    h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(mpc['branch'].iloc[:, 2:].to_numpy().astype('float'),
+                                                            dtype=torch.float32)
     h_data['bus', 'branch', 'bus'].edge_attr_names = mpc['branch'].columns[2:].tolist()
 
     ''' edge_type: bus--branch_gmd--bus '''
-    n_branch_gmd = mpc['branch_gmd'].shape[0]
-    branch_gmd_edges = np.zeros((n_branch_gmd, 2))
-    for i, row in mpc['branch_gmd'].iterrows():
-        branch_gmd_edges[i] = [row['hi_bus'], row['lo_bus']]
-    h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(branch_gmd_edges.T, dtype=torch.long)
-    h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
-        mpc['branch_gmd'].iloc[:, 4:].to_numpy(), dtype=torch.float32)
-    h_data['bus', 'branch_gmd', 'bus'].edge_attr_names = mpc['branch_gmd'].columns[4:].tolist()
-
+    if 'branch_gmd' in mpc:
+        n_branch_gmd = mpc['branch_gmd'].shape[0]
+        branch_gmd_edges = np.zeros((n_branch_gmd, 2))
+        for i, row in mpc['branch_gmd'].iterrows():
+            branch_gmd_edges[i] = [row['hi_bus'], row['lo_bus']]
+        h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(branch_gmd_edges.T, dtype=torch.long)
+        h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
+            mpc['branch_gmd'].iloc[:, 4:].to_numpy().astype('float32'), dtype=torch.float32)
+        h_data['bus', 'branch_gmd', 'bus'].edge_attr_names = mpc['branch_gmd'].columns[4:].tolist()
+    else:
+        # NOTE: for ACTIVSg cases
+        pass
     # bus geo data
     # NOTE: remove the type bus_gmd
-    # h_data['bus_gmd'].x = torch.tensor(mpc['bus_gmd'].to_numpy(), dtype=torch.float32)
+    # h_data['bus_gmd'].x = torch.tensor(mpc['bus_gmd'].to_numpy().astype('float32'), dtype=torch.float32)
 
     """ DC Network """
     ''' node_type: gmd_bus '''
-    h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
+    # h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy().astype('float32'), dtype=torch.float32)
+    # NOTE: for ACTIVSg cases
+    h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'][['status', 'g_gnd']].to_numpy().astype('float32'),
+                                       dtype=torch.float32)
 
     n_gmd_bus = mpc['gmd_bus'].shape[0]
     h_data['substation_mask'] = torch.zeros(n_gmd_bus).bool()
@@ -430,7 +444,7 @@ def process_gic_files(files, mpc, pre_transform=None, pre_filter=None, **kwargs)
         gmd_branch_edges[i] = [row['f_bus'], row['t_bus']]
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_branch_edges.T, dtype=torch.long)
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
-        mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
+        mpc['gmd_branch'][['br_status', 'br_r', 'br_v', 'len_km']].to_numpy().astype('float32'), dtype=torch.float32)
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr_names = mpc['gmd_branch'].columns[3:-1].tolist()
 
     # Modify the data based on simulations (x, y)
@@ -472,12 +486,12 @@ def convert_hdata(mpc):
 
     """ AC Network """
     ''' node_type: bus '''
-    h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+    h_data['bus'].x = torch.tensor(mpc['bus'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
     # store the column names
     h_data['bus'].x_names = mpc['bus'].columns[1:].tolist()
 
     ''' node_type: gen '''
-    h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy(), dtype=torch.float32)
+    h_data['gen'].x = torch.tensor(mpc['gen'].iloc[:, 1:].to_numpy().astype('float32'), dtype=torch.float32)
 
     ''' edge_type (virtual): gen--conn--bus '''
     n_gen = mpc['gen'].shape[0]
@@ -498,7 +512,8 @@ def convert_hdata(mpc):
     for i, row in mpc['branch'].iterrows():
         branch_edges[i] = [row['fbus'], row['tbus']]
     h_data['bus', 'branch', 'bus'].edge_index = torch.tensor(branch_edges.T, dtype=torch.long)
-    h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(mpc['branch'].iloc[:, 2:].to_numpy(), dtype=torch.float32)
+    h_data['bus', 'branch', 'bus'].edge_attr = torch.tensor(
+        mpc['branch'].iloc[:, 2:].to_numpy().astype('float32'), dtype=torch.float32)
     h_data['bus', 'branch', 'bus'].edge_attr_names = mpc['branch'].columns[2:].tolist()
 
     ''' edge_type: bus--branch_gmd--bus '''
@@ -508,15 +523,15 @@ def convert_hdata(mpc):
         branch_gmd_edges[i] = [row['hi_bus'], row['lo_bus']]
     h_data['bus', 'branch_gmd', 'bus'].edge_index = torch.tensor(branch_gmd_edges.T, dtype=torch.long)
     h_data['bus', 'branch_gmd', 'bus'].edge_attr = torch.tensor(
-        mpc['branch_gmd'].iloc[:, 4:].to_numpy(), dtype=torch.float32)
+        mpc['branch_gmd'].iloc[:, 4:].to_numpy().astype('float32'), dtype=torch.float32)
     h_data['bus', 'branch_gmd', 'bus'].edge_attr_names = mpc['branch_gmd'].columns[4:].tolist()
 
     # bus geo data
-    h_data['bus_gmd'].x = torch.tensor(mpc['bus_gmd'].to_numpy(), dtype=torch.float32)
+    h_data['bus_gmd'].x = torch.tensor(mpc['bus_gmd'].to_numpy().astype('float32'), dtype=torch.float32)
 
     """ DC Network """
     ''' node_type: gmd_bus '''
-    h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy(), dtype=torch.float32)
+    h_data['gmd_bus'].x = torch.tensor(mpc['gmd_bus'].iloc[:, 1:3].to_numpy().astype('float32'), dtype=torch.float32)
 
     n_gmd_bus = mpc['gmd_bus'].shape[0]
     h_data['substation_mask'] = torch.zeros(n_gmd_bus).bool()
@@ -537,7 +552,7 @@ def convert_hdata(mpc):
         gmd_branch_edges[i] = [row['f_bus'], row['t_bus']]
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_index = torch.tensor(gmd_branch_edges.T, dtype=torch.long)
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr = torch.tensor(
-        mpc['gmd_branch'].iloc[:, 3:-1].to_numpy(), dtype=torch.float32)
+        mpc['gmd_branch'].iloc[:, 3:-1].to_numpy().astype('float32'), dtype=torch.float32)
     h_data['gmd_bus', 'gmd_branch', 'gmd_bus'].edge_attr_names = mpc['gmd_branch'].columns[3:-1].tolist()
 
     return h_data
