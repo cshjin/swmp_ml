@@ -12,6 +12,7 @@ function construct_objective(m, var, pd)
     @objective(m, Min, OBJ)
 end
 
+
 function construct_objective_var(m, var, pd)
     ## Objective function
     OBJ = 0.0

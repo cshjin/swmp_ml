@@ -29,9 +29,7 @@ def func(iter):
     --efield_mag {args['efield_mag']} \\
     --efield_dir {args['efield_dir']} \\
     --run_id {iter} > /dev/null 2>&1"""
-    # print(cmd)
     os.system(cmd)
 
 
-# TODO: add perturbations to efield_mag and efield_dir  -- add efiled_mag and efield_dir to the command line
 Parallel(n_jobs=-1, prefer="threads")(delayed(func)(iter) for iter in range(1, args["nums"] + 1))

@@ -13,7 +13,8 @@ data/
 └── matpower
 ```
 
-* `excel` is the folder for `EXCEL` data format. __Note__: current heuristic solvers only support `EXCEL` data format.
+* `excel` is the folder for `EXCEL` data format. 
+  * __Note__: current heuristic solvers only support `EXCEL` data format.
 * `gic` is the folder for `GIC` problem, including the `results` from heuristic solvers and `src` code for heuristic solvers.
 * `matpower` is the folder for `MATPOWER` data format. This is the folder for processing `PyG` dataset.
 
@@ -29,15 +30,15 @@ julia install.jl
 * Run the GIC blocker problem by running the following command under the `data/gic` folder:
 
 ```bash
-julia gic_opf_blockers.jl
+julia gic_opf_blockers_stochastic.jl
 ```
 
 It will create new result file under the `data/gic/results` folder.
 
-Usage of the `gic_opf_blockers.jl` is as follows:
+Usage of the `gic_opf_blockers_stochastic.jl` is as follows:
 
 ```bash
-usage: gic_opf_blockers.jl [--network NETWORK] [--model MODEL]
+usage: gic_opf_blockers_stochastic.jl [--network NETWORK] [--model MODEL]
                         [--optimizer OPTIMIZER]
                         [--time_limit TIME_LIMIT]
                         [--efield_mag EFIELD_MAG]

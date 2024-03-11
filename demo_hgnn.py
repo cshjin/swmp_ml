@@ -19,8 +19,6 @@ from py_script.model import HeteroGNN
 from py_script.transforms import NormalizeColumnFeatures
 from py_script.utils import create_dir, get_device, process_args
 
-from datetime import datetime
-
 if __name__ == "__main__":
     args = process_args()
 
@@ -42,6 +40,7 @@ if __name__ == "__main__":
         DT_FORMAT = datetime.now().strftime("%Y%m%d_%H%M%S")
         LOG_DIR = osp.join('logs', 'demo_train', DT_FORMAT)
         create_dir(LOG_DIR)
+
     # Select the processor to use
     DEVICE = get_device(args['gpu'])
 
@@ -61,7 +60,7 @@ if __name__ == "__main__":
     else:
         raise "Please input at least one grid name"
 
-    # simple data
+    # sample data
     data = dataset[0]
 
     # Train and test split for our datasets with ratio: 0.8/0.1/0.1
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     # Create a DataLoader for our datasets
     # NOTE: update the batch size to `1` for reevaluation
     data_loader_train = DataLoader(dataset=dataset_train,
-                                   batch_size=1,
+                                   batch_size=args['batch_size'],
                                    shuffle=True)
     data_loader_val = DataLoader(dataset=dataset_val,
                                  batch_size=1,
@@ -100,9 +99,6 @@ if __name__ == "__main__":
                       device=DEVICE,
                       ).to(DEVICE)
 
-    # adjust the loss function accordingly
-    # loss_fn = CrossEntropyLoss() if args['setting'] == "gic" else MSELoss()
-    # loss_fn = F.cross_entropy if args['setting'] == "gic" else F.mse_loss
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=args['lr'],
                                  weight_decay=args['weight_decay'])
@@ -110,14 +106,18 @@ if __name__ == "__main__":
     res = model.fit(optimizer,
                     data_loader_train,
                     epochs=args['epochs'],
-                    verbose=True,
+                    verbose=args['verbose'],
                     device=DEVICE)
 
-    fig = plt.figure(figsize=(4, 3), tight_layout=True)
-    plt.plot(np.arange(len(res[0])), res[0])
-    plt.savefig("train.png", dpi=600)
+    torch.save(model.state_dict(), "_model.pt")
+    # plot the training loss
+    # fig = plt.figure(figsize=(4, 3), tight_layout=True)
+    # plt.plot(np.arange(len(res[0])), res[0])
+    # plt.savefig("train.png", dpi=600)
+
     res = model.evaluate(data_loader_test, device=DEVICE)
-    print(res)
+    print(f"Test acc: {res[0]:.4f}, roc-auc: {res[1]:.4f}, loss: {res[2]:.4f}")
+
     exit()
     # Some extra code to check if the optimizer really did place some blockers
     # in the results and if model really is placing some blockers in the grid
