@@ -1,22 +1,32 @@
+""" Utility functions for data processing and model training.
+
+Reference:
+* [Matpower Manual: v7.1]: http://matpower.org/docs/MATPOWER-manual.pdf
+
+Author: SWMP-Team
+License: MIT
+"""
 import os
 import re
 from io import StringIO
 
 import pandas as pd
 
+
 HEADERS = {
+    "bus": ['bus_i', 'type', 'Pd', 'Qd', 'Gs', 'Bs', 'area',
+            'Vm', 'Va', 'baseKV', 'zone', 'Vmax', 'Vmin'],
     "gen": ['bus', 'Pg', 'Qg', 'Qmax', 'Qmin',
             'Vg', 'mBase', 'status', 'Pmax', 'Pmin',
             'Pc1', 'Pc2', 'Qc1min', 'Qc1max',
             'Qc2min', 'Qc2max', 'ramp_agc', 'ramp_10', 'ramp_30', 'ramp_q', 'apf'],
-    "bus": ['bus_i', 'type', 'Pd', 'Qd', 'Gs', 'Bs', 'area',
-            'Vm', 'Va', 'baseKV', 'zone', 'Vmax', 'Vmin'],
     "gencost": ['model', 'startup', 'shutdown', 'ncost', 'c0', 'c1', 'c2'],
     "branch": ['fbus', 'tbus', 'r', 'x', 'b',
                'rateA', 'rateB', 'rateC', 'ratio',
-               'angle', 'status', 'angmin', 'angmax'],
-    "gmd_bus": ['parent_index', 'status', 'g_gnd', 'name'],
-    "gmd_branch": ['f_bus', 't_bus', 'parent_index', 'br_status',
+               'angle', 'status', 'angmin', 'angmax',
+               'Pf', 'Qf', 'Pt', 'Qt'],
+    "gmd_bus": ['parent_index', 'status', 'g_gnd', 'sub', 'name'],
+    "gmd_branch": ['f_bus', 't_bus', 'parent_type', 'parent_index', 'br_status',
                    'br_r', 'br_v', 'len_km', 'name'],
     "branch_gmd": ['hi_bus', 'lo_bus', 'gmd_br_hi', 'gmd_br_lo',
                    'gmd_k', 'gmd_br_series', 'gmd_br_common', 'baseMVA', 'type', 'config'],
@@ -27,7 +37,53 @@ HEADERS = {
 }
 
 
-# ! DEBUG for ACTIVESg2000 case
+def clean_file(input_file):
+    r""" Clean the input matpower file, and save as {input_file}_cleaned.m in the same folder.
+
+    - replace one or more tabs in the file with a single space
+    - remove leading or padding tabs and spaces of each line
+    - some blocks of the file are using `{`, replace them with `[`, similarly, replace `}` with `]`
+    - file ends with a newline character
+
+    Args:
+        input_file (str): The input file to clean.
+
+    Returns:
+        str: The output file name.
+    """
+    # Read the original file
+    try:
+        with open(input_file, 'r') as f:
+            content = f.readlines()
+    except Exception as e:
+        print("Error: {}".format(e))
+        exit(-1)
+
+    # Replace one or more tabs with a single space, remove leading and trailing spaces or tabs from each line,
+    # and replace {} with []
+    cleaned_content = [re.sub('\\s+', ' ', line).strip().replace('{', '[').replace('}', ']') for line in content]
+
+    # Ensure file ends with a newline character
+    cleaned_content.append('')
+
+    # Join the cleaned lines back into a single string
+    cleaned_content = '\n'.join(cleaned_content)
+
+    # Create the new filename
+    base, ext = os.path.splitext(input_file)
+    output_file = f"{base}_cleaned{ext}"
+
+    # Write the cleaned content to the new file
+    try:
+        with open(output_file, 'w') as f:
+            f.write(cleaned_content)
+    except Exception as e:
+        print("Error: {}".format(e))
+        exit(-1)
+
+    return output_file
+
+
 def read_mpc(fn):
     r""" Read the MPC MATPOWER file ".m" into dictionary.
     Args:
@@ -39,6 +95,7 @@ def read_mpc(fn):
     References:
         [1]: MATPOWER manual (https://matpower.org/docs/MATPOWER-manual.pdf), Appendix B.
     """
+    fn = clean_file(fn)
     mpc = {}
     with open(fn, "r") as f:
         string = f.read()
@@ -48,12 +105,6 @@ def read_mpc(fn):
         for line in f:
             lines.append(line)
 
-    # for match in matches:
-    #     line_number = string.count('\n', 0, string.index(match))
-    #     if line_number > 0:
-    #         previous_line = lines[line_number - 1]
-    #         print(previous_line)
-    # find match with `mpc.***`
     matches = re.findall(r"mpc\.\w+", string)
     for attr in matches:
         key = attr.split(".")[1]
@@ -72,28 +123,76 @@ def read_mpc(fn):
             #     value = float(value)
             mpc[key] = value
 
-        elif key in ['gen', 'bus', 'branch']:
-            # NOTE: remove 'gencost'
-            line_number = string.count('\n', 0, string.index(attr))
-            if line_number > 0:
-                header_line = lines[line_number - 1]
-                header = header_line.strip().split("%")[-1].strip().split()
+        elif key in ['gen', 'bus', 'branch', 'branch_gmd', 'bus_gmd']:
+            # DEPRECATED: ignore the header line above the data
+            # line_number = string.count('\n', 0, string.index(attr))
+            # if line_number > 0:
+            #     header_line = lines[line_number - 1]
+            #     header = header_line.strip().split("%")[-1].strip().split()
+
             # the keys with standard MATPOWER data
             pattern = rf'mpc\.{key}\s*=\s*\[[\n]?(?P<data>.*?)[\n]?\];'
             match = re.search(pattern, string, re.DOTALL)
             # convert to string for pandas dataframe
             data = StringIO(match.groupdict()['data'])
-            df = pd.read_csv(data, sep="\t", header=None)
-            # drop the nan caused by tab splitter
-            df = df.drop(columns=[0])
+            # df = pd.read_csv(data, sep="\t", header=None)
+            # after processing file spaces only separators
+            df = pd.read_csv(data, sep="\\s+", header=None, comment="%", engine="python")
+
+            if df.shape[1] == len(HEADERS[key]):
+                df.columns = HEADERS[key]
+            elif df.shape[1] < len(HEADERS[key]):
+                # fill the missing columns with 0
+                df.columns = HEADERS[key][:df.shape[1]]
+                for col in HEADERS[key][df.shape[1]:]:
+                    df[col] = 0
+
+            # drop the first column
+            # if key == "bus":
+            #     df = df.drop(df.columns[0], axis=1)
+
             # if key == 'bus':
             #     df = df.dropna(axis=1, how='all')
             # if key == 'gen':
             #     df.fillna(0, inplace=True)
-            len_cols = min(len(df.columns), len(header))
-            df = df.iloc[:, :len_cols]
-            df.columns = header
+            # len_cols = min(len(df.columns), len(header))
+            # df = df.iloc[:, :len_cols]
+            # df.columns = header
             mpc[key] = df
+
+        elif key in ['gmd_bus', 'gmd_branch']:
+            # line_number = string.count('\n', 0, string.index(attr))
+            # if line_number > 0:
+            #     header_line = lines[line_number - 1]
+            #     header = header_line.strip().split("%")[-1].strip().split()
+            # the keys with customized GMD data
+            pattern = rf'mpc\.{key}\s*=\s*[\n]?(?P<data>.*?)[\n]?;'
+            match = re.search(pattern, string, re.DOTALL)
+
+            data = StringIO(match.groupdict()['data'][2:-2])
+            # REVIEW: with multiple separators
+            # df = pd.read_csv(data, sep="\\s+", header=None, engine="python")
+            df = pd.read_csv(data, sep=r"\s+(?=(?:[^']*'[^']*')*[^']*$)", header=None, comment="%", engine="python")
+            if df.shape[1] == len(HEADERS[key]):
+                df.columns = HEADERS[key]
+            elif df.shape[1] < len(HEADERS[key]):
+                # fill the missing columns with 0
+                df.columns = HEADERS[key][:df.shape[1]]
+                for col in HEADERS[key][df.shape[1]:]:
+                    df[col] = 0
+            # drop the nan caused by tab splitter
+            # df = df.drop(columns=[0])
+            # len_cols = min(len(df.columns), len(header))
+            # df = df.iloc[:, :len_cols]
+            # df.columns = header
+            mpc[key] = df
+        elif key in ['branch_thermal']:
+            # TODO: thermal problem is not considered
+            pass
+
+        elif key in ['gencost']:
+            # TODO: update the loss function based on model type from gencost
+            pass
 
         elif key in ['thermal_cap_x0', 'thermal_cap_y0']:
             # the keys with single column
@@ -114,25 +213,6 @@ def read_mpc(fn):
             # # drop the nan caused by tab splitter
             # df = df.drop(columns=[0])
             # mpc[key] = df.to_numpy()
-
-        elif key in ['gmd_bus', 'gmd_branch', 'branch_gmd', 'branch_thermal', 'bus_gmd']:
-            line_number = string.count('\n', 0, string.index(attr))
-            if line_number > 0:
-                header_line = lines[line_number - 1]
-                header = header_line.strip().split("%")[-1].strip().split()
-            # the keys with customized GMD data
-            pattern = rf'mpc\.{key}\s*=\s*[\n]?(?P<data>.*?)[\n]?;'
-            match = re.search(pattern, string, re.DOTALL)
-
-            data = StringIO(match.groupdict()['data'][2:-2])
-            # REVIEW: with multiple separators
-            df = pd.read_csv(data, sep="\t", header=None, engine="python")
-            # drop the nan caused by tab splitter
-            df = df.drop(columns=[0])
-            len_cols = min(len(df.columns), len(header))
-            df = df.iloc[:, :len_cols]
-            df.columns = header
-            mpc[key] = df
     return mpc
 
 

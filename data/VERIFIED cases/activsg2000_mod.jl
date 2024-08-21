@@ -28,10 +28,11 @@ juniper_solver = JuMP.optimizer_with_attributes(Juniper.Optimizer, "nl_solver" =
 setting = Dict{String,Any}("output" => Dict{String,Any}("branch_flows" => true))
 
 
-data = "../test/data/matpower/activsg2000_mod.m"
+# data = "../test/data/matpower/activsg2000_mod.m"
+data = "./activsg2000_mod.m"
 case = _PM.parse_file(data)
-sol= _PMGMD.solve_gmd(case) # linear solver
-# sol=  _PMGMD.solve_gmd(case, ipopt_solver; setting=setting) # for opt solver
+# sol= _PMGMD.solve_gmd(case) # linear solver
+sol=  _PMGMD.solve_gmd(case, ipopt_solver; setting=setting) # for opt solver
 
 high_error = 1e-2 # abs(value) >= .0001
 

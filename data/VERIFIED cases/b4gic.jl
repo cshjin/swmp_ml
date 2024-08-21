@@ -37,29 +37,27 @@ setting = Dict{String,Any}("output" => Dict{String,Any}("branch_flows" => true))
 
 
 
-data = "../test/data/matpower/b4gic.m"
+# data = "../test/data/matpower/b4gic.m"
+data = "./b4gic.m"
 
 case = _PM.parse_file(data)
 
-sol = _PMGMD.solve_gmd(case)
+sol = _PMGMD.solve_gmd(case, ipopt_solver, setting=setting)
 
 max_error = 1e-2
 
 @testset "linear solve of gmd" begin
-	@testset "auto transformers" begin
-	end
-	@testset "y-d transformers" begin
-		 @test isapprox(sol["solution"]["qloss"]["2"], 37.220674406003006, rtol=max_error) || isapprox(sol["solution"]["qloss"]["2"], 37.313418981734294, rtol=max_error) 
-		 @test isapprox(sol["solution"]["ieff"]["2"], 22.09875679, rtol=max_error)
-		 @test isapprox(sol["solution"]["qloss"]["3"], 37.15240659861487, rtol=max_error) || isapprox(sol["solution"]["qloss"]["3"], 37.2689694, rtol=max_error) 
-		 @test isapprox(sol["solution"]["ieff"]["3"], 22.09875679, rtol=max_error)
-	end
-	@testset "y-y transformers" begin
-	end
-	@testset "d-d transformers" begin
-	end
-	@testset "lines" begin
-		 @test isapprox(sol["solution"]["qloss"]["1"], 0.0, rtol=max_error)
-		 @test isapprox(sol["solution"]["ieff"]["1"], 0.0, rtol=max_error)
-	end
+  @testset "auto transformers" begin end
+  @testset "y-d transformers" begin
+    @test isapprox(sol["solution"]["qloss"]["2"], 37.220674406003006, rtol=max_error) || isapprox(sol["solution"]["qloss"]["2"], 37.313418981734294, rtol=max_error)
+    @test isapprox(sol["solution"]["ieff"]["2"], 22.09875679, rtol=max_error)
+    @test isapprox(sol["solution"]["qloss"]["3"], 37.15240659861487, rtol=max_error) || isapprox(sol["solution"]["qloss"]["3"], 37.2689694, rtol=max_error)
+    @test isapprox(sol["solution"]["ieff"]["3"], 22.09875679, rtol=max_error)
+  end
+  @testset "y-y transformers" begin end
+  @testset "d-d transformers" begin end
+  @testset "lines" begin
+    @test isapprox(sol["solution"]["qloss"]["1"], 0.0, rtol=max_error)
+    @test isapprox(sol["solution"]["ieff"]["1"], 0.0, rtol=max_error)
+  end
 end
